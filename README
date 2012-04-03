@@ -1,0 +1,45 @@
+OpenELEC_DEV
+will do everything for you required to update; and its interactive
+it's compatible with any of the avaliable architectures OpenELEC supports.
+
+the script has a mechanism which will always keep itself up-to-date, so you only need to manually download it once;
+anytime an update is available it will replace the old version.
+
+
+to run it, is simple:
+
+1) open ssh terminal and run:
+wget -O ./openelec-nightly_latest.sh http://dl.dropbox.com/u/66962/Repo/OpenELEC/openelec-nightly_latest.sh
+
+
+2) give it proper permissions:
+chmod +x openelec-nightly_latest.sh
+
+
+3) run it !
+sh ./openelec-nightly_latest.sh
+
+
+* NOTE:
+Do NOT manually change the VERSION= variable !
+doing so will force the script to update itself with my working copy, which is constantly undergoing changes
+and will most likely break usage.
+
+i will change the version number on my end, when i'm comfortable with the code's condition.
+don't change this ! in fact, there is nothing within the script that should be changed manually
+
+
+================================================================================================================
+
+
+Usage:  ./openelec-nightly_latest.sh  [-ioacrlsvh]
+
+-i                   check if SYSTEM & KERNEL are already in-place; suggest reboot.
+-o                   list all avaliable archival builds for your architecture.
+-a                   list all avaliable builds for your architecture.
+-c                   quick check to see if we're up-to-date.
+-r                   check the remote build revision.
+-l                   what's our local build revision.
+-s                   check for new script version.
+-v                   script version.
+-h/--help            help.
