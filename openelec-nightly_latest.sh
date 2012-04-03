@@ -61,59 +61,59 @@ do
 	options_found=1
 	case $opt in
 	c)
-		# quick check to see if we're up-to-date
-		mkdir -p /dev/shm/xbmc-update/
-                arch=$(cat /etc/arch)
-                curl -silent $mode | grep $arch | sed -e 's/<li><a href="//' -e 's/[^ ]* //' -e 's/<\/a><\/li>//' > /dev/shm/xbmc-update/temp
-                if [ $(wc -l /dev/shm/xbmc-update/temp | cut -c -1) -gt "1" ] ;
-                then
-                        cat /dev/shm/xbmc-update/temp | tail -1 > /dev/shm/xbmc-update/temp2
-                else
-                        mv /dev/shm/xbmc-update/temp /dev/shm/xbmc-update/temp2
-                fi
-		PAST=$(cat /etc/version | tail -c 6 | tr -d 'r')
-		PRESENT=$(cat /dev/shm/xbmc-update/temp2 | tail -c 15 | cut -c 0-5)
-		if [ `echo $PRESENT | sed 's/.\{4\}$//'` == "-" ] ;
-		then
-			# this is for coming from revisions 9999 and lower
-		        PRESENT=$(cat /dev/shm/xbmc-update/temp2 | tail -c 15 | sed 's/.\{8\}$//' | tr -d "\-r"})
-		else
-			# this is for coming from revisions 10000 and higher
-		        PRESENT=$(cat /dev/shm/xbmc-update/temp2 | tail -c 15 | sed 's/.\{8\}$//' | tr -d "r")
-		fi
-		if [ "$PRESENT" -gt "$PAST" ] ;
-		then
-			echo
-			echo "Updates are Avaliable"
-			echo "Local:   $PAST"
-			echo "Remote:  $PRESENT"
-		else
-			echo
-			echo "No Updates Avaliable"
-		fi
-                rm -rf /dev/shm/xbmc-update/
-		unset arch
-		unset PAST
-		unset PRESENT
-		;;
+	# quick check to see if we're up-to-date
+	mkdir -p /dev/shm/xbmc-update/
+    arch=$(cat /etc/arch)
+    curl -silent $mode | grep $arch | sed -e 's/<li><a href="//' -e 's/[^ ]* //' -e 's/<\/a><\/li>//' > /dev/shm/xbmc-update/temp
+    if [ $(wc -l /dev/shm/xbmc-update/temp | cut -c -1) -gt "1" ] ;
+    then
+        cat /dev/shm/xbmc-update/temp | tail -1 > /dev/shm/xbmc-update/temp2
+    else
+        mv /dev/shm/xbmc-update/temp /dev/shm/xbmc-update/temp2
+    fi
+	PAST=$(cat /etc/version | tail -c 6 | tr -d 'r')
+	PRESENT=$(cat /dev/shm/xbmc-update/temp2 | tail -c 15 | cut -c 0-5)
+	if [ `echo $PRESENT | sed 's/.\{4\}$//'` == "-" ] ;
+	then
+		# this is for coming from revisions 9999 and lower
+	    PRESENT=$(cat /dev/shm/xbmc-update/temp2 | tail -c 15 | sed 's/.\{8\}$//' | tr -d "\-r"})
+	else
+		# this is for coming from revisions 10000 and higher
+		PRESENT=$(cat /dev/shm/xbmc-update/temp2 | tail -c 15 | sed 's/.\{8\}$//' | tr -d "r")
+	fi
+	if [ "$PRESENT" -gt "$PAST" ] ;
+	then
+		echo
+		echo "Updates are Avaliable"
+		echo "Local:   $PAST"
+		echo "Remote:  $PRESENT"
+	else
+		echo
+		echo "No Updates Avaliable"
+	fi
+    rm -rf /dev/shm/xbmc-update/
+	unset arch
+	unset PAST
+	unset PRESENT
+	;;
 
-        r)
+    r)
 		# displays the remote build number
 		mkdir -p /dev/shm/xbmc-update/
 		arch=$(cat /etc/arch)
 		curl -silent $mode | grep $arch | sed -e 's/<li><a href="//' -e 's/[^ ]* //' -e 's/<\/a><\/li>//' > /dev/shm/xbmc-update/temp
 		if [ $(wc -l /dev/shm/xbmc-update/temp | cut -c -1) -gt "1" ] ;
 		then
-	        	cat /dev/shm/xbmc-update/temp | tail -1 > /dev/shm/xbmc-update/temp2
+	        cat /dev/shm/xbmc-update/temp | tail -1 > /dev/shm/xbmc-update/temp2
 		else
-		        mv /dev/shm/xbmc-update/temp /dev/shm/xbmc-update/temp2
+		    mv /dev/shm/xbmc-update/temp /dev/shm/xbmc-update/temp2
 		fi
 		echo
 		echo "Newest Remote Release for $arch: `cat /dev/shm/xbmc-update/temp2 | tail -c 15 | sed 's/.\{8\}$//' | tr -d "\-r"`"
 		rm -rf /dev/shm/xbmc-update/
 		unset arch
 	        ;;
-
+			
 	a)
 		# show all remotely avalible builds for your architecture, and build date
 		arch=$(cat /etc/arch)
@@ -125,7 +125,7 @@ do
 		list=$(cat /dev/shm/xbmc-update/temp)
 		for i in $list
 		do
-		        echo -n "$i  --->  Compiled On: "; echo -n "$i" | cut -f 4-4 -d'-' | sed 's/......$//;s/./& /4' | sed 's/./& /7' | awk '{ print "[ "$2"/"$3"/"$1" ]" }'
+		    echo -n "$i  --->  Compiled On: "; echo -n "$i" | cut -f 4-4 -d'-' | sed 's/......$//;s/./& /4' | sed 's/./& /7' | awk '{ print "[ "$2"/"$3"/"$1" ]" }'
 		done
 		rm -rf /dev/shm/xbmc-update/
 		unset arch
@@ -135,19 +135,19 @@ do
 	o)
 		# show all old archived builds for your architecture, and build date
 		arch=$(cat /etc/arch)
-                mkdir -p /dev/shm/xbmc-update/
-                curl -silent $mode/archive/ | grep $arch | sed -e 's/<li><a href="//' -e 's/[^ ]* //' -e 's/<\/a><\/li>//' > /dev/shm/xbmc-update/temp
-                echo
-                echo "Archival Builds Avaliable for your Architecture:  ($arch)"
-                echo "---------------------------------------"
-                list=$(cat /dev/shm/xbmc-update/temp)
-                for i in $list
-                do
-                        echo -n "$i  --->  Compiled On: "; echo -n "$i" | cut -f 4-4 -d'-' | sed 's/......$//;s/./& /4' | sed 's/./& /7' | awk '{ print "[ "$2"/"$3"/"$1" ]" }'
-                done
-                rm -rf /dev/shm/xbmc-update/
-                unset arch
-                unset list
+        mkdir -p /dev/shm/xbmc-update/
+        curl -silent $mode/archive/ | grep $arch | sed -e 's/<li><a href="//' -e 's/[^ ]* //' -e 's/<\/a><\/li>//' > /dev/shm/xbmc-update/temp
+        echo
+        echo "Archival Builds Avaliable for your Architecture:  ($arch)"
+        echo "---------------------------------------"
+        list=$(cat /dev/shm/xbmc-update/temp)
+        for i in $list
+        do
+            echo -n "$i  --->  Compiled On: "; echo -n "$i" | cut -f 4-4 -d'-' | sed 's/......$//;s/./& /4' | sed 's/./& /7' | awk '{ print "[ "$2"/"$3"/"$1" ]" }'
+        done
+        rm -rf /dev/shm/xbmc-update/
+        unset arch
+        unset list
 		;;
 
 	i)
@@ -168,12 +168,12 @@ do
 	s)
 		# checking for a script update, and notifying. no actual update going on here.
 		rsvers=$(curl --silent http://dl.dropbox.com/u/66962/Repo/OpenELEC/openelec-nightly_latest.sh | grep "VERSION=" | grep -v grep | sed 's/[^0-9]*//g')
-                if [ "$rsvers" -gt "$VERSION" ] ;
-                then
-                        echo
-                        echo "*---| Script Update Avaliable."
-                        echo "*---| Current Version: $VERSION.0"
-                        echo "*---| New Version: $rsvers.0"
+        if [ "$rsvers" -gt "$VERSION" ] ;
+        then
+            echo
+            echo "*---| Script Update Avaliable."
+            echo "*---| Current Version: $VERSION.0"
+            echo "*---| New Version: $rsvers.0"
 			echo
 			echo "*---| Run -|Without Options|- to Update"
 		else
@@ -345,34 +345,34 @@ then
 		if [ "$rsvers" -gt "$VERSION" ] ;
 		then
 			echo
-		        echo "*---| Script Update Avaliable."
+		    echo "*---| Script Update Avaliable."
 			echo "*---| Current Version: $VERSION.0"
-		        echo "*---| New Version: $rsvers.0"
+		    echo "*---| New Version: $rsvers.0"
 			echo
 			echo "Changelog:"
 			echo
 			changelog
 			sleep 3
 			echo
-	        	echo "*---| Updating OpenELEC_DEV Now:"
+	        echo "*---| Updating OpenELEC_DEV Now:"
 			sleep 1
-		        wget -O `dirname $0`/openelec-nightly_$rsvers.sh http://dl.dropbox.com/u/66962/Repo/OpenELEC/openelec-nightly_latest.sh
+		    wget -O `dirname $0`/openelec-nightly_$rsvers.sh http://dl.dropbox.com/u/66962/Repo/OpenELEC/openelec-nightly_latest.sh
 			echo "Done !"
 			echo
 			echo
-		        ###### indicate update in progress to next script instance
-		        touch /tmp/update_in_progress
-		        ###### run a new version of update script
-		        sh `dirname $0`/openelec-nightly_$rsvers.sh
+		    ###### indicate update in progress to next script instance
+		    touch /tmp/update_in_progress
+		    ###### run a new version of update script
+		    sh `dirname $0`/openelec-nightly_$rsvers.sh
 			###### remove update indication flag
- 		        rm -f /tmp/update_in_progress
+ 		    rm -f /tmp/update_in_progress
 			###### swapping  script old with new
 			rm -f `dirname $0`/openelec-nightly_latest.sh
 			mv `dirname $0`/openelec-nightly_$rsvers.sh `dirname $0`/openelec-nightly_latest.sh
 			chmod 755 `dirname $0`/openelec-nightly_latest.sh
-		        ###### exit old script
-		        exit
-	    	fi
+			###### exit old script
+			exit
+			fi
 	fi
 else
 	echo 
@@ -390,10 +390,10 @@ fi
 
 if [ `cat /etc/openelec-release | awk '{ print $1 }'` != "OpenELEC" ] ;
 then
-        echo "PVR Branch Detected"
+    echo "PVR Branch Detected"
 	echo -ne "Please Wait..\033[0K\r"
 else
-        echo "Non-PVR Branch Detected"
+	echo "Non-PVR Branch Detected"
 	echo -ne "Please Wait..\033[0K\r"
 fi
 
@@ -415,41 +415,41 @@ echo "KERNEL & SYSTEM are already in place."
 echo "You must reboot to complete the update."
 echo "Would you like to reboot now (y/n) ?"
 read -n1 -p "==| " reb
-        if [[ $reb != "Y" ]] && [[ $reb != "y" ]] && [[ $reb != "N" ]] && [[ $reb != "n" ]] && [[ $reb != "yes" ]] && [[ $reb != "no" ]] && [[ $reb != "Yes" ]] && [[ $reb != "No" ]] ;
-        then
-                echo
-		echo
-                echo "Unrecognized Input."
-		sleep 2
-                echo "Please answer (y/n)"
-                echo "Exiting."
-                echo
-                unsetv
-                rm -rf /dev/shm/xbmc-update
-                exit 1
-        elif [[ $reb = "Y" || $reb = "y" || $reb = "Yes" || $reb = "yes" ]] ;
-        then
-                echo
-		echo
-		echo
-                echo "Rebooting."
-                unsetv
-                rm -rf /dev/shm/xbmc-update
-                sync
-                sleep 2
-                /sbin/reboot
-                exit 0
-        elif [[ $reb = "N" || $reb = "n" || $reb = "No" || $reb = "no" ]] ;
-        then
-                echo
-                echo
-                echo "Please reboot to complete the update."
-		sleep 2
-                echo "Exiting."
-                unsetv
-                rm -rf /dev/shm/xbmc-update
-                exit 0
-        fi
+if [[ $reb != "Y" ]] && [[ $reb != "y" ]] && [[ $reb != "N" ]] && [[ $reb != "n" ]] && [[ $reb != "yes" ]] && [[ $reb != "no" ]] && [[ $reb != "Yes" ]] && [[ $reb != "No" ]] ;
+then
+    echo
+	echo
+    echo "Unrecognized Input."
+	sleep 2
+    echo "Please answer (y/n)"
+    echo "Exiting."
+    echo
+    unsetv
+    rm -rf /dev/shm/xbmc-update
+    exit 1
+elif [[ $reb = "Y" || $reb = "y" || $reb = "Yes" || $reb = "yes" ]] ;
+then
+    echo
+	echo
+	echo
+    echo "Rebooting."
+	unsetv
+    rm -rf /dev/shm/xbmc-update
+    sync
+    sleep 2
+    /sbin/reboot
+    exit 0
+elif [[ $reb = "N" || $reb = "n" || $reb = "No" || $reb = "no" ]] ;
+then
+    echo
+    echo
+    echo "Please reboot to complete the update."
+	sleep 2
+    echo "Exiting."
+    unsetv
+    rm -rf /dev/shm/xbmc-update
+    exit 0
+    fi
 fi
 
 
@@ -531,16 +531,16 @@ then
 	echo -ne "\033[0K\r"
 	echo
 	echo
-        echo "#### WARNING:"
-        echo "#### UPDATING TO OR FROM DEVELOPMENT BUILDS MAY HAVE POTENTIALLY UNPREDICTABLE EFFECTS"
-        echo "#### ON THE STABILITY AND OVERALL USABILITY OF YOUR SYSTEM. SINCE NEW CODE IS LARGELY"
-        echo "#### UNTESTED, DO NOT EXPECT SUPPORT ON ANY ISSUES YOU MAY ENCOUNTER AFTER UPDATING."
-        echo "#### IF WERE TO BE OFFERED, IT WILL BE LIMITED TO DEVELOPMENT LEVEL DEBUGGING."
+	echo "#### WARNING:"
+	echo "#### UPDATING TO OR FROM DEVELOPMENT BUILDS MAY HAVE POTENTIALLY UNPREDICTABLE EFFECTS"
+	echo "#### ON THE STABILITY AND OVERALL USABILITY OF YOUR SYSTEM. SINCE NEW CODE IS LARGELY"
+	echo "#### UNTESTED, DO NOT EXPECT SUPPORT ON ANY ISSUES YOU MAY ENCOUNTER AFTER UPDATING."
+	echo "#### IF WERE TO BE OFFERED, IT WILL BE LIMITED TO DEVELOPMENT LEVEL DEBUGGING."
 	echo
 	echo
-        echo -ne "Please Wait..\033[0K\r"
+	echo -ne "Please Wait..\033[0K\r"
 	sleep 6
-        echo -ne "\033[0K\r"
+	echo -ne "\033[0K\r"
 	echo "===| OpenELEC"
 	echo "Updates Are Avaliable."
 	echo "Local:   $PAST"
@@ -553,13 +553,13 @@ then
 	then
 		echo
 		echo
-	        echo "Unrecognized Input."
+		echo "Unrecognized Input."
 		sleep 2
-	        echo "Please answer (y/n)"
-	        echo "Exiting."
-	        echo
+	    echo "Please answer (y/n)"
+	    echo "Exiting."
+	    echo
 		unsetv
-	        exit 1
+	    exit 1
 	elif [[ $yn = "Y" || $yn = "y" || $yn = "Yes" || $yn = "yes" ]] ;
 	then
 		sleep .5
@@ -634,40 +634,39 @@ then
 	sys_return=0
 else
 	sys_return=1
-        echo "WARNING:"
-        echo "SYSTEM md5 MISMATCH!"
-        echo "--------------------"
-        echo "There is an integrity problem with the System package"
-        echo "Notify (IRC/Forums) one of the Developers that:"
-        echo "the SYSTEM image of $FOLDER.tar.bz2 is corrupt"
-        sleep 3
-        rm -f /storage/.update/SYSTEM
-        rm -f /storage/.update/SYSTEM.md5
-        rm -rf /dev/shm/xbmc-update
-        sync
-
+    echo "WARNING:"
+    echo "SYSTEM md5 MISMATCH!"
+    echo "--------------------"
+    echo "There is an integrity problem with the System package"
+    echo "Notify (IRC/Forums) one of the Developers that:"
+    echo "the SYSTEM image of $FOLDER.tar.bz2 is corrupt"
+    sleep 3
+    rm -f /storage/.update/SYSTEM
+    rm -f /storage/.update/SYSTEM.md5
+    rm -rf /dev/shm/xbmc-update
+    sync
 fi
 
 sleep 1
 
 if [ "$kernmd5" = "$kernrom" ] ;
 then
-        echo "md5 ==> KERNEL: OK!"
+    echo "md5 ==> KERNEL: OK!"
 	rm -f /storage/.update/KERNEL.md5
 	kern_return=0
 else
 	kern_return=1
 	echo "WARNING:"
-        echo "KERNEL md5 MISMATCH!"
-        echo "--------------------"
-        echo "There is an integrity problem with the Kernel package"
-        echo "Notify (IRC/Forums) one of the Developers that:"
-        echo "the KERNEL image of $FOLDER.tar.bz2 is corrupt"
-        sleep 3
-        rm -f /storage/.update/KERNEL
-        rm -f /storage/.update/KERNEL.md5
-        rm -rf /dev/shm/xbmc-update
-        sync
+    echo "KERNEL md5 MISMATCH!"
+    echo "--------------------"
+    echo "There is an integrity problem with the Kernel package"
+    echo "Notify (IRC/Forums) one of the Developers that:"
+    echo "the KERNEL image of $FOLDER.tar.bz2 is corrupt"
+    sleep 3
+    rm -f /storage/.update/KERNEL
+    rm -f /storage/.update/KERNEL.md5
+    rm -rf /dev/shm/xbmc-update
+    sync
 fi
 
 
@@ -706,7 +705,7 @@ echo "--| to roll back system the version, if nessessary."
 echo "--| *Never mix SYSTEM & KERNEL images among releases."
 if [ -d /storage/downloads/OpenELEC_r$PAST ] ;
 then
-        rm -rf /storage/downloads/OpenELEC_r$PAST
+    rm -rf /storage/downloads/OpenELEC_r$PAST
 fi
 mkdir -p /storage/downloads/OpenELEC_r$PRESENT
 cp /dev/shm/xbmc-update/OpenELEC-*.tar.bz2 /storage/downloads/OpenELEC_r$PRESENT
@@ -727,18 +726,18 @@ echo "Would you like to reboot now (y/n) ?"
 read -n1 -p "==| " reb
 if [[ "$reb" != "Y" ]] && [[ "$reb" != "y" ]] && [[ "$reb" != "N" ]] && [[ "$reb" != "n" ]] && [[ "$reb" != "yes" ]] && [[ "$reb" != "no" ]] && [[ "$reb" != "Yes" ]] && [[ "$reb" != "No" ]] ;
 then
-        echo
-        echo "Unrecognized Input."
-        echo "Please answer (y/n)"
-        echo "Exiting."
-        echo
+    echo
+    echo "Unrecognized Input."
+    echo "Please answer (y/n)"
+    echo "Exiting."
+    echo
 	unsetv
-        exit 1
+    exit 1
 elif [[ "$reb" = "Y" || "$reb" = "y" || "$reb" = "Yes" || "$reb" = "yes" ]] ;
 then
 	sleep 1
 	echo
-        echo "Rebooting."
+    echo "Rebooting."
 	unsetv
 	sync
 	sleep 1
@@ -747,12 +746,12 @@ then
 elif [[ "$reb" = "N" || "$reb" = "n" || "$reb" = "No" || "$reb" = "no" ]] ;
 then
 	sleep 1
-        echo
+    echo
 	echo
 	echo "Please reboot to complete the update."
-        echo "Exiting."
+    echo "Exiting."
 	unsetv
-        exit 0
+    exit 0
 fi
 
 
