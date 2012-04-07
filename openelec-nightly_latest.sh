@@ -30,7 +30,7 @@ set -e
 
 
 ###### script release version
-VERSION="10"
+VERSION="11"
 
 
 ###### if no options specified; we continue as normal
@@ -390,7 +390,7 @@ do
 	h|help)
 		options_found=1
 		# options avaliable and usage. 
-		echo "Usage:  $0 [-ioacrlsvh]"
+		echo "Usage:  $0 [-iozacrlsvh]"
 		echo
 		echo "-i                   check if SYSTEM & KERNEL are already in-place; suggest reboot."
 		echo "-o                   list all avaliable archival builds for your architecture."
@@ -545,7 +545,6 @@ then
 	        echo "*---| Updating OpenELEC_DEV Now:"
 			sleep 1
 			curl https://raw.github.com/wavrunrx/OpenELEC_Dev/master/openelec-nightly_latest.sh > `dirname $0`/openelec-nightly_$rsvers.sh
-		    #wget -O `dirname $0`/openelec-nightly_$rsvers.sh https://raw.github.com/wavrunrx/OpenELEC_Dev/master/openelec-nightly_latest.sh
 			echo "Done !"
 			echo
 			echo

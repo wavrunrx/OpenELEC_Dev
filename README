@@ -34,12 +34,13 @@ don't change this ! in fact, there is nothing within the script that should be c
 
 Usage:  ./openelec-nightly_latest.sh  [-ioacrlsvh]
 
--i                   check if SYSTEM & KERNEL are already in-place; suggest reboot.
+-i                    check if SYSTEM & KERNEL are already in-place; suggest reboot.
 -o                   list all avaliable archival builds for your architecture.
+-z                   roll back or forward to a version of our choosing.
 -a                   list all avaliable builds for your architecture.
 -c                   quick check to see if we're up-to-date.
--r                   check the remote build revision.
--l                   what's our local build revision.
--s                   check for new script version.
+-r                    check the remote build revision.
+-l                    what's our local build revision.
+-s                   check for new script version
 -v                   script version.
--h/--help            help.
+-h/--help          help.
