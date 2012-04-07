@@ -31,7 +31,7 @@ set -e
 
 ###### script release version
 ## Monday, April 2nd, 2012
-VERSION="9"
+VERSION="10"
 
 
 ###### if no options specified; we continue as normal
