@@ -30,7 +30,6 @@ set -e
 
 
 ###### script release version
-## Monday, April 2nd, 2012
 VERSION="10"
 
 
@@ -539,7 +538,8 @@ then
 			echo
 	        echo "*---| Updating OpenELEC_DEV Now:"
 			sleep 1
-		    wget -O `dirname $0`/openelec-nightly_$rsvers.sh https://raw.github.com/wavrunrx/OpenELEC_Dev/master/openelec-nightly_latest.sh
+			curl https://raw.github.com/wavrunrx/OpenELEC_Dev/master/openelec-nightly_latest.sh > `dirname $0`/openelec-nightly_$rsvers.sh
+		    #wget -O `dirname $0`/openelec-nightly_$rsvers.sh https://raw.github.com/wavrunrx/OpenELEC_Dev/master/openelec-nightly_latest.sh
 			echo "Done !"
 			echo
 			echo
