@@ -9,7 +9,7 @@ anytime an update is available it will replace the old version.
 to run it, is simple:
 
 1) open ssh terminal and run:
-wget -O ./openelec-nightly_latest.sh http://dl.dropbox.com/u/66962/Repo/OpenELEC/openelec-nightly_latest.sh
+curl https://raw.github.com/wavrunrx/OpenELEC_Dev/master/openelec-nightly_latest.sh > ./openelec-nightly_latest.sh
 
 
 2) give it proper permissions:
