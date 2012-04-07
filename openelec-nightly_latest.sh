@@ -44,7 +44,7 @@ options_found="0"
 OPTIND="1"
 
 
-###### what branch are we using ? pvr, or non-pvr...
+###### what branch are we using ? pvr, or not
 
 if [ `cat /etc/openelec-release | awk '{ print $1 }'` != "OpenELEC" ] ;
 then
@@ -172,7 +172,7 @@ do
 	s)
 		options_found=1
 		# checking for a script update, and notifying. no actual update going on here.
-		rsvers=$(curl --silent http://dl.dropbox.com/u/66962/Repo/OpenELEC/openelec-nightly_latest.sh | grep "VERSION=" | grep -v grep | sed 's/[^0-9]*//g')
+		rsvers=$(curl --silent https://raw.github.com/wavrunrx/OpenELEC_Dev/master/openelec-nightly_latest.sh | grep "VERSION=" | grep -v grep | sed 's/[^0-9]*//g')
         if [ "$rsvers" -gt "$VERSION" ] ;
         then
             echo
@@ -192,7 +192,7 @@ do
 		options_found=1
 		# whats our current revision
 		echo
-		echo "My Local Revision: `cat /etc/version | tail -c 6 | tr -d 'r'`"
+		echo "My Local Build: `cat /etc/version | tail -c 6 | tr -d 'r'`"
 		;;
 
 	q)	
@@ -205,6 +205,7 @@ do
 		
 	z)	
 		options_found=1
+		arch=$(cat /etc/arch)
 		# roll back or forward to a version of our choosing
 		echo
 		echo "Are you sure you want to switch to an older/newer Build (y/n) ?"
@@ -228,16 +229,21 @@ do
 				mkdir -p /dev/shm/xbmc-update/
 				curl -silent $mode/ | grep $arch | sed -e 's/<li><a href="//' -e 's/[^ ]* //' -e 's/<\/a><\/li>//' > /dev/shm/xbmc-update/temp
 				curl -silent $mode/archive/ | grep $arch | sed -e 's/<li><a href="//' -e 's/[^ ]* //' -e 's/<\/a><\/li>//' >> /dev/shm/xbmc-update/temp
-				cat /dev/shm/xbmc-update/temp | sort -n  | sed '$d' > /dev/shm/xbmc-update/temp2
 				echo -ne "\033[0K\r"
+				echo
+				echo "Builds avaliable for your architecture: $arch"
+				echo
+				cat /dev/shm/xbmc-update/temp | sort -n  | sed '$d' > /dev/shm/xbmc-update/temp2
+				echo "==================================="
 				echo
 				list=$(cat /dev/shm/xbmc-update/temp2)
 				for i in $list
 				do
 					echo -n "Build: " ; echo -n "$i" | cut -f 5-5 -d'-' | sed '$s/........$//' | tr -d "r" ; echo -n "-----> Compiled On: " ; echo -n "$i" | cut -f 4-4 -d'-' | sed 's/......$//;s/./& /4' | sed 's/./& /7' | awk '{ print "[ "$2"/"$3"/"$1" ]" }' ; echo
 				done
+				echo "==================================="
 				echo
-				echo "Enter the Build/Revision number you want from the list above (Ex: "10027") "
+				echo "Enter the Build/Revision number you want (Ex: "10027") "
 				read -p "==| " fbrev
 				fn=$(grep "$fbrev" /dev/shm/xbmc-update/temp2 | awk '{print $1}')
 				echo
@@ -257,8 +263,7 @@ do
 				sleep 2
 				echo
 				###### Move KERNEL & SYSTEM to /storage/.update/
-				echo "Moving new images to /storage/.update"
-				echo "* Please do not abort the process now"
+				echo "Moving Images to /storage/.update"
 				find /dev/shm/xbmc-update -type f -name "KERNEL" -exec /bin/mv {} /storage/.update \;
 				find /dev/shm/xbmc-update -type f -name "SYSTEM" -exec /bin/mv {} /storage/.update \;
 				mv /dev/shm/xbmc-update/OpenELEC-*/target/*.md5 /storage/.update
@@ -508,12 +513,10 @@ then
 	exit 1
 fi
 
-###### dl.dropbox drops ICMP requests; doing it this way, if we get a '404: We can't find the page you're looking for.'
-###### at least we know their service is alive and we can attempt to check for updates in the repo. this is however a
-###### less then optimal way to check the servers status, and warrants a future rework.
+###### making sure github is alive and ready to update the script if nessessary.
 
-status=$(curl --silent https://dl.dropbox.com/ | grep "404" | head -n 1 | sed 's/[^0-9]*//g')
-if [ "$status" = "404" ] ;
+ping -qc 3 raw.github.com > /dev/null
+if [ "$?" = "0" ] ;
 then
 	###### thanks for the help on this vpeter
 	###### check if a script update is in progress
@@ -521,7 +524,7 @@ then
 	then
 		###### file does not exist - first run
 		###### checking script version; auto updating and rerunning new version if avaliable
-		rsvers=$(curl --silent http://dl.dropbox.com/u/66962/Repo/OpenELEC/openelec-nightly_latest.sh | grep "VERSION=" | grep -v grep | sed 's/[^0-9]*//g')
+		rsvers=$(curl --silent https://raw.github.com/wavrunrx/OpenELEC_Dev/master/openelec-nightly_latest.sh | grep "VERSION=" | grep -v grep | sed 's/[^0-9]*//g')
 		if [ "$rsvers" -gt "$VERSION" ] ;
 		then
 			echo
@@ -536,7 +539,7 @@ then
 			echo
 	        echo "*---| Updating OpenELEC_DEV Now:"
 			sleep 1
-		    wget -O `dirname $0`/openelec-nightly_$rsvers.sh http://dl.dropbox.com/u/66962/Repo/OpenELEC/openelec-nightly_latest.sh
+		    wget -O `dirname $0`/openelec-nightly_$rsvers.sh https://raw.github.com/wavrunrx/OpenELEC_Dev/master/openelec-nightly_latest.sh
 			echo "Done !"
 			echo
 			echo
@@ -792,8 +795,7 @@ sleep 2
 
 ###### Move KERNEL & SYSTEM to /storage/.update/
 echo
-echo "Moving new images to /storage/.update"
-echo "* Please do not abort the process now"
+echo "Moving Images to /storage/.update"
 find /dev/shm/xbmc-update -type f -name "KERNEL" -exec /bin/mv {} /storage/.update \;
 find /dev/shm/xbmc-update -type f -name "SYSTEM" -exec /bin/mv {} /storage/.update \;
 mv /dev/shm/xbmc-update/OpenELEC-*/target/*.md5 /storage/.update
