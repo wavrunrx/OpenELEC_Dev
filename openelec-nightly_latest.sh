@@ -55,7 +55,7 @@ fi
 
 ###### options
 
-while getopts ":craospilqzvh--:help" opt ;
+while getopts ":craospilqzvbh--:help" opt ;
 do
 	case $opt in
 	c)
@@ -379,6 +379,12 @@ do
 		# whats our script's version
 		echo
 		echo "OpenELEC_DEV Version: $VERSION.0"
+		;;
+
+	b)
+		# reboot -- intentionally undocumented (needed only for GUI interaction)
+		options_found=1
+		/sbin/reboot
 		;;
 
 	h|help)
