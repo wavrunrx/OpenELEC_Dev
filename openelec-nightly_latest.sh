@@ -8,14 +8,14 @@ set -e
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-#     * Redistributions of source code must retain the above copyright
-#       notice, this list of conditions and the following disclaimer.
-#     * Redistributions in binary form must reproduce the above copyright
-#       notice, this list of conditions and the following disclaimer in the
-#       documentation and/or other materials provided with the distribution.
-#     * Neither the name of the <organization> nor the
-#       names of its contributors may be used to endorse or promote products
-#       derived from this software without specific prior written permission.
+#	* Redistributions of source code must retain the above copyright
+#	  notice, this list of conditions and the following disclaimer.
+#	* Redistributions in binary form must reproduce the above copyright
+#	  notice, this list of conditions and the following disclaimer in the
+#	  documentation and/or other materials provided with the distribution.
+#	* Neither the name of the <organization> nor the
+#	  names of its contributors may be used to endorse or promote products
+#	  derived from this software without specific prior written permission.
 #
 # THIS SOFTWARE IS PROVIDED BY Eric Bixler ''AS IS'' AND ANY
 # EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -29,8 +29,8 @@ set -e
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-###### script release version
-VERSION="11"
+###### script version
+VERSION="12"
 
 
 ###### if no options specified; we continue as normal
@@ -58,6 +58,7 @@ fi
 while getopts ":craospilqzvbh--:help" opt ;
 do
 	case $opt in
+
 	c)
 		options_found=1
 		# quick check to see if we're up-to-date
@@ -649,9 +650,15 @@ then
 fi
 
 
-###### create the temporary working directory in ram
+###### create the temporary working directory in ram; delete it if it already exists; script will terminate if anything is already in there
 
-mkdir -p /dev/shm/xbmc-update/
+if -d [ /dev/shm/xbmc-update ] ;
+then
+	rm -rf /dev/shm/xbmc-update
+	mkdir -p /dev/shm/xbmc-update/
+else
+	mkdir -p /dev/shm/xbmc-update/
+fi
 
 
 ###### Captures remote filename & extension
@@ -739,8 +746,8 @@ then
 	echo -ne "\033[0K\r"
 	echo "===| OpenELEC"
 	echo "Updates Are Avaliable."
-	echo "Local:   $PAST"
-	echo "Remote:  $PRESENT"
+	echo "Local:   $PAST          Compiled: `cat /etc/version | cut -f 2-2 -d'-' | sed 's/......$//;s/./& /4' | sed 's/./& /7' | awk '{ print "[ "$2"/"$3"/"$1" ]" }'`" 
+	echo "Remote:  $PRESENT          Compiled: `echo $FOLDER | cut -f 4-4 -d'-' | sed 's/......$//;s/./& /4' | sed 's/./& /7' | awk '{ print "[ "$2"/"$3"/"$1" ]" }'`"
 	echo
 	## The remote build is newer then our local build. Asking for input.
 	echo "Would you like to update (y/n) ?"
@@ -766,7 +773,7 @@ then
 		echo
 		wget $mode/`cat /dev/shm/xbmc-update/temp2` -P "/dev/shm/xbmc-update/"
 		echo "Done!"
-		extract=$(/dev/shm/xbmc-update/$FOLDER.tar.bz2)
+		extract="/dev/shm/xbmc-update/$FOLDER.tar.bz2"
 		sleep 1
 	elif [[ $yn = "N" || $yn = "n" || $yn = "No" || $yn = "no" ]] ;
 	then
@@ -786,8 +793,8 @@ else
 	echo
 	echo "===| OpenELEC"
 	echo "No Updates Avaliable."
-	echo "Local:   $PAST"
-	echo "Remote:  $PRESENT"
+	echo "Local:   $PAST          Compiled: `cat /etc/version | cut -f 2-2 -d'-' | sed 's/......$//;s/./& /4' | sed 's/./& /7' | awk '{ print "[ "$2"/"$3"/"$1" ]" }'`" 
+	echo "Remote:  $PRESENT          Compiled: `echo $FOLDER | cut -f 4-4 -d'-' | sed 's/......$//;s/./& /4' | sed 's/./& /7' | awk '{ print "[ "$2"/"$3"/"$1" ]" }'`"
 	echo
 	echo "Check back later."
 	echo
@@ -894,17 +901,16 @@ echo -ne "\033[0K\r"
 ###### create a backup of our build for easy access if needed for a quick rollback
 
 echo
-echo "--| A copy of $FOLDER.tar.bz2 has been created here:"
+echo "--| A copy of the SYSTEM & KERNEL images have been created here:"
 echo "--| /storage/downloads/OpenELEC_r$PRESENT"
-echo "--| Use SYSTEM & KERNEL located in tar.bz2::target"
-echo "--| to roll back system the version, if nessessary."
-echo "--| *Never mix SYSTEM & KERNEL images among releases."
+echo "--| Note: *Never* mix SYSTEM & KERNEL images between releases."
 if [ -d /storage/downloads/OpenELEC_r$PAST ] ;
 then
 	rm -rf /storage/downloads/OpenELEC_r$PAST
 fi
 mkdir -p /storage/downloads/OpenELEC_r$PRESENT
-cp /dev/shm/xbmc-update/OpenELEC-*.tar.bz2 /storage/downloads/OpenELEC_r$PRESENT
+#cp /dev/shm/xbmc-update/OpenELEC-*.tar.bz2 /storage/downloads/OpenELEC_r$PRESENT
+cp /storage/.update/KERNEL /storage/.update/SYSTEM /storage/downloads/OpenELEC_r$PRESENT
 
 
 ###### Cleanup
