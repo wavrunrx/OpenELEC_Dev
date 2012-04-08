@@ -770,7 +770,6 @@ then
 		echo
 		echo
 		echo "Downloading Image:"
-		echo
 		wget $mode/`cat /dev/shm/xbmc-update/temp2` -P "/dev/shm/xbmc-update/"
 		echo "Done!"
 		extract="/dev/shm/xbmc-update/$FOLDER.tar.bz2"
@@ -920,6 +919,7 @@ rm -rf /dev/shm/xbmc-update
 
 ###### ask if we want to reboot now
 
+echo
 echo
 echo "Update Preperation Complete."
 sleep 2
