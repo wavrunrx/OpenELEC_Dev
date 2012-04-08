@@ -84,12 +84,12 @@ do
 		if [ "$PRESENT" -gt "$PAST" ] ;
 		then
 			echo
-			echo "Updates are Avaliable"
+			echo "Updates are Available"
 			echo "Local:   $PAST"
 			echo "Remote:  $PRESENT"
 		else
 			echo
-			echo "No Updates Avaliable"
+			echo "No Updates Available"
 		fi
 		rm -rf /dev/shm/xbmc-update/
 		unset arch
@@ -117,12 +117,12 @@ do
 			
 	a)
 		options_found=1
-		# show all remotely avalible builds for your architecture, and build date
+		# show all remotely available builds for your architecture, and build date
 		arch=$(cat /etc/arch)
 		mkdir -p /dev/shm/xbmc-update/
 		curl -silent $mode/ | grep $arch | sed -e 's/<li><a href="//' -e 's/[^ ]* //' -e 's/<\/a><\/li>//' > /dev/shm/xbmc-update/temp
 		echo
-		echo "Builds Avaliable for your Architecture:  ($arch)"
+		echo "Builds Available for your Architecture:  ($arch)"
 		echo "---------------------------------------"
 		list=$(cat /dev/shm/xbmc-update/temp)
 		for i in $list
@@ -496,18 +496,19 @@ unset yn
 currentsys=$(cat /etc/version | cut -f 1 -d'-')
 if [ "$currentsys" != "devel" ] ;
 then
+	echo
 	echo "Your Version:"
 	echo "Release: $currentsys"
 	echo
 	echo "You're currently on a Stable release of OpenELEC."
-	echo "To use this script, you will first need to manually"
-	echo "update OpenELEC to a development build. Be aware"
+	echo "To use this script, you first need to manually"
+	echo "migrate OpenELEC to a development build. Be aware"
 	echo "that development builds are inherently unstable"
 	echo "and should not be used in production enviroments."
 	echo "Usability of your HTPC may be adversly effected."
 	echo
 	echo "Once you are running a development build, you may"
-	echo "keep your system up-to-date by running this script"
+	echo "keep your system up-to-date by re-running this script"
 	echo "from time to time."
 	echo
 	echo "Visit the following locations to get started if you"
@@ -522,8 +523,8 @@ then
 	echo
 	echo "---------------------------------------------------"
 	echo
-	sleep 2
 	echo "Exiting Now."
+	echo
 	exit 1
 fi
 
@@ -537,12 +538,12 @@ then
 	if [ ! -f /tmp/update_in_progress ] ;
 	then
 		###### file does not exist - first run
-		###### checking script version; auto updating and rerunning new version if avaliable
+		###### checking script version; auto updating and rerunning new version if available 
 		rsvers=$(curl --silent https://raw.github.com/wavrunrx/OpenELEC_Dev/master/openelec-nightly_latest.sh | grep "VERSION=" | grep -v grep | sed 's/[^0-9]*//g')
 		if [ "$rsvers" -gt "$VERSION" ] ;
 		then
 			echo
-			echo "*---| Script Update Avaliable."
+			echo "*---| Script Update Available."
 			echo "*---| Current Version: $VERSION.0"
 			echo "*---| New Version: $rsvers.0"
 			echo
@@ -652,7 +653,7 @@ fi
 
 ###### create the temporary working directory in ram; delete it if it already exists; script will terminate if anything is already in there
 
-if -d [ /dev/shm/xbmc-update ] ;
+if [ -d "/dev/shm/xbmc-update" ] ;
 then
 	rm -rf /dev/shm/xbmc-update
 	mkdir -p /dev/shm/xbmc-update/
@@ -709,7 +710,7 @@ then
 	echo "You are currently using an unofficial development version of OpenELEC."
 	echo "This isnt supported, and will yield unusual results if we continue."
 	echo "Your Build: $PAST"
-	echo "Is a higher revision then the newest avaliable on the official snapshot server:"
+	echo "Is a higher revision then the newest available on the official snapshot server:"
 	echo "Remote Build: $PRESENT"
 	echo
 	sleep 4
@@ -718,7 +719,7 @@ then
 fi
 
 
-###### this is only comes into play if the option -q is used. if so, we supress output if an update isnt avaliable. if one is, we dont care, and want to exit.
+###### this is only comes into play if the option -q is used. if so, we supress output if an update isnt available. if one is, we dont care, and want to exit.
 
 if [ "$update_yes" = "1" ] ;
 then
@@ -745,7 +746,7 @@ then
 	sleep 6
 	echo -ne "\033[0K\r"
 	echo "===| OpenELEC"
-	echo "Updates Are Avaliable."
+	echo "Updates Are Available."
 	echo "Local:   $PAST          Compiled: `cat /etc/version | cut -f 2-2 -d'-' | sed 's/......$//;s/./& /4' | sed 's/./& /7' | awk '{ print "[ "$2"/"$3"/"$1" ]" }'`" 
 	echo "Remote:  $PRESENT          Compiled: `echo $FOLDER | cut -f 4-4 -d'-' | sed 's/......$//;s/./& /4' | sed 's/./& /7' | awk '{ print "[ "$2"/"$3"/"$1" ]" }'`"
 	echo
@@ -791,7 +792,7 @@ else
 	echo -ne "\033[0K\r"
 	echo
 	echo "===| OpenELEC"
-	echo "No Updates Avaliable."
+	echo "No Updates Available."
 	echo "Local:   $PAST          Compiled: `cat /etc/version | cut -f 2-2 -d'-' | sed 's/......$//;s/./& /4' | sed 's/./& /7' | awk '{ print "[ "$2"/"$3"/"$1" ]" }'`" 
 	echo "Remote:  $PRESENT          Compiled: `echo $FOLDER | cut -f 4-4 -d'-' | sed 's/......$//;s/./& /4' | sed 's/./& /7' | awk '{ print "[ "$2"/"$3"/"$1" ]" }'`"
 	echo
