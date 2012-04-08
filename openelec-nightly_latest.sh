@@ -900,9 +900,9 @@ echo -ne "\033[0K\r"
 ###### create a backup of our build for easy access if needed for a quick rollback
 
 echo
-echo "--| A copy of the SYSTEM & KERNEL images have been created here:"
-echo "--| /storage/downloads/OpenELEC_r$PRESENT"
-echo "--| Note: *Never* mix SYSTEM & KERNEL images between releases."
+echo "__| A copy of the SYSTEM & KERNEL images have been created here:"
+echo "__| /storage/downloads/OpenELEC_r$PRESENT"
+echo "__| Note: *Never* mix SYSTEM & KERNEL images between releases."
 if [ -d /storage/downloads/OpenELEC_r$PAST ] ;
 then
 	rm -rf /storage/downloads/OpenELEC_r$PAST
@@ -926,6 +926,7 @@ sleep 2
 echo "You must reboot to complete the update."
 echo "Would you like to reboot now (y/n) ?"
 read -n1 -p "==| " reb
+echo
 if [[ "$reb" != "Y" ]] && [[ "$reb" != "y" ]] && [[ "$reb" != "N" ]] && [[ "$reb" != "n" ]] && [[ "$reb" != "yes" ]] && [[ "$reb" != "no" ]] && [[ "$reb" != "Yes" ]] && [[ "$reb" != "No" ]] ;
 then
 	echo
@@ -948,7 +949,6 @@ then
 elif [[ "$reb" = "N" || "$reb" = "n" || "$reb" = "No" || "$reb" = "no" ]] ;
 then
 	sleep 1
-	echo
 	echo
 	echo "Please reboot to complete the update."
 	echo "Exiting."
