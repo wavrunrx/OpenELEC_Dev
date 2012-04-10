@@ -1,9 +1,13 @@
-OpenELEC_DEV
-will do everything for you required to update; and its interactive
-it's compatible with any of the avaliable architectures OpenELEC supports.
+
+OpenELEC_DEV; will do everything for you; and its interactive.
+
+it can be run on any architecture. (ION, Generic, Fusion, etc..)
 
 the script has a mechanism which will always keep itself up-to-date, so you only need to manually download it once;
-anytime an update is available it will replace the old version.
+anytime an update is available it will replace the old version, automatically.
+
+
+================================================================================================================
 
 
 to run it, is simple:
@@ -18,15 +22,6 @@ chmod +x openelec-nightly_latest.sh
 
 3) run it !
 sh ./openelec-nightly_latest.sh
-
-
-* NOTE:
-Do NOT manually change the VERSION= variable !
-doing so will force the script to update itself with my working copy, which is constantly undergoing changes
-and will most likely break usage.
-
-i will change the version number on my end, when i'm comfortable with the code's condition.
-don't change this ! in fact, there is nothing within the script that should be changed manually
 
 
 ================================================================================================================
@@ -44,3 +39,17 @@ Usage:  ./openelec-nightly_latest.sh  [-ioacrlsvh]
 -s                   check for new script version
 -v                   script version.
 -h/--help          help.
+
+
+===========================================================================================
+
+
+NOTE:
+as a general rule of thumb; using user built version's of OpenELEC will seriously break usage of this script; 
+i've built in some checks to look for this; but i can't possibly code for all the potential possibilities; 
+therefore i need to leave some of the decision up to you:
+
+IF YOU ARE USING ANY UNOFFICIAL BUILD THAT'S NOT AVAILABLE ON OPENELEC'S SERVER
+(IE sources.openelec.tv/tmp/image/) THEN DO NOT EXPECT MY SCRIPT TO FUNCTION PROPERLY 
+FOR YOU. IT WILL MOST LIKELY BREAK YOUR SYSTEM. ONLY WHEN YOU ARE RUNNING AN 
+OFFICIAL BUILD, SHOULD YOU CONSIDER USING THIS SCRIPT.
