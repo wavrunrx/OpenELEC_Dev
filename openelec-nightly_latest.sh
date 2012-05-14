@@ -833,7 +833,6 @@ if [ "$sysmd5" = "$sysrom" ] ;
 then
 	echo
 	echo "md5 ==> SYSTEM: OK!"
-	rm -f /storage/.update/SYSTEM.md5
 	sys_return=0
 else
 	sys_return=1
@@ -855,7 +854,6 @@ sleep 1
 if [ "$kernmd5" = "$kernrom" ] ;
 then
 	echo "md5 ==> KERNEL: OK!"
-	rm -f /storage/.update/KERNEL.md5
 	kern_return=0
 else
 	kern_return=1
