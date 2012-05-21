@@ -48,6 +48,9 @@ OPTIND="1"
 if [ `cat /etc/openelec-release | awk '{ print $1 }'` != "OpenELEC" ] ;
 then
 	mode="http://sources.openelec.tv/tmp/image/openelec-pvr"
+elif [`cat /etc/openelec-release | awk '{ print $1 }'` = "RPi.arm" ] ;
+then
+	mode="http://sources.openelec.tv/tmp/image/openelec-rpi"
 else
 	mode="http://sources.openelec.tv/tmp/image/openelec-eden"
 fi
@@ -491,7 +494,7 @@ unset yn
 }
 
 
-###### check that were actually running a devel build already; otherwise cancel the opertation, with an explanation
+###### check that were actually running a devel build already; otherwise cancel the opertation, with an explanation of why
 
 currentsys=$(cat /etc/version | cut -f 1 -d'-')
 if [ "$currentsys" != "devel" ] ;
@@ -590,13 +593,17 @@ if [ `cat /etc/openelec-release | awk '{ print $1 }'` != "OpenELEC" ] ;
 then
 	echo "PVR Branch Detected"
 	echo -ne "Please Wait..\033[0K\r"
+elif [ `cat /etc/openelec-release | awk '{ print $1 }'` = "RPi.arm" ] ;
+then
+	echo "Raspberry Pi Branch Detected"
+	echo -ne "Please Wait..\033[0K\r"
 else
 	echo "Non-PVR Branch Detected"
 	echo -ne "Please Wait..\033[0K\r"
 fi
 
 
-###### making .update; no errors if already exists
+###### makie .update; no errors if already exists
 
 mkdir -p /storage/.update
 
@@ -668,17 +675,17 @@ arch=$(cat /etc/arch)
 curl -silent $mode/ | grep $arch | sed -e 's/<li><a href="//' -e 's/[^ ]* //' -e 's/<\/a><\/li>//' > /dev/shm/xbmc-update/temp
 
 
-###### remove all but the newest build in out list
+###### remove all but the newest build from out list
 
 if [ $(wc -l /dev/shm/xbmc-update/temp | cut -c -1) -gt "1" ] ;
 then
-	cat /dev/shm/xbmc-update/temp | tail -1 > /dev/shm/xbmc-update/temp2
+	cat /dev/shm/xbmc-update/temp | tail -n 1 > /dev/shm/xbmc-update/temp2
 else
 	mv /dev/shm/xbmc-update/temp /dev/shm/xbmc-update/temp2
 fi
 
 
-##### some critical variables
+##### variables
 
 ## filename w/o extension (architecture agnostic)
 FOLDER=$(cat /dev/shm/xbmc-update/temp2 | sed '$s/........$//')
@@ -694,7 +701,7 @@ PRESENT=$(cat /dev/shm/xbmc-update/temp2 | tail -c 15 | cut -c 0-5)
 
 if [ `printf $PRESENT | sed 's/.\{4\}$//'` == "-" ] ;
 then
-	# this is for coming from revisions 9999 and lower ... hopefully nobody's using anything this old
+	# this is for coming from revisions 9999 and lower ... hopefully nobody's using any nightly builds this old !
 	PRESENT=$(cat /dev/shm/xbmc-update/temp2 | tail -c 15 | sed 's/.\{8\}$//' | tr -d "\-r"})
 else
 	# this is for coming from revisions 10000 and higher
@@ -712,6 +719,7 @@ then
 	echo "Your Build: $PAST"
 	echo "Is a higher revision then the newest available on the official snapshot server:"
 	echo "Remote Build: $PRESENT"
+	echo
 	echo
 	sleep 4
 	echo "Exiting Now."
