@@ -464,7 +464,7 @@ exit 1
 }
 
 
-###### for cleanup purposes, we're removing some enviroment variables we've set, after this script is run / aborted
+###### for cleanup purposes, we're removing some enviroment variables we've set, after this script is run or aborted
 
 unsetv ()
 {
@@ -536,12 +536,11 @@ fi
 ping -qc 3 raw.github.com > /dev/null
 if [ "$?" = "0" ] ;
 then
-	###### thanks for the help on this vpeter
 	###### check if a script update is in progress
 	if [ ! -f /tmp/update_in_progress ] ;
 	then
-		###### file does not exist - first run
-		###### checking script version; auto updating and rerunning new version if available 
+		###### file does not exist :: first run
+		###### checking script version; auto updating and re-running new version; if available 
 		rsvers=$(curl --silent https://raw.github.com/wavrunrx/OpenELEC_Dev/master/openelec-nightly_latest.sh | grep "VERSION=" | grep -v grep | sed 's/[^0-9]*//g')
 		if [ "$rsvers" -gt "$VERSION" ] ;
 		then
@@ -603,7 +602,7 @@ else
 fi
 
 
-###### makie .update; no errors if already exists
+###### make .update
 
 mkdir -p /storage/.update
 
@@ -697,7 +696,7 @@ PAST=$(cat /etc/version | tail -c 6 | tr -d 'r')
 PRESENT=$(cat /dev/shm/xbmc-update/temp2 | tail -c 15 | cut -c 0-5)
 
 
-###### remote build revision (allows revision growth to 5 digits -- 0-9999, & 10000-99999; this *may* work properly with builds of 100000, and up; im not sure)
+###### remote build revision (allows revision growth to 5 digits -- 0-9999, & 10000-99999; this *may* work properly with builds of 100000, and up)
 
 if [ `printf $PRESENT | sed 's/.\{4\}$//'` == "-" ] ;
 then
@@ -727,7 +726,7 @@ then
 fi
 
 
-###### this is only comes into play if the option -q is used. if so, we supress output if an update isnt available. if one is, we dont care, and want to exit.
+###### this is only comes into play if the option -q is used. if so, we supress output if an update isnt available. if one is, we dont care, and want to exit (this will be used in the addon gui)
 
 if [ "$update_yes" = "1" ] ;
 then
@@ -820,7 +819,7 @@ echo "Done!"
 sleep 2
 
 
-###### Move KERNEL & SYSTEM to /storage/.update/
+###### Move KERNEL & SYSTEM  and respective md5's to /storage/.update/
 echo
 echo "Moving Images to /storage/.update"
 find /dev/shm/xbmc-update -type f -name "KERNEL" -exec /bin/mv {} /storage/.update \;
@@ -879,10 +878,10 @@ else
 fi
 
 
-###### this could have been done more easily above, by adding an exit 1; but the problem with that was: the system rom is evaluated first.
-###### if an error is found, the process is terminated and we would never know if the kernel image was broken or not.
+###### the system rom is evaluated first.
+###### if an error is found, the process is terminated and we would never know if the kernel image was broken as well or not.
 ######
-###### this way we know that if the sum of $kern_return, and $sys_return is anything over "1", that one of the images is broken, and we've already been
+###### this way we know that if the sum of $kern_return, and $sys_return is anything over "1", that one or both of the images are broken, and we've already been
 ###### notified which one it was above. exit.
 
 return=$(($kern_return+$sys_return))
@@ -895,8 +894,6 @@ then
 fi
 
 
-###### just some feedback
-
 echo "File Integrity: GOOD!"
 echo
 echo -ne "Continuing..\033[0K\r"
@@ -904,18 +901,18 @@ sleep 2
 echo -ne "\033[0K\r"
 
 
-###### create a backup of our build for easy access if needed for a quick rollback
+###### create a backup of our build for easy access if needed for a emergency rollback
 
 echo
-echo "__| A copy of the SYSTEM & KERNEL images have been created here:"
-echo "__| /storage/downloads/OpenELEC_r$PRESENT"
-echo "__| Note: *Never* mix SYSTEM & KERNEL images between releases."
+echo "Important Notice:"
+echo "-->  A copy of the SYSTEM & KERNEL images have been created here:"
+echo "-->  /storage/downloads/OpenELEC_r$PRESENT"
+echo "-->  NEVER mix SYSTEM & KERNEL images from differing architectures, or build revisions."
 if [ -d /storage/downloads/OpenELEC_r$PAST ] ;
 then
 	rm -rf /storage/downloads/OpenELEC_r$PAST
 fi
 mkdir -p /storage/downloads/OpenELEC_r$PRESENT
-#cp /dev/shm/xbmc-update/OpenELEC-*.tar.bz2 /storage/downloads/OpenELEC_r$PRESENT
 cp /storage/.update/KERNEL /storage/.update/SYSTEM /storage/downloads/OpenELEC_r$PRESENT
 
 
@@ -930,7 +927,7 @@ echo
 echo
 echo "Update Preperation Complete."
 sleep 2
-echo "You must reboot to complete the update."
+echo "You must reboot to finish the update."
 echo "Would you like to reboot now (y/n) ?"
 read -n1 -p "==| " reb
 echo
