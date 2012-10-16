@@ -43,16 +43,14 @@ options_found="0"
 OPTIND="1"
 
 
-###### what branch are we using ? pvr, or not
+###### what branch do we use
 
-if [ `cat /etc/openelec-release | awk '{ print $1 }'` != "OpenELEC" ] ;
-then
-	mode="http://sources.openelec.tv/tmp/image/openelec-pvr"
-elif [`cat /etc/openelec-release | awk '{ print $1 }'` = "RPi.arm" ] ;
+
+if [`cat /etc/arch | awk '{ print $1 }'` = "RPi.arm" ] ;
 then
 	mode="http://sources.openelec.tv/tmp/image/openelec-rpi"
 else
-	mode="http://sources.openelec.tv/tmp/image/openelec-eden"
+	mode="http://sources.openelec.tv/tmp/image/openelec-frodo"
 fi
 
 
@@ -583,22 +581,6 @@ else
 	sleep 3
 	echo -ne "\033[0K\r"
 	echo
-fi
-
-
-###### are we on a pvr build or not (soon we wont need this type of detection as xbmc frodo will merge pvr into mainline)
-
-if [ `cat /etc/openelec-release | awk '{ print $1 }'` != "OpenELEC" ] ;
-then
-	echo "PVR Branch Detected"
-	echo -ne "Please Wait..\033[0K\r"
-elif [ `cat /etc/openelec-release | awk '{ print $1 }'` = "RPi.arm" ] ;
-then
-	echo "Raspberry Pi Branch Detected"
-	echo -ne "Please Wait..\033[0K\r"
-else
-	echo "Non-PVR Branch Detected"
-	echo -ne "Please Wait..\033[0K\r"
 fi
 
 
