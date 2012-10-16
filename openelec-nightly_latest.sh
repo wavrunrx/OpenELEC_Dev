@@ -143,7 +143,7 @@ do
 		curl -silent $mode/archive/ | grep $arch | sed -e 's/<li><a href="//' -e 's/[^ ]* //' -e 's/<\/a><\/li>//' > /dev/shm/xbmc-update/temp
 		echo
 		echo "Archival Builds Avaliable for your Architecture:  ($arch)"
-		echo "---------------------------------------"
+		echo "------------------------------------------------"
 		list=$(cat /dev/shm/xbmc-update/temp)
 		for i in $list
 		do
