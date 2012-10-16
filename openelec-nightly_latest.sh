@@ -46,7 +46,7 @@ OPTIND="1"
 ###### what branch do we use
 
 
-if [`cat /etc/arch | awk '{ print $1 }'` = "RPi.arm" ] ;
+if [ `cat /etc/arch | awk '{ print $1 }'` = "RPi.arm" ] ;
 then
 	mode="http://sources.openelec.tv/tmp/image/openelec-rpi"
 else
@@ -149,6 +149,11 @@ do
 		do
 			echo -n "$i  --->  Compiled On: "; echo -n "$i" | cut -f 4-4 -d'-' | sed 's/......$//;s/./& /4' | sed 's/./& /7' | awk '{ print "[ "$2"/"$3"/"$1" ]" }'
 		done
+		if [[ ! -s /dev/shm/xbmc-update/temp ]] ;
+        then
+        	echo "There are no archived builds for your architecture at this time."
+        	echo
+        fi
 		rm -rf /dev/shm/xbmc-update/
 		unset arch
 		unset list
