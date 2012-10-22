@@ -194,16 +194,16 @@ do
 					echo
 					echo "Unrecognized Input."
 					echo "Please answer (y/n)"
-					echo "Exiting."
+					echo "Exiting Now."
 					echo
-					unsetv
+					unset reb
 					exit 1
 				elif [[ "$reb" = "Y" || "$reb" = "y" || "$reb" = "Yes" || "$reb" = "yes" ]] ;
 				then
 					sleep 1
 					echo
 					echo "Rebooting."
-					unsetv
+					unset reb
 					sync
 					sleep 1
 					/sbin/reboot
@@ -213,7 +213,8 @@ do
 					sleep 1
 					echo
 					echo "Exiting Now."
-					unsetv
+					echo
+					unset reb
 					exit 0
 				fi
 		else
