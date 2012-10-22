@@ -613,6 +613,9 @@ ping -qc 3 raw.github.com > /dev/null
 echo -ne "\033[0K\r"
 if [ "$?" = "0" ] ;
 then
+	echo -ne "Update Server Active.\033[0K\r"
+	sleep 1
+	echo -ne "\033[0K\r"
 	###### check if a script update is in progress
 	if [ ! -f /tmp/update_in_progress ] ;
 	then
