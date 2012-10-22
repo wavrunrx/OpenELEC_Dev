@@ -60,7 +60,7 @@ if [ "$mode" = "RPi.arm" ] ;
 then
 	temploc="/dev/shm/xbmc-update"
 else
-	temploc="/storage/downloads/rPi_Update-Temporary"
+	temploc="/storage/downloads/xbmc-update"
 fi
 
 
@@ -73,24 +73,24 @@ do
 	c)
 		options_found=1
 		# quick check to see if we're up-to-date
-		mkdir -p /dev/shm/xbmc-update/
+		mkdir -p $temploc/
 		arch=$(cat /etc/arch)
-		curl -silent $mode/ | grep $arch | sed -e 's/<li><a href="//' -e 's/[^ ]* //' -e 's/<\/a><\/li>//' > /dev/shm/xbmc-update/temp
-		if [ $(wc -l /dev/shm/xbmc-update/temp | cut -c -1) -gt "1" ] ;
+		curl -silent $mode/ | grep $arch | sed -e 's/<li><a href="//' -e 's/[^ ]* //' -e 's/<\/a><\/li>//' > $temploc/temp
+		if [ $(wc -l $temploc/temp | cut -c -1) -gt "1" ] ;
 		then
-			cat /dev/shm/xbmc-update/temp | tail -1 > /dev/shm/xbmc-update/temp2
+			cat $temploc/temp | tail -1 > $temploc/temp2
 		else
-			mv /dev/shm/xbmc-update/temp /dev/shm/xbmc-update/temp2
+			mv $temploc/temp $temploc/temp2
 		fi
 		PAST=$(cat /etc/version | tail -c 6 | tr -d 'r')
-		PRESENT=$(cat /dev/shm/xbmc-update/temp2 | tail -c 15 | cut -c 0-5)
+		PRESENT=$(cat $temploc/temp2 | tail -c 15 | cut -c 0-5)
 		if [ `echo $PRESENT | sed 's/.\{4\}$//'` == "-" ] ;
 		then
 			# this is for coming from revisions 9999 and lower
-			PRESENT=$(cat /dev/shm/xbmc-update/temp2 | tail -c 15 | sed 's/.\{8\}$//' | tr -d "\-r"})
+			PRESENT=$(cat $temploc/temp2 | tail -c 15 | sed 's/.\{8\}$//' | tr -d "\-r"})
 		else
 			# this is for coming from revisions 10000 and higher
-			PRESENT=$(cat /dev/shm/xbmc-update/temp2 | tail -c 15 | sed 's/.\{8\}$//' | tr -d "r")
+			PRESENT=$(cat $temploc/temp2 | tail -c 15 | sed 's/.\{8\}$//' | tr -d "r")
 		fi
 		if [ "$PRESENT" -gt "$PAST" ] ;
 		then
@@ -102,7 +102,7 @@ do
 			echo
 			echo "No Updates Available"
 		fi
-		rm -rf /dev/shm/xbmc-update/
+		rm -rf $temploc/
 		unset arch
 		unset PAST
 		unset PRESENT
@@ -111,18 +111,18 @@ do
 	r)
 		options_found=1
 		# displays the remote build number
-		mkdir -p /dev/shm/xbmc-update/
+		mkdir -p $temploc/
 		arch=$(cat /etc/arch)
-		curl -silent $mode/ | grep $arch | sed -e 's/<li><a href="//' -e 's/[^ ]* //' -e 's/<\/a><\/li>//' > /dev/shm/xbmc-update/temp
-		if [ $(wc -l /dev/shm/xbmc-update/temp | cut -c -1) -gt "1" ] ;
+		curl -silent $mode/ | grep $arch | sed -e 's/<li><a href="//' -e 's/[^ ]* //' -e 's/<\/a><\/li>//' > $temploc/temp
+		if [ $(wc -l $temploc/temp | cut -c -1) -gt "1" ] ;
 		then
-			cat /dev/shm/xbmc-update/temp | tail -1 > /dev/shm/xbmc-update/temp2
+			cat $temploc/temp | tail -1 > $temploc/temp2
 		else
-			mv /dev/shm/xbmc-update/temp /dev/shm/xbmc-update/temp2
+			mv $temploc/temp $temploc/temp2
 		fi
 		echo
-		echo "Newest Remote Release for $arch: `cat /dev/shm/xbmc-update/temp2 | tail -c 15 | sed 's/.\{8\}$//' | tr -d "\-r"`"
-		rm -rf /dev/shm/xbmc-update/
+		echo "Newest Remote Release for $arch: `cat $temploc/temp2 | tail -c 15 | sed 's/.\{8\}$//' | tr -d "\-r"`"
+		rm -rf $temploc/
 		unset arch
 		;;
 			
@@ -130,17 +130,17 @@ do
 		options_found=1
 		# show all remotely available builds for your architecture, and build date
 		arch=$(cat /etc/arch)
-		mkdir -p /dev/shm/xbmc-update/
-		curl -silent $mode/ | grep $arch | sed -e 's/<li><a href="//' -e 's/[^ ]* //' -e 's/<\/a><\/li>//' > /dev/shm/xbmc-update/temp
+		mkdir -p $temploc/
+		curl -silent $mode/ | grep $arch | sed -e 's/<li><a href="//' -e 's/[^ ]* //' -e 's/<\/a><\/li>//' > $temploc/temp
 		echo
 		echo "Builds Available for your Architecture:  ($arch)"
 		echo "---------------------------------------"
-		list=$(cat /dev/shm/xbmc-update/temp)
+		list=$(cat $temploc/temp)
 		for i in $list
 		do
 		    echo -n "$i  --->  Compiled On: "; echo -n "$i" | cut -f 4-4 -d'-' | sed 's/......$//;s/./& /4' | sed 's/./& /7' | awk '{ print "[ "$2"/"$3"/"$1" ]" }'
 		done
-		rm -rf /dev/shm/xbmc-update/
+		rm -rf $temploc/
 		unset arch
 		unset list
 		;;
@@ -149,22 +149,22 @@ do
 		options_found=1
 		# show all old archived builds for your architecture, and build date
 		arch=$(cat /etc/arch)
-		mkdir -p /dev/shm/xbmc-update/
-		curl -silent $mode/archive/ | grep $arch | sed -e 's/<li><a href="//' -e 's/[^ ]* //' -e 's/<\/a><\/li>//' > /dev/shm/xbmc-update/temp
+		mkdir -p $temploc/
+		curl -silent $mode/archive/ | grep $arch | sed -e 's/<li><a href="//' -e 's/[^ ]* //' -e 's/<\/a><\/li>//' > $temploc/temp
 		echo
 		echo "Archival Builds Avaliable for your Architecture:  ($arch)"
 		echo "------------------------------------------------"
-		list=$(cat /dev/shm/xbmc-update/temp)
+		list=$(cat $temploc/temp)
 		for i in $list
 		do
 			echo -n "$i  --->  Compiled On: "; echo -n "$i" | cut -f 4-4 -d'-' | sed 's/......$//;s/./& /4' | sed 's/./& /7' | awk '{ print "[ "$2"/"$3"/"$1" ]" }'
 		done
-		if [[ ! -s /dev/shm/xbmc-update/temp ]] ;
+		if [[ ! -s $temploc/temp ]] ;
         then
         	echo "There are no archived builds for your architecture at this time."
         	echo
         fi
-		rm -rf /dev/shm/xbmc-update/
+		rm -rf $temploc/
 		unset arch
 		unset list
 		;;
@@ -242,17 +242,17 @@ do
 				echo
 				echo -ne "Please Wait..\033[0K\r"
 				arch=$(cat /etc/arch)
-				mkdir -p /dev/shm/xbmc-update/
-				curl -silent $mode/ | grep $arch | sed -e 's/<li><a href="//' -e 's/[^ ]* //' -e 's/<\/a><\/li>//' > /dev/shm/xbmc-update/temp
-				curl -silent $mode/archive/ | grep $arch | sed -e 's/<li><a href="//' -e 's/[^ ]* //' -e 's/<\/a><\/li>//' >> /dev/shm/xbmc-update/temp
+				mkdir -p $temploc/
+				curl -silent $mode/ | grep $arch | sed -e 's/<li><a href="//' -e 's/[^ ]* //' -e 's/<\/a><\/li>//' > $temploc/temp
+				curl -silent $mode/archive/ | grep $arch | sed -e 's/<li><a href="//' -e 's/[^ ]* //' -e 's/<\/a><\/li>//' >> $temploc/temp
 				echo -ne "\033[0K\r"
 				echo
 				echo "Builds avaliable for your architecture: $arch"
 				echo
-				cat /dev/shm/xbmc-update/temp | sort -n  | sed '$d' > /dev/shm/xbmc-update/temp2
+				cat $temploc/temp | sort -n  | sed '$d' > $temploc/temp2
 				echo "==================================="
 				echo
-				list=$(cat /dev/shm/xbmc-update/temp2)
+				list=$(cat $temploc/temp2)
 				for i in $list
 				do
 					echo -n "Build: " ; echo -n "$i" | cut -f 5-5 -d'-' | sed '$s/........$//' | tr -d "r" ; echo -n "-----> Compiled On: " ; echo -n "$i" | cut -f 4-4 -d'-' | sed 's/......$//;s/./& /4' | sed 's/./& /7' | awk '{ print "[ "$2"/"$3"/"$1" ]" }' ; echo
@@ -266,31 +266,31 @@ do
 					echo
 					echo "Error: Not a valid Build"
 					echo "Please choose a build from the list displayed above"
-					rm -rf /dev/shm/xbmc-update
+					rm -rf $temploc/
 					exit 1
 				fi
-				fn=$(grep "$fbrev" /dev/shm/xbmc-update/temp2 | awk '{print $1}')
+				fn=$(grep "$fbrev" $temploc/temp2 | awk '{print $1}')
 				echo
 				echo "Downloading.."
 				fe=$(curl --silent $mode/$fn --head | head -n1 | wc -m)
 				if [ "$fe" = "17" ] ;
 				then
-					wget -O /dev/shm/xbmc-update/$fn $mode/$fn
+					wget -O $temploc/$fn $mode/$fn
 				else
-					wget -O /dev/shm/xbmc-update/$fn $mode/archive/$fn
+					wget -O $temploc/$fn $mode/archive/$fn
 				fi
-				extract="/dev/shm/xbmc-update/$fn"
+				extract="$temploc/$fn"
 				echo
 				echo "Extracting Files..."
-				tar -xjf $extract -C /dev/shm/xbmc-update/
+				tar -xjf $extract -C $temploc/
 				echo "Done!"
 				sleep 2
 				echo
 				###### Move KERNEL & SYSTEM to /storage/.update/
 				echo "Moving Images to /storage/.update"
-				find /dev/shm/xbmc-update -type f -name "KERNEL" -exec /bin/mv {} /storage/.update \;
-				find /dev/shm/xbmc-update -type f -name "SYSTEM" -exec /bin/mv {} /storage/.update \;
-				mv /dev/shm/xbmc-update/OpenELEC-*/target/*.md5 /storage/.update
+				find $temploc -type f -name "KERNEL" -exec /bin/mv {} /storage/.update \;
+				find $temploc -type f -name "SYSTEM" -exec /bin/mv {} /storage/.update \;
+				mv $temploc/OpenELEC-*/target/*.md5 /storage/.update
 				echo "Done!"
 				sleep 2
 				###### Compare md5-sums
@@ -315,7 +315,7 @@ do
 				sleep 3
 				rm -f /storage/.update/SYSTEM
 				rm -f /storage/.update/SYSTEM.md5
-				rm -rf /dev/shm/xbmc-update
+				rm -rf $temploc/
 				sync
 				fi
 				sleep 1
@@ -335,7 +335,7 @@ do
 				sleep 3
 				rm -f /storage/.update/KERNEL
 				rm -f /storage/.update/KERNEL.md5
-				rm -rf /dev/shm/xbmc-update
+				rm -rf $temploc/
 				sync
 				fi
 				return=$(($kern_return+$sys_return))
@@ -352,7 +352,7 @@ do
 				sleep 2
 				echo -ne "\033[0K\r"
 				###### Cleanup
-				rm -rf /dev/shm/xbmc-update
+				rm -rf $temploc/
 				###### ask if we want to reboot now
 				echo "Update Preperation Complete."
 				sleep 2
@@ -469,7 +469,7 @@ ctrl_c ()
 {
 echo -ne "\n\n"
 unsetv
-rm -rf /dev/shm/xbmc-update
+rm -rf $temploc/
 echo -ne "SIGINT Interrupt caught"
 echo -ne "\nTemporary files removed\n"
 echo -ne "\nBye !\n"
@@ -626,7 +626,7 @@ then
 	echo "Exiting."
 	echo
 	unsetv
-	rm -rf /dev/shm/xbmc-update
+	rm -rf $temploc/
 	exit 1
 elif [[ $reb = "Y" || $reb = "y" || $reb = "Yes" || $reb = "yes" ]] ;
 then
@@ -635,7 +635,7 @@ then
 	echo
 	echo "Rebooting."
 	unsetv
-	rm -rf /dev/shm/xbmc-update
+	rm -rf $temploc/
 	sync
 	sleep 2
 	/sbin/reboot
@@ -648,60 +648,60 @@ then
 	sleep 2
 	echo "Exiting."
 	unsetv
-	rm -rf /dev/shm/xbmc-update
+	rm -rf $temploc/
 	exit 0
 	fi
 fi
 
 
-###### create the temporary working directory in ram; delete it if it already exists; script will terminate if anything is already in there
+###### create the temporary working directory; delete if it already exists; (script would terminate if anything is already in there)
 
-if [ -d "/dev/shm/xbmc-update" ] ;
+if [ -d "$temploc" ] ;
 then
-	rm -rf /dev/shm/xbmc-update
-	mkdir -p /dev/shm/xbmc-update/
+	rm -rf $temploc/
+	mkdir -p $temploc
 else
-	mkdir -p /dev/shm/xbmc-update/
+	mkdir -p $temploc
 fi
 
 
 ###### Captures remote filename & extension
 
 arch=$(cat /etc/arch)
-curl -silent $mode/ | grep $arch | sed -e 's/<li><a href="//' -e 's/[^ ]* //' -e 's/<\/a><\/li>//' > /dev/shm/xbmc-update/temp
+curl -silent $mode/ | grep $arch | sed -e 's/<li><a href="//' -e 's/[^ ]* //' -e 's/<\/a><\/li>//' > $temploc/temp
 
 
 ###### remove all but the newest build from out list
 
-if [ $(wc -l /dev/shm/xbmc-update/temp | cut -c -1) -gt "1" ] ;
+if [ $(wc -l $temploc/temp | cut -c -1) -gt "1" ] ;
 then
-	cat /dev/shm/xbmc-update/temp | tail -n 1 > /dev/shm/xbmc-update/temp2
+	cat $temploc/temp | tail -n 1 > $temploc/temp2
 else
-	mv /dev/shm/xbmc-update/temp /dev/shm/xbmc-update/temp2
+	mv $temploc/temp $temploc/temp2
 fi
 
 
 ##### variables
 
 ## filename w/o extension (architecture agnostic)
-FOLDER=$(cat /dev/shm/xbmc-update/temp2 | sed '$s/........$//')
+FOLDER=$(cat $temploc/temp2 | sed '$s/........$//')
 
 ## capture local build revision
 PAST=$(cat /etc/version | tail -c 6 | tr -d 'r')
 
 ## capture remote build revision (allows revision growth to 5 digits)
-PRESENT=$(cat /dev/shm/xbmc-update/temp2 | tail -c 15 | cut -c 0-5)
+PRESENT=$(cat $temploc/temp2 | tail -c 15 | cut -c 0-5)
 
 
-###### remote build revision (allows revision growth to 5 digits -- 0-9999, & 10000-99999; this *may* work properly with builds of 100000, and up)
+###### remote build revision (allows revision growth to 5 digits -- 0-9999, & 10000-99999)
 
 if [ `printf $PRESENT | sed 's/.\{4\}$//'` == "-" ] ;
 then
 	# this is for coming from revisions 9999 and lower ... hopefully nobody's using any nightly builds this old !
-	PRESENT=$(cat /dev/shm/xbmc-update/temp2 | tail -c 15 | sed 's/.\{8\}$//' | tr -d "\-r"})
+	PRESENT=$(cat $temploc/temp2 | tail -c 15 | sed 's/.\{8\}$//' | tr -d "\-r"})
 else
 	# this is for coming from revisions 10000 and higher
-	PRESENT=$(cat /dev/shm/xbmc-update/temp2 | tail -c 15 | sed 's/.\{8\}$//' | tr -d "r")
+	PRESENT=$(cat $temploc/temp2 | tail -c 15 | sed 's/.\{8\}$//' | tr -d "r")
 fi
 
 
@@ -775,9 +775,9 @@ then
 		echo
 		echo
 		echo "Downloading Image:"
-		wget $mode/`cat /dev/shm/xbmc-update/temp2` -P "/dev/shm/xbmc-update/"
+		wget $mode/`cat $temploc/temp2` -P "$temploc/"
 		echo "Done!"
-		extract="/dev/shm/xbmc-update/$FOLDER.tar.bz2"
+		extract="$temploc/$FOLDER.tar.bz2"
 		sleep 1
 	elif [[ $yn = "N" || $yn = "n" || $yn = "No" || $yn = "no" ]] ;
 	then
@@ -792,7 +792,7 @@ then
 	fi
 else
 	## The remote build is not newer then what we've got already. Exit.
-	rm -rf /dev/shm/xbmc-update/
+	rm -rf $temploc/
 	echo -ne "\033[0K\r"
 	echo
 	echo "===| OpenELEC"
@@ -811,7 +811,7 @@ fi
 
 echo
 echo "Extracting Files..."
-tar -xjf $extract -C /dev/shm/xbmc-update/
+tar -xjf $extract -C $temploc/
 echo "Done!"
 sleep 2
 
@@ -819,9 +819,9 @@ sleep 2
 ###### Move KERNEL & SYSTEM  and respective md5's to /storage/.update/
 echo
 echo "Moving Images to /storage/.update"
-find /dev/shm/xbmc-update -type f -name "KERNEL" -exec /bin/mv {} /storage/.update \;
-find /dev/shm/xbmc-update -type f -name "SYSTEM" -exec /bin/mv {} /storage/.update \;
-mv /dev/shm/xbmc-update/OpenELEC-*/target/*.md5 /storage/.update
+find $temploc -type f -name "KERNEL" -exec /bin/mv {} /storage/.update \;
+find $temploc -type f -name "SYSTEM" -exec /bin/mv {} /storage/.update \;
+mv $temploc/OpenELEC-*/target/*.md5 /storage/.update
 echo "Done!"
 sleep 2
 
@@ -849,7 +849,7 @@ else
 	sleep 3
 	rm -f /storage/.update/SYSTEM
 	rm -f /storage/.update/SYSTEM.md5
-	rm -rf /dev/shm/xbmc-update
+	rm -rf $temploc/
 	sync
 fi
 
@@ -870,7 +870,7 @@ else
 	sleep 3
 	rm -f /storage/.update/KERNEL
 	rm -f /storage/.update/KERNEL.md5
-	rm -rf /dev/shm/xbmc-update
+	rm -rf $temploc/
 	sync
 fi
 
@@ -916,7 +916,7 @@ sleep 5
 
 ###### Cleanup
 
-rm -rf /dev/shm/xbmc-update
+rm -rf $temploc/
 
 
 ###### ask if we want to reboot now
