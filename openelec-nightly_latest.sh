@@ -54,6 +54,16 @@ else
 fi
 
 
+###### set the temporary file location based on what device we are using...(the rPi does not have enough RAM to download the image to /dev/shm
+
+if [ "$mode" = "RPi.arm" ] ;
+then
+	temploc="/dev/shm/xbmc-update"
+else
+	temploc="/storage/downloads/rPi_Update-Temporary"
+fi
+
+
 ###### options
 
 while getopts ":craospilqzvbh--:help" opt ;
@@ -163,10 +173,10 @@ do
 		options_found=1
 		# check to see if the appropriate files are in the right place, for a reboot
 		SYS_KERN=$(ls /storage/.update/* 2> /dev/null | wc -l)
-		if [ "$SYS_KERN" = "2" ] ;
+		if [ "$SYS_KERN" = "4" ] ;
 		then
 			echo
-			echo "KERNEL & SYSTEM are already in place."
+			echo "KERNEL & SYSTEM images are already in place."
 			echo "Please reboot your HTPC when possible"
 			echo "to complete the update."
 		else
@@ -559,7 +569,7 @@ then
 			echo
 			echo "*---| Updating OpenELEC_DEV Now:"
 			sleep 1
-			curl https://raw.github.com/wavrunrx/OpenELEC_Dev/master/openelec-nightly_latest.sh > `dirname $0`/openelec-nightly_$rsvers.sh
+			curl –-silent https://raw.github.com/wavrunrx/OpenELEC_Dev/master/openelec-nightly_latest.sh > `dirname $0`/openelec-nightly_$rsvers.sh
 			echo "Done !"
 			echo
 			echo
@@ -891,9 +901,9 @@ echo -ne "\033[0K\r"
 ###### create a backup of our build for easy access if needed for a emergency rollback
 
 echo
-echo "Important Notice:"
+echo "[ Important Notice ]"
 echo "-->  A copy of the SYSTEM & KERNEL images have been created here:"
-echo "-->  /storage/downloads/OpenELEC_r$PRESENT"
+echo "     /storage/downloads/OpenELEC_r$PRESENT"
 echo "-->  NEVER mix SYSTEM & KERNEL images from differing architectures, or build revisions."
 if [ -d /storage/downloads/OpenELEC_r$PAST ] ;
 then
@@ -901,6 +911,7 @@ then
 fi
 mkdir -p /storage/downloads/OpenELEC_r$PRESENT
 cp /storage/.update/KERNEL /storage/.update/SYSTEM /storage/downloads/OpenELEC_r$PRESENT
+sleep 5
 
 
 ###### Cleanup
