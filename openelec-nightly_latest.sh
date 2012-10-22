@@ -141,6 +141,7 @@ do
         	echo "There are no available builds for your architecture at this time."
         	echo "Please check again later."
         	echo
+        	exit 1
         fi
 		for i in $list
 		do
@@ -153,7 +154,7 @@ do
 
 	o)
 		options_found=1
-		# show all old archived builds for your architecture, and build date
+		# show all old archived builds for your architecture, as well as compilation date
 		arch=$(cat /etc/arch)
 		mkdir -p $temploc/
 		curl -silent $mode/archive/ | grep $arch | sed -e 's/<li><a href="//' -e 's/[^ ]* //' -e 's/<\/a><\/li>//' > $temploc/temp
@@ -226,13 +227,13 @@ do
 	s)
 		options_found=1
 		# checking for a script update, and notifying. no actual update going on here.
-		rsvers=$(curl --silent https://raw.github.com/wavrunrx/OpenELEC_Dev/master/openelec-nightly_latest.sh | grep "VERSION=" | grep -v grep | sed 's/[^0-9]*//g')
+		rsvers=$(curl --silent https://raw.github.com/wavrunrx/OpenELEC_Dev/master/openelec-nightly_latest.sh | grep "VERSION=" | grep -v grep | sed 's/[^0-9]*//g' > /dev/null)
 		if [ "$rsvers" -gt "$VERSION" ] ;
 		then
 			echo
 			echo "*---| Script Update Avaliable."
-			echo "*---| Current Version: $VERSION.0"
-			echo "*---| New Version: $rsvers.0"
+			echo "*---| Current Version: $VERSION"
+			echo "*---| New Version: $rsvers"
 			echo
 			echo "*---| Re-Run -|Without Options|- to Update"
 		else
@@ -278,7 +279,7 @@ do
 			then
 				echo
 				echo
-				echo -ne "Please Wait..\033[0K\r"
+				echo -ne "Please Wait...\033[0K\r"
 				arch=$(cat /etc/arch)
 				mkdir -p $temploc/
 				curl -silent $mode/ | grep $arch | sed -e 's/<li><a href="//' -e 's/[^ ]* //' -e 's/<\/a><\/li>//' > $temploc/temp
@@ -298,7 +299,7 @@ do
         			echo
         			echo "Exiting Now."
         			echo
-        			unsetv
+        			unset list
         			exit 1
         		fi
 				for i in $list
@@ -319,7 +320,8 @@ do
 				fi
 				fn=$(grep "$fbrev" $temploc/temp2 | awk '{print $1}')
 				echo
-				echo "Downloading.."
+				echo "Downloading..."
+				echo -ne "Please Wait..\033[0K\r"
 				fe=$(curl --silent $mode/$fn --head | head -n1 | wc -m)
 				if [ "$fe" = "17" ] ;
 				then
@@ -327,18 +329,23 @@ do
 				else
 					wget -O $temploc/$fn $mode/archive/$fn
 				fi
+				echo -ne "\033[0K\r"
 				extract="$temploc/$fn"
 				echo
 				echo "Extracting Files..."
+				echo -ne "Please Wait...\033[0K\r"
 				tar -xjf $extract -C $temploc/
+				echo -ne "\033[0K\r"
 				echo "Done!"
 				sleep 2
 				echo
 				###### Move KERNEL & SYSTEM to /storage/.update/
 				echo "Moving Images to /storage/.update"
+				echo -ne "Please Wait...\033[0K\r"
 				find $temploc -type f -name "KERNEL" -exec /bin/mv {} /storage/.update \;
 				find $temploc -type f -name "SYSTEM" -exec /bin/mv {} /storage/.update \;
 				mv $temploc/OpenELEC-*/target/*.md5 /storage/.update
+				echo -ne "\033[0K\r"
 				echo "Done!"
 				sleep 2
 				###### Compare md5-sums
@@ -395,9 +402,9 @@ do
 					exit 1
 				fi
 				###### some feedback
-				echo "File Integrity: GOOD!"
+				echo "File Integrity: PASSED!"
 				echo
-				echo -ne "Continuing..\033[0K\r"
+				echo -ne "Continuing...\033[0K\r"
 				sleep 2
 				echo -ne "\033[0K\r"
 				###### Cleanup
@@ -509,8 +516,8 @@ fi
 
 changelog ()
 {
-echo "For Changelog, Please Visit:"
-echo "http://bit.ly/HfDh8Z"
+echo "Github Commit/Change Log:"
+echo "https://github.com/wavrunrx/OpenELEC_Dev/commits/master"
 }
 
 
@@ -598,7 +605,10 @@ fi
 
 ###### making sure github is alive and ready to update the script if nessessary.
 
+echo "Checking update server's state."
+echo -ne "Please Wait...\033[0K\r"
 ping -qc 3 raw.github.com > /dev/null
+echo -ne "\033[0K\r"
 if [ "$?" = "0" ] ;
 then
 	###### check if a script update is in progress
@@ -642,9 +652,9 @@ then
 else
 	echo 
 	echo "* Script Update Server Not Responding"
-	echo "* Trying Again Later"
-	echo "------------------"
-	echo -ne "Continuing..\033[0K\r"
+	echo "* Checking again on the next run."
+	echo "---------------------------------"
+	echo -ne "Continuing...\033[0K\r"
 	sleep 3
 	echo -ne "\033[0K\r"
 	echo
@@ -823,7 +833,7 @@ then
 	echo "#### IF WERE TO BE OFFERED, IT WILL BE LIMITED TO DEVELOPMENT LEVEL DEBUGGING."
 	echo
 	echo
-	echo -ne "Please Wait..\033[0K\r"
+	echo -ne "Please Wait...\033[0K\r"
 	sleep 6
 	echo -ne "\033[0K\r"
 	echo "===| OpenELEC"
@@ -888,7 +898,9 @@ fi
 
 echo
 echo "Extracting Files..."
+echo -ne "Please Wait...\033[0K\r"
 tar -xjf $extract -C $temploc/
+echo -ne "\033[0K\r"
 echo "Done!"
 sleep 2
 
@@ -896,9 +908,11 @@ sleep 2
 ###### Move KERNEL & SYSTEM  and respective md5's to /storage/.update/
 echo
 echo "Moving Images to /storage/.update"
+echo -ne "Please Wait...\033[0K\r"
 find $temploc -type f -name "KERNEL" -exec /bin/mv {} /storage/.update \;
 find $temploc -type f -name "SYSTEM" -exec /bin/mv {} /storage/.update \;
 mv $temploc/OpenELEC-*/target/*.md5 /storage/.update
+echo -ne "\033[0K\r"
 echo "Done!"
 sleep 2
 
@@ -968,9 +982,9 @@ then
 fi
 
 
-echo "File Integrity: GOOD!"
+echo "File Integrity Check: PASSED!"
 echo
-echo -ne "Continuing..\033[0K\r"
+echo -ne "Continuing...\033[0K\r"
 sleep 2
 echo -ne "\033[0K\r"
 
@@ -982,16 +996,23 @@ then
 	rm -rf /storage/downloads/OpenELEC_r$PAST
 fi
 
+echo "Creating backup of NEW SYSTEM & KERNEL images."
+echo -ne "Please Wait...\033[0K\r"
 mkdir -p /storage/downloads/OpenELEC_r$PRESENT
 cp /storage/.update/KERNEL /storage/.update/SYSTEM /storage/.update/KERNEL.md5 /storage/.update/SYSTEM.md5 /storage/downloads/OpenELEC_r$PRESENT
+echo -ne "\033[0K\r"
 echo
 echo "---- Important Notice ----"
 echo "     In the need of an emergency rollback:"
 echo "-->  A backup copy of your *NEW* SYSTEM & KERNEL images (revision $PRESENT) have been created here:"
 echo "     /storage/downloads/OpenELEC_r$PRESENT"
 echo
+echo "Creating backup of PREVIOUS SYSTEM & KERNEL images."
+echo -ne "Please Wait...\033[0K\r"
 mkdir -p /storage/downloads/OpenELEC_r$PAST
 cp /flash/KERNEL /flash/SYSTEM /storage/downloads/OpenELEC_r$PRESENT/KERNEL.md5 /storage/downloads/OpenELEC_r$PRESENT/SYSTEM.md5 /storage/downloads/OpenELEC_r$PAST
+echo -ne "\033[0K\r"
+echo
 echo "     In the need of an emergency rollback:"
 echo "-->  A backup copy of your *PREVIOUS* SYSTEM & KERNEL images (revision $PAST) have been created here:"
 echo "     /storage/downloads/OpenELEC_r$PAST"
