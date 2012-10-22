@@ -605,7 +605,9 @@ fi
 
 ###### making sure github is alive and ready to update the script if nessessary.
 
-echo "Checking update server's state."
+echo "Checking update server's state...\033[0K\r"
+sleep 1
+echo -ne "\033[0K\r"
 echo -ne "Please Wait...\033[0K\r"
 ping -qc 3 raw.github.com > /dev/null
 echo -ne "\033[0K\r"
