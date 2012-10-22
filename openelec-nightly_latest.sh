@@ -710,11 +710,13 @@ fi
 
 if [ "$PRESENT" -lt "$PAST" ] ;
 then
+	echo
 	echo "You are currently using an unofficial development version of OpenELEC."
 	echo "This isnt supported, and will yield unusual results if we continue."
+	echo "Your build is a higher revision then the newest available on the official snapshot server:"
 	echo
-	echo "Your Build: $PAST is a higher revision then the newest available on the official snapshot server:"
-	echo "Remote Build: $PRESENT"
+	echo "Local:  $PAST"
+	echo "Remote: $PRESENT"
 	echo
 	sleep 2
 	echo "Exiting Now."
