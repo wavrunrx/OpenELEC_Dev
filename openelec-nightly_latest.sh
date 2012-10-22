@@ -202,7 +202,7 @@ do
 				then
 					sleep 1
 					echo
-					echo "Rebooting."
+					echo "Rebooting..."
 					unset reb
 					sync
 					sleep 1
@@ -297,6 +297,7 @@ do
         			echo "Please check again later."
         			echo
         			echo "Exiting Now."
+        			echo
         			unsetv
         			exit 1
         		fi
@@ -419,7 +420,7 @@ do
 				then
 					sleep 1
 					echo
-					echo "Rebooting."
+					echo "Rebooting..."
 					sync
 					sleep 1
 					/sbin/reboot
@@ -684,7 +685,7 @@ then
 	echo
 	echo
 	echo
-	echo "Rebooting."
+	echo "Rebooting..."
 	unsetv
 	rm -rf $temploc/
 	sync
@@ -1022,7 +1023,7 @@ elif [[ "$reb" = "Y" || "$reb" = "y" || "$reb" = "Yes" || "$reb" = "yes" ]] ;
 then
 	sleep 1
 	echo
-	echo "Rebooting."
+	echo "Rebooting..."
 	unsetv
 	sync
 	sleep 1
