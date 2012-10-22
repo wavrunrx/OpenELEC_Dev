@@ -136,6 +136,12 @@ do
 		echo "Builds Available for your Architecture:  ($arch)"
 		echo "---------------------------------------"
 		list=$(cat $temploc/temp)
+		if [[ ! -s $list ]] ;
+        then
+        	echo "There are no available builds for your architecture at this time."
+        	echo "Please check again later."
+        	echo
+        fi
 		for i in $list
 		do
 		    echo -n "$i  --->  Compiled On: "; echo -n "$i" | cut -f 4-4 -d'-' | sed 's/......$//;s/./& /4' | sed 's/./& /7' | awk '{ print "[ "$2"/"$3"/"$1" ]" }'
@@ -253,13 +259,22 @@ do
 				echo "==================================="
 				echo
 				list=$(cat $temploc/temp2)
+				if [[ ! -s $list ]] ;
+        		then
+        			echo "There are no available builds for your architecture at this time."
+        			echo "Please check again later."
+        			echo
+        			echo "Exiting Now."
+        			unsetv
+        			exit 1
+        		fi
 				for i in $list
 				do
 					echo -n "Build: " ; echo -n "$i" | cut -f 5-5 -d'-' | sed '$s/........$//' | tr -d "r" ; echo -n "-----> Compiled On: " ; echo -n "$i" | cut -f 4-4 -d'-' | sed 's/......$//;s/./& /4' | sed 's/./& /7' | awk '{ print "[ "$2"/"$3"/"$1" ]" }' ; echo
 				done
 				echo "==================================="
 				echo
-				echo "Enter the Build/Revision number you want *only* from the list above (Ex: "10027") "
+				echo "Enter the Build/Revision number you want from the list above (Ex: "11327")"
 				read -p "==| " fbrev
 				if ! [[ "$fbrev" =~ ^[0-9]+$ ]] ; 
 				then
@@ -306,11 +321,11 @@ do
 					sys_return=0
 				else
 					sys_return=1
-				echo "WARNING:"
+				echo "---   WARNING   ---"
 				echo "SYSTEM md5 MISMATCH!"
 				echo "--------------------"
-				echo "There is an integrity problem with the System package"
-				echo "Notify on IRC/Forums one of the Developers that:"
+				echo "There is an integrity problem with the SYSTEM package"
+				echo "Notify one of the developers on the Forums or IRC that"
 				echo "the SYSTEM image of $fn.tar.bz2 is corrupt"
 				sleep 3
 				rm -f /storage/.update/SYSTEM
@@ -326,11 +341,11 @@ do
 					kern_return=0
 				else
 				kern_return=1
-				echo "WARNING:"
+				echo "---   WARNING   ---"
 				echo "KERNEL md5 MISMATCH!"
 				echo "--------------------"
-				echo "There is an integrity problem with the Kernel package"
-				echo "Notify on IRC/Forums one of the Developers that:"
+				echo "There is an integrity problem with the KERNEL package"
+				echo "Notify one of the developers on the Forums or IRC that"
 				echo "the KERNEL image of $fn.tar.bz2 is corrupt"
 				sleep 3
 				rm -f /storage/.update/KERNEL
@@ -341,11 +356,12 @@ do
 				return=$(($kern_return+$sys_return))
 				if [[ "$return" = "2" ]] ;
 				then
+					echo "md5 mismatch detected."
 					echo "Update Terminated."
 					unsetv
 					exit 1
 				fi
-				###### just some feedback
+				###### some feedback
 				echo "File Integrity: GOOD!"
 				echo
 				echo -ne "Continuing..\033[0K\r"
@@ -403,7 +419,7 @@ do
 		options_found=1
 		# whats our script's version
 		echo
-		echo "OpenELEC_DEV Version: $VERSION.0"
+		echo "OpenELEC_DEV Version: $VERSION"
 		;;
 
 	b)
@@ -414,7 +430,8 @@ do
 
 	h|help)
 		options_found=1
-		# options avaliable and usage. 
+		# options avaliable and usage.
+		echo
 		echo "Usage:  $0 [-iozacrlsvh]"
 		echo
 		echo "-i                   check if SYSTEM & KERNEL are already in-place; suggest reboot."
@@ -432,7 +449,9 @@ do
 
 	\?)
 		# terminate if invalid option is used
-				echo "Invalid option: -$OPTARG" >&2
+				echo "Invalid option used: -$OPTARG" >&2
+				echo "Run with -h/--help"
+				echo
 				exit 1
 		;;
 	esac
@@ -477,7 +496,7 @@ exit 1
 }
 
 
-###### for cleanup purposes, we're removing some enviroment variables we've set, after this script is run or aborted
+###### for cleanup purposes, we're removing some enviroment variables we've set, after the script is run or aborted
 
 unsetv ()
 {
@@ -559,8 +578,8 @@ then
 		then
 			echo
 			echo "*---| Script Update Available."
-			echo "*---| Current Version: $VERSION.0"
-			echo "*---| New Version: $rsvers.0"
+			echo "*---| Current Version: $VERSION"
+			echo "*---| New Version: $rsvers"
 			echo
 			echo "Changelog:"
 			echo
@@ -681,7 +700,7 @@ else
 fi
 
 
-##### variables
+#####
 
 ## filename w/o extension (architecture agnostic)
 FOLDER=$(cat $temploc/temp2 | sed '$s/........$//')
@@ -711,25 +730,48 @@ fi
 if [ "$PRESENT" -lt "$PAST" ] ;
 then
 	echo
-	echo "You are currently using an unofficial development version of OpenELEC."
-	echo "This isnt supported, and will yield unusual results if we continue."
-	echo "Your build is a higher revision then the newest available on the official snapshot server:"
+	echo "You are currently using an unofficial development build of OpenELEC."
+	echo "This isn't supported, and will yield unusual results if we continue."
+	echo "Your build is a higher revision then whats available on the official"
+	echo "snapshot server, as seen here: http://sources.openelec.tv/tmp/image/"
 	echo
 	echo "Local:  $PAST"
 	echo "Remote: $PRESENT"
 	echo
 	sleep 2
 	echo "Exiting Now."
+	echo
 	unsetv
 	exit 1
 fi
 
 
-###### this is only comes into play if the option -q is used. if so, we supress output if an update isnt available. if one is, we dont care, and want to exit (this will be used in the addon gui)
+###### this is only comes into play if the option -q is passed. if so, we supress output if an update isnt available. if one is, we dont care, and want to exit (this will be used in the addon gui)
 
 if [ "$update_yes" = "1" ] ;
 then
 	exit 0
+fi
+
+
+###### if there are no builds avaliable on the server for your specific architecture, we are going to notify you, and gracefully exit
+arch=$(cat /etc/arch)
+curl -silent $mode/ | grep $arch | sed -e 's/<li><a href="//' -e 's/[^ ]* //' -e 's/<\/a><\/li>//' > $temploc/temp
+echo
+echo "Builds Available for your Architecture:  ($arch)"
+echo "---------------------------------------"
+list=$(cat $temploc/temp)
+if [[ ! -s $list ]] ;
+then
+	echo "There are no builds avaliable for your architecture on the devel server at this time."
+	echo "Please check again later. You may also check manually for yourself here:"
+	echo "http://sources.openelec.tv/tmp/image/"
+	echo
+	rm -rf $temploc/
+	unsetv
+	echo "Exiting Now."
+	echo
+	exit 1
 fi
 
 
@@ -842,12 +884,12 @@ then
 	sys_return=0
 else
 	sys_return=1
-	echo "WARNING:"
+	echo "---   WARNING   ---"
 	echo "SYSTEM md5 MISMATCH!"
 	echo "--------------------"
-	echo "There is an integrity problem with the System package"
-	echo "Notify on IRC/Forums one of the Developers that:"
-	echo "the SYSTEM image of $FOLDER.tar.bz2 is corrupt"
+	echo "There is an integrity problem with the SYSTEM package"
+	echo "Notify one of the developers on the Forums or IRC that"
+	echo "the SYSTEM image of $fn.tar.bz2 is corrupt"
 	sleep 3
 	rm -f /storage/.update/SYSTEM
 	rm -f /storage/.update/SYSTEM.md5
@@ -863,12 +905,12 @@ then
 	kern_return=0
 else
 	kern_return=1
-	echo "WARNING:"
+	echo "---   WARNING   ---"
 	echo "KERNEL md5 MISMATCH!"
 	echo "--------------------"
-	echo "There is an integrity problem with the Kernel package"
-	echo "Notify on IRC/Forums one of the Developers that:"
-	echo "the KERNEL image of $FOLDER.tar.bz2 is corrupt"
+	echo "There is an integrity problem with the KERNEL package"
+	echo "Notify one of the developers on the Forums or IRC that"
+	echo "the SYSTEM image of $fn.tar.bz2 is corrupt"
 	sleep 3
 	rm -f /storage/.update/KERNEL
 	rm -f /storage/.update/KERNEL.md5
@@ -884,9 +926,9 @@ fi
 ###### notified which one it was above. exit.
 
 return=$(($kern_return+$sys_return))
-
 if [[ "$return" = "2" ]] ;
 then
+	echo "md5 mismatch detected."
 	echo "Update Terminated."
 	unsetv
 	exit 1
@@ -903,14 +945,18 @@ echo -ne "\033[0K\r"
 ###### create a backup of our build for easy access if needed for a emergency rollback
 
 echo
-echo "[ Important Notice ]"
-echo "-->  A copy of the SYSTEM & KERNEL images have been created here:"
+echo "---- Important Notice ----"
+echo "-->  A backup copy of the *New* of the SYSTEM & KERNEL images have been created here:"
 echo "     /storage/downloads/OpenELEC_r$PRESENT"
-echo "-->  NEVER mix SYSTEM & KERNEL images from differing architectures, or build revisions."
+echo
+echo "-->  ** NEVER mix SYSTEM & KERNEL images from differing architectures, or build revisions."
+echo "-->  ** You can cause irreparable damage to your system which will require a clean re-install."
+
 if [ -d /storage/downloads/OpenELEC_r$PAST ] ;
 then
 	rm -rf /storage/downloads/OpenELEC_r$PAST
 fi
+
 mkdir -p /storage/downloads/OpenELEC_r$PRESENT
 cp /storage/.update/KERNEL /storage/.update/SYSTEM /storage/downloads/OpenELEC_r$PRESENT
 sleep 5
