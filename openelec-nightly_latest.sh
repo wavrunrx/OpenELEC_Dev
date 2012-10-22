@@ -975,15 +975,7 @@ sleep 2
 echo -ne "\033[0K\r"
 
 
-###### create a backup of our build for easy access if needed for a emergency rollback
-
-echo
-echo "---- Important Notice ----"
-echo "-->  A backup copy of the *New* of the SYSTEM & KERNEL images have been created here:"
-echo "     /storage/downloads/OpenELEC_r$PRESENT"
-echo
-echo "-->  ** NEVER mix SYSTEM & KERNEL images from differing architectures, or build revisions."
-echo "-->  ** You can cause irreparable damage to your system which will require a clean re-install."
+###### create a backup of our current, and new build for easy access if needed for a emergency rollback
 
 if [ -d /storage/downloads/OpenELEC_r$PAST ] ;
 then
@@ -991,7 +983,22 @@ then
 fi
 
 mkdir -p /storage/downloads/OpenELEC_r$PRESENT
-cp /storage/.update/KERNEL /storage/.update/SYSTEM /storage/downloads/OpenELEC_r$PRESENT
+cp /storage/.update/KERNEL /storage/.update/SYSTEM /storage/.update/KERNEL.md5 /storage/.update/SYSTEM.md5 /storage/downloads/OpenELEC_r$PRESENT
+echo
+echo "---- Important Notice ----"
+echo "     In the need of an emergency rollback:"
+echo "-->  A backup copy of your *NEW* SYSTEM & KERNEL images (revision $PRESENT) have been created here:"
+echo "     /storage/downloads/OpenELEC_r$PRESENT"
+echo
+mkdir -p /storage/downloads/OpenELEC_r$PAST
+cp /flash/KERNEL /flash/SYSTEM /storage/downloads/OpenELEC_r$PRESENT/KERNEL.md5 /storage/downloads/OpenELEC_r$PRESENT/SYSTEM.md5 /storage/downloads/OpenELEC_r$PAST
+echo "     In the need of an emergency rollback:"
+echo "-->  A backup copy of your *PREVIOUS* SYSTEM & KERNEL images (revision $PAST) have been created here:"
+echo "     /storage/downloads/OpenELEC_r$PAST"
+echo
+echo "---- Important Notice ----"
+echo "-->  NEVER mix SYSTEM & KERNEL images from differing architectures, or build revisions."
+echo "-->  You will cause irreparable damage to your operating system which will require a clean re-install."
 sleep 5
 
 
