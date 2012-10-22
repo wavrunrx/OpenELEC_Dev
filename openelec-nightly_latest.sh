@@ -185,6 +185,37 @@ do
 			echo "KERNEL & SYSTEM images are already in place."
 			echo "Please reboot your HTPC when possible"
 			echo "to complete the update."
+			echo
+			echo "Would you like to reboot now (y/n) ?"
+			read -n1 -p "==| " reb
+			echo
+				if [[ "$reb" != "Y" ]] && [[ "$reb" != "y" ]] && [[ "$reb" != "N" ]] && [[ "$reb" != "n" ]] && [[ "$reb" != "yes" ]] && [[ "$reb" != "no" ]] && [[ "$reb" != "Yes" ]] && [[ "$reb" != "No" ]] ;
+				then
+					echo
+					echo "Unrecognized Input."
+					echo "Please answer (y/n)"
+					echo "Exiting."
+					echo
+					unsetv
+					exit 1
+				elif [[ "$reb" = "Y" || "$reb" = "y" || "$reb" = "Yes" || "$reb" = "yes" ]] ;
+				then
+					sleep 1
+					echo
+					echo "Rebooting."
+					unsetv
+					sync
+					sleep 1
+					/sbin/reboot
+					exit 0
+				elif [[ "$reb" = "N" || "$reb" = "n" || "$reb" = "No" || "$reb" = "no" ]] ;
+				then
+					sleep 1
+					echo
+					echo "Exiting Now."
+					unsetv
+					exit 0
+				fi
 		else
 			echo
 			echo "No KERNEL/SYSTEM images are in-place."
