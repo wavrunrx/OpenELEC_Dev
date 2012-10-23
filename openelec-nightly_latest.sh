@@ -165,6 +165,7 @@ do
         	echo "There are no available builds for your architecture at this time."
         	echo "Please check again later."
         	echo
+			echo "Exiting Now."
         	exit 1
         fi
 		for i in `cat $temploc/temp3`
@@ -192,7 +193,6 @@ do
 		if [[ ! -s `cat $temploc/temp` ]] ;
         then
         	echo "There are no archived builds for your architecture at this time."
-        	echo
         fi
 		rm -rf $temploc/
 		unset arch
@@ -322,7 +322,6 @@ do
 					echo "http://sources.openelec.tv/tmp/image/"
         			echo
         			echo "Exiting Now."
-        			echo
         			exit 1
         		fi
 				for i in `cat $temploc/temp3`
