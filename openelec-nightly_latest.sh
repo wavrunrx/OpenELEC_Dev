@@ -59,8 +59,12 @@ fi
 arch=$(cat /etc/arch)
 if [ "$arch" = "RPi.arm" ] ;
 then
+	echo "RaspberryPi Detected"
+	echo
 	temploc="/storage/downloads/xbmc-update"
 else
+	echo "Non-ARM Device Detected"
+	echo
 	temploc="/dev/shm/xbmc-update"
 fi
 
@@ -528,7 +532,6 @@ shift $(($OPTIND - 1))
 
 ###### if options are specified, we wont proceede any further, unless -z is passed
 
-
 if [ "$options_found" -ge "1" ] ;
 then
 	exit 0
@@ -626,8 +629,8 @@ then
 	exit 1
 fi
 
-###### making sure github is alive and ready to update the script if nessessary.
 
+###### making sure github is alive and ready to update the script if nessessary.
 
 echo -ne "Please Wait...\033[0K\r"
 sleep 1
@@ -639,7 +642,7 @@ echo -ne "\033[0K\r"
 if [ "$?" = "0" ] ;
 then
 	echo -ne "Update Server Active.\033[0K\r"
-	sleep 1
+	sleep 2
 	echo -ne "\033[0K\r"
 	###### check if a script update is in progress
 	if [ ! -f /tmp/update_in_progress ] ;
@@ -1018,7 +1021,6 @@ then
 	exit 1
 fi
 
-
 echo "File Integrity Check: PASSED!"
 echo
 echo -ne "Continuing...\033[0K\r"
@@ -1108,3 +1110,4 @@ fi
 ## everything went well: we're done !
 
 exit 0
+
