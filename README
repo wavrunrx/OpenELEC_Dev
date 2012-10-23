@@ -5,7 +5,7 @@ OpenELEC has an automatic update feature already built in, but its for going fro
 if you like to live on the bleeding edge of new code, this script will make the whole update process a simple affair
 normally requiring minimal input.
 
-it can be run off any currently avaliable architecture [as of 10/22/2012].
+it can be run off any currently available architecture [as of 10/22/2012].
 (ION, Generic, Intel, Fusion, RaspberryPi)
 
 the script has a mechanism which will always keep itself up-to-date, so you only need to download it once.
@@ -24,7 +24,7 @@ How to get it:
 	curl https://raw.github.com/wavrunrx/OpenELEC_Dev/master/openelec-nightly_latest.sh > ./openelec-nightly_latest.sh && chmod +x openelec-nightly_latest.sh
 
 
-2) now, run it ! (see below for avaliable options)
+2) now, run it ! (see below for available options)
 
 
 	sh ./openelec-nightly_latest.sh
