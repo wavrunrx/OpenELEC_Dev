@@ -30,6 +30,7 @@ set -e
 
 
 ###### script version
+
 VERSION="18"
 
 
@@ -45,13 +46,14 @@ OPTIND="1"
 
 ###### what branch do we use
 
+#if [ `cat /etc/arch | awk '{ print $1 }'` = "RPi.arm" ] ;
+#then
+#	mode="http://sources.openelec.tv/tmp/image/"
+#else
+#	mode="http://sources.openelec.tv/tmp/image/"
+#fi
 
-if [ `cat /etc/arch | awk '{ print $1 }'` = "RPi.arm" ] ;
-then
-	mode="http://sources.openelec.tv/tmp/image/openelec-rpi"
-else
-	mode="http://sources.openelec.tv/tmp/image/openelec-frodo"
-fi
+mode="http://sources.openelec.tv/tmp/image/"
 
 
 ###### set the temporary file location based on what device we are using...(the rPi does not have enough RAM to download the image to /dev/shm
@@ -309,12 +311,11 @@ do
 				echo -ne "Please Wait...\033[0K\r"
 				arch=$(cat /etc/arch)
 				mkdir -p $temploc/
-				curl --silent $mode/ | grep $arch | sed -e 's/<li><a href="//' -e 's/[^ ]* //' -e 's/<\/a><\/li>//' > $temploc/temp
+				#curl --silent $mode/ | grep $arch | sed -e 's/<li><a href="//' -e 's/[^ ]* //' -e 's/<\/a><\/li>//' > $temploc/temp
 				curl --silent $mode/archive/ | grep $arch | sed -e 's/<li><a href="//' -e 's/[^ ]* //' -e 's/<\/a><\/li>//' >> $temploc/temp
 				echo -ne "\033[0K\r"
 				echo
 				echo "Builds Available for your Architecture: ($arch)"
-				## sed '$d' will remove the build you are currently on.
 				cat $temploc/temp | sed '$d' | sort -n > $temploc/temp3
 				echo "---------------------------------------"
 				echo
