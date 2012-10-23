@@ -99,6 +99,8 @@ do
 			echo "http://sources.openelec.tv/tmp/image/"
         	echo
         	echo "Exiting Now."
+        	rm -rf $temploc/
+        	unset arch
         	exit 1
         fi
 		PAST=$(cat /etc/version | tail -c 6 | tr -d 'r')
@@ -149,6 +151,8 @@ do
 			echo "http://sources.openelec.tv/tmp/image/"
         	echo
         	echo "Exiting Now."
+			rm -rf $temploc/
+			unset arch
         	exit 1
         fi
 		echo
@@ -168,10 +172,13 @@ do
 		echo "---------------------------------------"
 		if [[ ! -s `cat $temploc/temp3` ]] ;
         then
+        	echo
         	echo "There are no available builds for your architecture at this time."
         	echo "Please check again later."
         	echo
 			echo "Exiting Now."
+			rm -rf $temploc/
+			unset arch
         	exit 1
         fi
 		for i in `cat $temploc/temp3`
@@ -191,8 +198,9 @@ do
 		echo
 		echo "Archival Builds Avaliable for your Architecture:  ($arch)"
 		echo "------------------------------------------------"
-		if [[ ! -s `cat $temploc/temp` ]] ;
+		if [[ -s `cat $temploc/temp` ]] ;
         then
+        	echo
         	echo "There are no archived builds for your architecture at this time."
         	echo "Please check again later."
         	echo
@@ -313,15 +321,15 @@ do
 				echo -ne "Please Wait...\033[0K\r"
 				arch=$(cat /etc/arch)
 				mkdir -p $temploc/
-				#curl --silent $mode/ | grep $arch | sed -e 's/<li><a href="//' -e 's/[^ ]* //' -e 's/<\/a><\/li>//' > $temploc/temp
-				curl --silent $mode/archive/ | grep $arch | sed -e 's/<li><a href="//' -e 's/[^ ]* //' -e 's/<\/a><\/li>//' >> $temploc/temp
+				curl --silent $mode/archive/ | grep $arch | sed -e 's/<li><a href="//' -e 's/[^ ]* //' -e 's/<\/a><\/li>//' > $temploc/temp
 				echo -ne "\033[0K\r"
 				echo
 				echo "Builds Available for your Architecture: ($arch)"
-				cat $temploc/temp | sed '$d' | sort -n > $temploc/temp3
+				## sed '$d' removes first result
+				cat $temploc/temp | sort -n > $temploc/temp3
 				echo "---------------------------------------"
 				echo
-				if [[ ! -s `cat $temploc/temp3` ]] ;
+				if [[ -s `cat $temploc/temp3` ]] ;
         		then
         			echo "There are either no available builds for your architecture at this time, or"
 					echo "the only build avaliable, is the same build revision you are currently on."
@@ -338,8 +346,8 @@ do
 
 				echo "---------------------------------------"
 				echo
-				echo "Enter the Build/Revision number you want from the list above (Ex: "11327")"
-				read -p "==| " fbrev
+				echo "Enter the build number you want from the above list (Ex: "11327")"
+				read -n1 -p "==| " fbrev
 				if ! [[ "$fbrev" =~ ^[0-9]+$ ]] ; 
 				then
 					echo
