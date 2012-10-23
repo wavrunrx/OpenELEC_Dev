@@ -611,6 +611,7 @@ echo -ne "Checking Update Server's State...\033[0K\r"
 sleep 2
 echo -ne "\033[0K\r"
 echo -ne "Please Wait...\033[0K\r"
+sleep 1
 ping -qc 3 raw.github.com > /dev/null
 echo -ne "\033[0K\r"
 if [ "$?" = "0" ] ;
@@ -814,8 +815,8 @@ fi
 ###### if there are no builds avaliable on the server for your specific architecture, we are going to notify you, and gracefully exit
 
 arch=$(cat /etc/arch)
-curl -silent $mode/ | grep $arch | sed -e 's/<li><a href="//' -e 's/[^ ]* //' -e 's/<\/a><\/li>//' > $temploc/temp
-if [[ -s $temploc/temp ]] ;
+curl -silent $mode/ | grep $arch | sed -e 's/<li><a href="//' -e 's/[^ ]* //' -e 's/<\/a><\/li>//' > $temploc/temp3
+if [[ ! -s $temploc/temp3 ]] ;
 then
 	echo "There are no builds avaliable for your architecture on the devel server at this time."
 	echo "Please check again later. You may also check manually for yourself here:"
