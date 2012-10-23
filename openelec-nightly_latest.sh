@@ -662,7 +662,7 @@ then
 			echo
 			echo "*---| Updating OpenELEC_DEV Now:"
 			sleep 1
-			curl –-silent https://raw.github.com/wavrunrx/OpenELEC_Dev/master/openelec-nightly_latest.sh > `dirname $0`/openelec-nightly_$rsvers.sh
+			curl --silent https://raw.github.com/wavrunrx/OpenELEC_Dev/master/openelec-nightly_latest.sh > `dirname $0`/openelec-nightly_$rsvers.sh
 			echo "Done !"
 			echo
 			echo
