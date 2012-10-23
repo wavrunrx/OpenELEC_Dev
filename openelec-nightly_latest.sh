@@ -347,7 +347,7 @@ do
 				echo "---------------------------------------"
 				echo
 				echo "Enter the build number you want from the above list (Ex: "11327")"
-				read -n1 -p "==| " fbrev
+				read -p "==| " fbrev
 				if ! [[ "$fbrev" =~ ^[0-9]+$ ]] ; 
 				then
 					echo
@@ -356,7 +356,7 @@ do
 					rm -rf $temploc/
 					exit 1
 				fi
-				fn=$(grep "$fbrev" $temploc/temp2 | awk '{print $1}')
+				fn=$(grep "$fbrev" $temploc/temp3 | awk '{print $1}')
 				echo
 				echo "Downloading..."
 				echo -ne "Please Wait..\033[0K\r"
