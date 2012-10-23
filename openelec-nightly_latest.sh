@@ -76,14 +76,14 @@ do
 		# quick check to see if we're up-to-date
 		mkdir -p $temploc/
 		arch=$(cat /etc/arch)
-		curl -silent $mode/ | grep $arch | sed -e 's/<li><a href="//' -e 's/[^ ]* //' -e 's/<\/a><\/li>//' > $temploc/temp
+		curl --silent $mode/ | grep $arch | sed -e 's/<li><a href="//' -e 's/[^ ]* //' -e 's/<\/a><\/li>//' > $temploc/temp
 		if [ $(wc -l $temploc/temp | cut -c -1) -gt "1" ] ;
 		then
 			cat $temploc/temp | tail -1 > $temploc/temp2
 		else
 			mv $temploc/temp $temploc/temp2
 		fi
-		if [[ ! -s $temploc/temp2 ]] ;
+		if [[ ! -s `cat $temploc/temp2` ]] ;
         then
         	echo
         	echo "There are either no available builds for your architecture at this time, or"
@@ -126,14 +126,14 @@ do
 		# displays the remote build number
 		mkdir -p $temploc/
 		arch=$(cat /etc/arch)
-		curl -silent $mode/ | grep $arch | sed -e 's/<li><a href="//' -e 's/[^ ]* //' -e 's/<\/a><\/li>//' > $temploc/temp
+		curl --silent $mode/ | grep $arch | sed -e 's/<li><a href="//' -e 's/[^ ]* //' -e 's/<\/a><\/li>//' > $temploc/temp
 		if [ $(wc -l $temploc/temp | cut -c -1) -gt "1" ] ;
 		then
 			cat $temploc/temp | tail -1 > $temploc/temp2
 		else
 			mv $temploc/temp $temploc/temp2
 		fi
-		if [[ ! -s $temploc/temp2 ]] ;
+		if [[ ! -s `cat $temploc/temp2` ]] ;
         then
         	echo
         	echo "There are either no available builds for your architecture at this time, or"
@@ -156,11 +156,11 @@ do
 		# show all remotely available builds for your architecture, and build date
 		arch=$(cat /etc/arch)
 		mkdir -p $temploc/
-		curl -silent $mode/ | grep $arch | sed -e 's/<li><a href="//' -e 's/[^ ]* //' -e 's/<\/a><\/li>//' > $temploc/temp3
+		curl --silent $mode/ | grep $arch | sed -e 's/<li><a href="//' -e 's/[^ ]* //' -e 's/<\/a><\/li>//' > $temploc/temp3
 		echo
 		echo "Builds Available for your Architecture:  ($arch)"
 		echo "---------------------------------------"
-		if [[ -s `cat $temploc/temp3` ]] ;
+		if [[ ! -s `cat $temploc/temp3` ]] ;
         then
         	echo "There are no available builds for your architecture at this time."
         	echo "Please check again later."
@@ -180,7 +180,7 @@ do
 		# show all old archived builds for your architecture, as well as compilation date
 		arch=$(cat /etc/arch)
 		mkdir -p $temploc/
-		curl -silent $mode/archive/ | grep $arch | sed -e 's/<li><a href="//' -e 's/[^ ]* //' -e 's/<\/a><\/li>//' > $temploc/temp
+		curl --silent $mode/archive/ | grep $arch | sed -e 's/<li><a href="//' -e 's/[^ ]* //' -e 's/<\/a><\/li>//' > $temploc/temp
 		echo
 		echo "Archival Builds Avaliable for your Architecture:  ($arch)"
 		echo "------------------------------------------------"
@@ -189,7 +189,7 @@ do
 		do
 			echo -n "$i  --->  Compiled On: "; echo -n "$i" | cut -f 4-4 -d'-' | sed 's/......$//;s/./& /4' | sed 's/./& /7' | awk '{ print "[ "$2"/"$3"/"$1" ]" }'
 		done
-		if [[ ! -s $temploc/temp ]] ;
+		if [[ ! -s `cat $temploc/temp` ]] ;
         then
         	echo "There are no archived builds for your architecture at this time."
         	echo
@@ -305,8 +305,8 @@ do
 				echo -ne "Please Wait...\033[0K\r"
 				arch=$(cat /etc/arch)
 				mkdir -p $temploc/
-				curl -silent $mode/ | grep $arch | sed -e 's/<li><a href="//' -e 's/[^ ]* //' -e 's/<\/a><\/li>//' > $temploc/temp
-				curl -silent $mode/archive/ | grep $arch | sed -e 's/<li><a href="//' -e 's/[^ ]* //' -e 's/<\/a><\/li>//' >> $temploc/temp
+				curl --silent $mode/ | grep $arch | sed -e 's/<li><a href="//' -e 's/[^ ]* //' -e 's/<\/a><\/li>//' > $temploc/temp
+				curl --silent $mode/archive/ | grep $arch | sed -e 's/<li><a href="//' -e 's/[^ ]* //' -e 's/<\/a><\/li>//' >> $temploc/temp
 				echo -ne "\033[0K\r"
 				echo
 				echo "Builds Available for your Architecture: ($arch)"
@@ -314,7 +314,7 @@ do
 				cat $temploc/temp | sed '$d' | sort -n > $temploc/temp3
 				echo "---------------------------------------"
 				echo
-				if [[ ! -s $temploc/temp3 ]] ;
+				if [[ ! -s `cat $temploc/temp3` ]] ;
         		then
         			echo "There are either no available builds for your architecture at this time, or"
 					echo "the only build avaliable, is the same build revision you are currently on."
@@ -629,11 +629,11 @@ fi
 
 ###### making sure github is alive and ready to update the script if nessessary.
 
-echo
-echo -ne "Checking Update Server's State...\033[0K\r"
-sleep 2
-echo -ne "\033[0K\r"
+
 echo -ne "Please Wait...\033[0K\r"
+sleep 1
+echo -ne "\033[0K\r"
+echo -ne "Checking Update Server's State...\033[0K\r"
 sleep 1
 ping -qc 3 raw.github.com > /dev/null
 echo -ne "\033[0K\r"
@@ -768,8 +768,8 @@ fi
 ###### if there are no builds avaliable on the server for your specific architecture, we are going to notify you, and gracefully exit
 
 arch=$(cat /etc/arch)
-curl -silent $mode/ | grep $arch | sed -e 's/<li><a href="//' -e 's/[^ ]* //' -e 's/<\/a><\/li>//' > $temploc/temp3
-if [[ ! -s $temploc/temp3 ]] ;
+curl --silent $mode/ | grep $arch | sed -e 's/<li><a href="//' -e 's/[^ ]* //' -e 's/<\/a><\/li>//' > $temploc/temp3
+if [[ ! -s `cat $temploc/temp3` ]] ;
 then
         echo "There are either no available builds for your architecture at this time, or"
         echo "the only build avaliable, is the same build revision you are currently on."
@@ -787,7 +787,7 @@ fi
 ###### Captures remote filename & extension
 
 arch=$(cat /etc/arch)
-curl -silent $mode/ | grep $arch | sed -e 's/<li><a href="//' -e 's/[^ ]* //' -e 's/<\/a><\/li>//' > $temploc/temp
+curl --silent $mode/ | grep $arch | sed -e 's/<li><a href="//' -e 's/[^ ]* //' -e 's/<\/a><\/li>//' > $temploc/temp
 
 
 ###### remove all but the newest build from out list
