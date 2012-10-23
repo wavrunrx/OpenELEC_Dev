@@ -137,7 +137,7 @@ do
 		echo "Builds Available for your Architecture:  ($arch)"
 		echo "---------------------------------------"
 		list=$(cat $temploc/temp)
-		if [[ ! -s $list ]] ;
+		if [[ -s $list ]] ;
         then
         	echo "There are no available builds for your architecture at this time."
         	echo "Please check again later."
@@ -148,6 +148,7 @@ do
 		do
 		    echo -n "$i  --->  Compiled On: "; echo -n "$i" | cut -f 4-4 -d'-' | sed 's/......$//;s/./& /4' | sed 's/./& /7' | awk '{ print "[ "$2"/"$3"/"$1" ]" }'
 		done
+		echo
 		rm -rf $temploc/
 		unset arch
 		unset list
@@ -656,7 +657,7 @@ then
 			exit
 		else
 			echo -ne "Script Update Not Avaliable."
-			sleep 1
+			sleep 2
 			echo -ne "\033[0K\r"
 			echo -ne "Continuing...\033[0K\r"
 			sleep 1
@@ -815,10 +816,7 @@ fi
 
 arch=$(cat /etc/arch)
 curl -silent $mode/ | grep $arch | sed -e 's/<li><a href="//' -e 's/[^ ]* //' -e 's/<\/a><\/li>//' > $temploc/temp
-echo
-echo "Builds Available for your Architecture:  ($arch)"
-echo "---------------------------------------"
-if [[ ! -s $temploc/temp ]] ;
+if [[ -s $temploc/temp ]] ;
 then
 	echo "There are no builds avaliable for your architecture on the devel server at this time."
 	echo "Please check again later. You may also check manually for yourself here:"
