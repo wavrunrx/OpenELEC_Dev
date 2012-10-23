@@ -289,25 +289,26 @@ do
 				echo
 				echo "Builds avaliable for your architecture: $arch"
 				echo
-				cat $temploc/temp | sort -n  | sed '$d' > $temploc/temp3
-				echo "==================================="
+				## sed '$d' will remove the build you are currently on. pipe it to sort -n
+				cat $temploc/temp | sort -n > $temploc/temp3
+				echo "======================================="
 				echo
-				list=$(cat $temploc/temp3)
-				if [[ ! -s $list ]] ;
+				if [[ ! -s $temploc/temp3 ]] ;
         		then
-        			echo "There are no available builds for your architecture at this time."
+        			echo "There are either no available builds for your architecture at this time, or"
+        			echo "the only build avaliable, is the same build revision you are currently on."
         			echo "Please check again later."
         			echo
         			echo "Exiting Now."
         			echo
-        			unset list
         			exit 1
         		fi
-				for i in $list
+				for i in `cat $temploc/temp3`
 				do
 					echo -n "Build: " ; echo -n "$i" | cut -f 5-5 -d'-' | sed '$s/........$//' | tr -d "r" ; echo -n "-----> Compiled On: " ; echo -n "$i" | cut -f 4-4 -d'-' | sed 's/......$//;s/./& /4' | sed 's/./& /7' | awk '{ print "[ "$2"/"$3"/"$1" ]" }' ; echo
 				done
-				echo "==================================="
+
+				echo "======================================="
 				echo
 				echo "Enter the Build/Revision number you want from the list above (Ex: "11327")"
 				read -p "==| " fbrev
