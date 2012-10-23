@@ -83,6 +83,18 @@ do
 		else
 			mv $temploc/temp $temploc/temp2
 		fi
+		if [[ ! -s $temploc/temp2 ]] ;
+        then
+        	echo
+        	echo "There are either no available builds for your architecture at this time, or"
+			echo "the only build avaliable, is the same build revision you are currently on."
+			echo "Unable to check remote revision number."
+			echo "Please check again later. You may also check manually for yourself here:"
+			echo "http://sources.openelec.tv/tmp/image/"
+        	echo
+        	echo "Exiting Now."
+        	exit 1
+        fi
 		PAST=$(cat /etc/version | tail -c 6 | tr -d 'r')
 		PRESENT=$(cat $temploc/temp2 | tail -c 15 | cut -c 0-5)
 		if [ `echo $PRESENT | sed 's/.\{4\}$//'` == "-" ] ;
@@ -121,6 +133,18 @@ do
 		else
 			mv $temploc/temp $temploc/temp2
 		fi
+		if [[ ! -s $temploc/temp2 ]] ;
+        then
+        	echo
+        	echo "There are either no available builds for your architecture at this time, or"
+			echo "the only build avaliable, is the same build revision you are currently on."
+			echo "Unable to display remote revision number."
+			echo "Please check again later. You may also check manually for yourself here:"
+			echo "http://sources.openelec.tv/tmp/image/"
+        	echo
+        	echo "Exiting Now."
+        	exit 1
+        fi
 		echo
 		echo "Newest Remote Release for $arch: `cat $temploc/temp2 | tail -c 15 | sed 's/.\{8\}$//' | tr -d "\-r"`"
 		rm -rf $temploc/
