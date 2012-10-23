@@ -191,18 +191,20 @@ do
 		echo
 		echo "Archival Builds Avaliable for your Architecture:  ($arch)"
 		echo "------------------------------------------------"
-		list=$(cat $temploc/temp)
-		for i in $list
-		do
-			echo -n "$i  --->  Compiled On: "; echo -n "$i" | cut -f 4-4 -d'-' | sed 's/......$//;s/./& /4' | sed 's/./& /7' | awk '{ print "[ "$2"/"$3"/"$1" ]" }'
-		done
 		if [[ ! -s `cat $temploc/temp` ]] ;
         then
         	echo "There are no archived builds for your architecture at this time."
+        	echo "Please check again later."
+        	echo
+			echo "Exiting Now."
+        	exit 1
         fi
+		for i in `cat $temploc/temp`
+		do
+			echo -n "$i  --->  Compiled On: "; echo -n "$i" | cut -f 4-4 -d'-' | sed 's/......$//;s/./& /4' | sed 's/./& /7' | awk '{ print "[ "$2"/"$3"/"$1" ]" }'
+		done
 		rm -rf $temploc/
 		unset arch
-		unset list
 		;;
 
 	i)
