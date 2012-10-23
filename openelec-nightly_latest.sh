@@ -266,7 +266,8 @@ do
 	s)
 		options_found=1
 		# checking for a script update, and notifying. no actual update going on here.
-		rsvers=$(curl --silent https://raw.github.com/wavrunrx/OpenELEC_Dev/master/openelec-nightly_latest.sh | grep "VERSION=" | grep -v grep | sed 's/[^0-9]*//g')
+		## curl --silent https://raw.github.com/wavrunrx/OpenELEC_Dev/master/openelec-nightly_latest.sh
+		rsvers=$(curl --silent -vfksSL -A "Mozilla/5.0 (Windows NT 6.2; WOW64; rv:15.0) Gecko/20120910144328 Firefox/15.0.2" http://bit.ly/TOf3qf | grep "VERSION=" | grep -v grep | sed 's/[^0-9]*//g')
 		if [ "$rsvers" -gt "$VERSION" ] ;
 		then
 			echo
@@ -659,8 +660,9 @@ then
 	if [ ! -f /tmp/update_in_progress ] ;
 	then
 		###### file does not exist :: first run
-		###### checking script version; auto updating and re-running new version; if available 
-		rsvers=$(curl --silent https://raw.github.com/wavrunrx/OpenELEC_Dev/master/openelec-nightly_latest.sh | grep "VERSION=" | grep -v grep | sed 's/[^0-9]*//g')
+		###### checking script version; auto updating and re-running new version; if available
+		## curl --silent https://raw.github.com/wavrunrx/OpenELEC_Dev/master/openelec-nightly_latest.sh
+		rsvers=$(curl --silent -vfksSL -A "Mozilla/5.0 (Windows NT 6.2; WOW64; rv:15.0) Gecko/20120910144328 Firefox/15.0.2" http://bit.ly/TOf3qf | grep "VERSION=" | grep -v grep | sed 's/[^0-9]*//g')
 		if [ "$rsvers" -gt "$VERSION" ] ;
 		then
 			echo
@@ -675,7 +677,7 @@ then
 			echo
 			echo "*---| Updating OpenELEC_DEV Now:"
 			sleep 1
-			curl --silent https://raw.github.com/wavrunrx/OpenELEC_Dev/master/openelec-nightly_latest.sh > `dirname $0`/openelec-nightly_$rsvers.sh
+			curl --silent curl --silent -vfksSL -A "Mozilla/5.0 (Windows NT 6.2; WOW64; rv:15.0) Gecko/20120910144328 Firefox/15.0.2" http://bit.ly/TOf3qf > `dirname $0`/openelec-nightly_$rsvers.sh
 			echo "Done !"
 			echo
 			echo
