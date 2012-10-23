@@ -31,7 +31,7 @@ set -e
 
 ###### script version
 
-VERSION="18"
+VERSION="19"
 
 
 ###### if no options specified; we continue as normal
