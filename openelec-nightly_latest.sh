@@ -89,7 +89,7 @@ do
 		else
 			mv $temploc/temp $temploc/temp2
 		fi
-		if [[ ! -s `cat $temploc/temp2` ]] ;
+		if [[ -z `cat $temploc/temp2` ]] ;
         then
         	echo
         	echo "There are either no available builds for your architecture at this time, or"
@@ -141,7 +141,7 @@ do
 		else
 			mv $temploc/temp $temploc/temp2
 		fi
-		if [[ ! -s `cat $temploc/temp2` ]] ;
+		if [[ -z `cat $temploc/temp2` ]] ;
         then
         	echo
         	echo "There are either no available builds for your architecture at this time, or"
@@ -170,7 +170,7 @@ do
 		echo
 		echo "Builds Available for your Architecture:  ($arch)"
 		echo "---------------------------------------"
-		if [[ ! -s `cat $temploc/temp3` ]] ;
+		if [[ -z `cat $temploc/temp3` ]] ;
         then
         	echo
         	echo "There are no available builds for your architecture at this time."
@@ -198,7 +198,7 @@ do
 		echo
 		echo "Archival Builds Avaliable for your Architecture:  ($arch)"
 		echo "------------------------------------------------"
-		if [[ -s `cat $temploc/temp` ]] ;
+		if [[ -z `cat $temploc/temp` ]] ;
         then
         	echo
         	echo "There are no archived builds for your architecture at this time."
@@ -330,7 +330,7 @@ do
 				cat $temploc/temp | sort -n > $temploc/temp3
 				echo "---------------------------------------"
 				echo
-				if [[ -s `cat $temploc/temp3` ]] ;
+				if [[ -z `cat $temploc/temp3` ]] ;
         		then
         			echo "There are either no available builds for your architecture at this time, or"
 					echo "the only build avaliable, is the same build revision you are currently on."
@@ -784,7 +784,7 @@ fi
 
 arch=$(cat /etc/arch)
 curl --silent $mode/ | grep $arch | sed -e 's/<li><a href="//' -e 's/[^ ]* //' -e 's/<\/a><\/li>//' > $temploc/temp3
-if [[ ! -s `cat $temploc/temp3` ]] ;
+if [[ -z `cat $temploc/temp3` ]] ;
 then
         echo "There are either no available builds for your architecture at this time, or"
         echo "the only build avaliable, is the same build revision you are currently on."
@@ -792,7 +792,6 @@ then
         echo "http://sources.openelec.tv/tmp/image/"
         echo
         echo "Exiting Now."
-        echo
         rm -rf $temploc/
         unsetv
         exit 1
