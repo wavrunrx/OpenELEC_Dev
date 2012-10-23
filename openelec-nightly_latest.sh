@@ -743,6 +743,27 @@ else
 fi
 
 
+###### if there are no builds avaliable on the server for your specific architecture, we are going to notify you, and gracefully exit
+
+arch=$(cat /etc/arch)
+curl -silent $mode/ | grep $arch | sed -e 's/<li><a href="//' -e 's/[^ ]* //' -e 's/<\/a><\/li>//' > $temploc/temp3
+if [[ ! -s $temploc/temp3 ]] ;
+then
+        echo "There are either no available builds for your architecture at this time, or"
+        echo "the only build avaliable, is the same build revision you are currently on."
+        echo "Please check again later. You may also check manually for yourself here:"
+        echo "http://sources.openelec.tv/tmp/image/"
+        echo
+        echo "Exiting Now."
+        echo
+        rm -rf $temploc/
+        unsetv
+        echo "Exiting Now."
+        echo
+        exit 1
+fi
+
+
 ###### Captures remote filename & extension
 
 arch=$(cat /etc/arch)
@@ -812,24 +833,6 @@ fi
 if [ "$update_yes" = "1" ] ;
 then
 	exit 0
-fi
-
-
-###### if there are no builds avaliable on the server for your specific architecture, we are going to notify you, and gracefully exit
-
-arch=$(cat /etc/arch)
-curl -silent $mode/ | grep $arch | sed -e 's/<li><a href="//' -e 's/[^ ]* //' -e 's/<\/a><\/li>//' > $temploc/temp3
-if [[ ! -s $temploc/temp3 ]] ;
-then
-	echo "There are no builds avaliable for your architecture on the devel server at this time."
-	echo "Please check again later. You may also check manually for yourself here:"
-	echo "http://sources.openelec.tv/tmp/image/"
-	echo
-	rm -rf $temploc/
-	unsetv
-	echo "Exiting Now."
-	echo
-	exit 1
 fi
 
 
