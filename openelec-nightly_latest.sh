@@ -132,11 +132,11 @@ do
 		# show all remotely available builds for your architecture, and build date
 		arch=$(cat /etc/arch)
 		mkdir -p $temploc/
-		curl -silent $mode/ | grep $arch | sed -e 's/<li><a href="//' -e 's/[^ ]* //' -e 's/<\/a><\/li>//' > $temploc/temp
+		curl -silent $mode/ | grep $arch | sed -e 's/<li><a href="//' -e 's/[^ ]* //' -e 's/<\/a><\/li>//' > $temploc/temp3
 		echo
 		echo "Builds Available for your Architecture:  ($arch)"
 		echo "---------------------------------------"
-		list=$(cat $temploc/temp)
+		list=$(cat $temploc/temp3)
 		if [[ -s $list ]] ;
         then
         	echo "There are no available builds for your architecture at this time."
@@ -289,10 +289,10 @@ do
 				echo
 				echo "Builds avaliable for your architecture: $arch"
 				echo
-				cat $temploc/temp | sort -n  | sed '$d' > $temploc/temp2
+				cat $temploc/temp | sort -n  | sed '$d' > $temploc/temp3
 				echo "==================================="
 				echo
-				list=$(cat $temploc/temp2)
+				list=$(cat $temploc/temp3)
 				if [[ ! -s $list ]] ;
         		then
         			echo "There are no available builds for your architecture at this time."
@@ -792,6 +792,8 @@ then
 	echo "This isn't supported, and will yield unusual results if we continue."
 	echo "Your build is a higher revision then whats available on the official"
 	echo "snapshot server, as seen here: http://sources.openelec.tv/tmp/image/"
+	echo "In order to use this update script, you |*MUST*| be using an official"
+	echo "build, that is avaliable on the public snapshot server."
 	echo
 	echo "Local:  $PAST"
 	echo "Remote: $PRESENT"
