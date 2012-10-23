@@ -30,7 +30,7 @@ set -e
 
 
 ###### script version
-VERSION="17"
+VERSION="18"
 
 
 ###### if no options specified; we continue as normal
