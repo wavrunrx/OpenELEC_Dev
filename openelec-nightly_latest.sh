@@ -56,11 +56,12 @@ fi
 
 ###### set the temporary file location based on what device we are using...(the rPi does not have enough RAM to download the image to /dev/shm
 
-if [ "$mode" = "RPi.arm" ] ;
+arch=$(cat /etc/arch)
+if [ "$arch" = "RPi.arm" ] ;
 then
-	temploc="/dev/shm/xbmc-update"
-else
 	temploc="/storage/downloads/xbmc-update"
+else
+	temploc="/dev/shm/xbmc-update"
 fi
 
 
@@ -605,7 +606,8 @@ fi
 
 ###### making sure github is alive and ready to update the script if nessessary.
 
-echo -ne "Checking update server's state...\033[0K\r"
+echo
+echo -ne "Checking Update Server's State...\033[0K\r"
 sleep 2
 echo -ne "\033[0K\r"
 echo -ne "Please Wait...\033[0K\r"
@@ -810,13 +812,13 @@ fi
 
 
 ###### if there are no builds avaliable on the server for your specific architecture, we are going to notify you, and gracefully exit
+
 arch=$(cat /etc/arch)
 curl -silent $mode/ | grep $arch | sed -e 's/<li><a href="//' -e 's/[^ ]* //' -e 's/<\/a><\/li>//' > $temploc/temp
 echo
 echo "Builds Available for your Architecture:  ($arch)"
 echo "---------------------------------------"
-list=$(cat $temploc/temp)
-if [[ ! -s $list ]] ;
+if [[ ! -s $temploc/temp ]] ;
 then
 	echo "There are no builds avaliable for your architecture on the devel server at this time."
 	echo "Please check again later. You may also check manually for yourself here:"
