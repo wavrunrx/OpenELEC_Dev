@@ -652,7 +652,14 @@ then
 			chmod 755 `dirname $0`/openelec-nightly_latest.sh
 			###### exit old script
 			exit
-			fi
+		else
+			echo -ne "Script Update Not Avaliable."
+			sleep 1
+			echo -ne "\033[0K\r"
+			echo -ne "Continuing...\033[0K\r"
+			sleep 1
+			echo -ne "\033[0K\r"
+		fi
 	fi
 else
 	echo 
