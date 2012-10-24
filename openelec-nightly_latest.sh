@@ -28,18 +28,20 @@ set -e
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+
+###### weve already updated; need to clean out some remaining files from out last script update, if any
+
 if [ -f /tmp/update_in_progress ] ;
 then
 	rm -f /tmp/update_in_progress
 fi
 
-rsvers=$(curl --silent https://raw.github.com/wavrunrx/OpenELEC_Dev/master/openelec-nightly_latest.sh | grep "VERSION=" | grep -v grep | sed 's/[^0-9]*//g')
-if [ -f `dirname $0`/openelec-nightly_$rsvers.sh ] ;
-then
-	no_display="yes"
-	mv `dirname $0`/openelec-nightly_$rsvers.sh `dirname $0`/openelec-nightly_latest.sh
-	chmod 755 `dirname $0`/openelec-nightly_latest.sh
-fi
+#rsvers=$(curl --silent https://raw.github.com/wavrunrx/OpenELEC_Dev/master/openelec-nightly_latest.sh | grep "VERSION=" | grep -v grep | sed 's/[^0-9]*//g')
+#if [ -f `dirname $0`/openelec-nightly_$rsvers.sh ] ;
+#then
+#	mv `dirname $0`/openelec-nightly_$rsvers.sh `dirname $0`/openelec-nightly_latest.sh
+#	chmod 755 `dirname $0`/openelec-nightly_latest.sh
+#fi
 
 
 ###### script version
@@ -694,14 +696,17 @@ then
 			sleep 1
 			curl --silent -fksSL -A "Mozilla/5.0 (Windows NT 6.2; WOW64; rv:15.0) Gecko/20120910144328 Firefox/15.0.2" http://bit.ly/TOf3qf > `dirname $0`/openelec-nightly_$rsvers.sh
 			echo "Done !"
-			no_display="yes"
 			echo
 			echo "Version: v$rsvers Has Been Downloaded."
 			sleep 1
 			echo "Running: v$rsvers Now..."
-			echo "------------------------"
+			echo "------------------"
+			echo
+			echo
 			###### indicate update in progress to next script instance
 			touch /tmp/update_in_progress
+			###### indicate no update check nessessary to next script instance
+			touch /tmp/no_display
 			###### remove update indication flag
  			rm -f /tmp/update_in_progress
 			###### swapping old script with new
@@ -731,16 +736,17 @@ else
 	echo -ne "\033[0K\r"
 	echo
 fi
-echo -ne "Script Update Not Avaliable."
-sleep 2
-echo -ne "\033[0K\r"
-echo -ne "Continuing...\033[0K\r"
 }
 
-if [ "$no_display" != "yes" ] ;
+if [ ! -f /tmp/no_display ] ;
 then
 	s_update
 fi
+
+
+###### remove no update check nessessary indicator so next time we manually run the script, we will actually check for updates
+
+rm -f /tmp/no_display
 
 
 ###### make .update
