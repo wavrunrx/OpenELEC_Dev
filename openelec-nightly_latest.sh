@@ -158,7 +158,7 @@ do
         	exit 1
         fi
 		echo
-		echo "Newest Remote Release for [ $arch ]: `cat $temploc/temp2 | tail -c 15 | sed 's/.\{8\}$//' | tr -d "\-r"`"
+		echo "Newest Remote Release for [ $arch ] ==> `cat $temploc/temp2 | tail -c 15 | sed 's/.\{8\}$//' | tr -d "\-r"`"
 		rm -rf $temploc/
 		unset arch
 		;;
@@ -172,6 +172,7 @@ do
 		echo
 		echo "Builds Available for your Architecture:  ($arch)"
 		echo "---------------------------------------"
+		echo
 		if [[ -z `cat $temploc/temp3` ]] ;
         then
         	echo
