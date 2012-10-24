@@ -513,7 +513,7 @@ do
 		options_found=1
 		# options avaliable and usage.
 		echo
-		echo "Usage:  $0 [-iozacrlsvh]"
+		echo "Usage:  $0 [-iozacrlsbvh]"
 		echo
 		echo "-i                   check if SYSTEM & KERNEL are already in-place; suggest reboot."
 		echo "-o                   list all avaliable archival builds for your architecture."
