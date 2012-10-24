@@ -33,7 +33,7 @@ How to get it:
 ================================================================================================================
 
 
-Options:  ./openelec-nightly_latest.sh  [-ioacrlsvh]
+Options:  ./openelec-nightly_latest.sh  [-ioacrlsbvh]
 
 
 	-i                   check if SYSTEM & KERNEL are already in-place; and suggest a reboot.
@@ -43,7 +43,8 @@ Options:  ./openelec-nightly_latest.sh  [-ioacrlsvh]
 	-c                   quick check to see if we're up-to-date.
 	-r                   check the remote build revision.
 	-l                   what's our local build revision.
-	-s                   check for new script version
+	-s                   check for new script version.
+	-b                   reboot OpenELEC
 	-v                   script version.
 	-h/--help            help.
 
