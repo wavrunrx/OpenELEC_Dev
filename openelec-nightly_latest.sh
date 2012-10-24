@@ -36,13 +36,6 @@ then
 	rm -f /tmp/update_in_progress
 fi
 
-#rsvers=$(curl --silent https://raw.github.com/wavrunrx/OpenELEC_Dev/master/openelec-nightly_latest.sh | grep "VERSION=" | grep -v grep | sed 's/[^0-9]*//g')
-#if [ -f `dirname $0`/openelec-nightly_$rsvers.sh ] ;
-#then
-#	mv `dirname $0`/openelec-nightly_$rsvers.sh `dirname $0`/openelec-nightly_latest.sh
-#	chmod 755 `dirname $0`/openelec-nightly_latest.sh
-#fi
-
 
 ###### script version
 
@@ -165,7 +158,7 @@ do
         	exit 1
         fi
 		echo
-		echo "Newest Remote Release for $arch: `cat $temploc/temp2 | tail -c 15 | sed 's/.\{8\}$//' | tr -d "\-r"`"
+		echo "Newest Remote Release for [ $arch ]: `cat $temploc/temp2 | tail -c 15 | sed 's/.\{8\}$//' | tr -d "\-r"`"
 		rm -rf $temploc/
 		unset arch
 		;;
@@ -276,7 +269,6 @@ do
 	s)
 		options_found=1
 		# checking for a script update, and notifying. no actual update going on here.
-		## curl --silent https://raw.github.com/wavrunrx/OpenELEC_Dev/master/openelec-nightly_latest.sh
 		rsvers=$(curl --silent -fksSL -A "Mozilla/5.0 (Windows NT 6.2; WOW64; rv:15.0) Gecko/20120910144328 Firefox/15.0.2" http://bit.ly/TOf3qf | grep "VERSION=" | grep -v grep | sed 's/[^0-9]*//g')
 		if [ "$rsvers" -gt "$VERSION" ] ;
 		then
@@ -285,7 +277,7 @@ do
 			echo "*---| Current Version: $VERSION"
 			echo "*---| New Version: $rsvers"
 			echo
-			echo "*---| Re-Run -|Without Options|- to Update"
+			echo "----> Run Without Options to Update"
 		else
 			echo
 			echo "No Script Updates Available at this Time."
@@ -355,7 +347,7 @@ do
 					echo -n "Build: " ; echo -n "$i" | cut -f 5-5 -d'-' | sed '$s/........$//' | tr -d "r" ; echo -n "-----> Compiled On: " ; echo -n "$i" | cut -f 4-4 -d'-' | sed 's/......$//;s/./& /4' | sed 's/./& /7' | awk '{ print "[ "$2"/"$3"/"$1" ]" }' ; echo
 				done
 
-				echo "---------------------------------------"
+				echo "----------------------------------"
 				echo
 				echo "Enter the build number you want from the above list (Ex: "11327")"
 				read -p "==| " fbrev
@@ -363,7 +355,7 @@ do
 				then
 					echo
 					echo "Error: Not a valid Build"
-					echo "Please choose a build from the list displayed above"
+					echo "Please enter ONLY the build number from the list displayed above"
 					rm -rf $temploc/
 					exit 1
 				fi
@@ -507,10 +499,12 @@ do
 	v)
 		options_found=1
 		# whats our script's version
+		echo
+		echo "OpenELEC_DEV Version: $VERSION"
 		;;
 
 	b)
-		# reboot -- intentionally undocumented (needed only for GUI interaction)
+		# reboot
 		options_found=1
 		/sbin/reboot
 		;;
@@ -529,6 +523,7 @@ do
 		echo "-r                   check the remote build revision."
 		echo "-l                   what's our local build revision."
 		echo "-s                   check for new script version"
+		echo "-b                   reboot OpenELEC"
 		echo "-v                   script version."
 		echo "-h/--help            help."
 		exit
@@ -664,7 +659,7 @@ echo -ne "\033[0K\r"
 if [ "$?" = "0" ] ;
 then
 	echo -ne "Update Server Active.\033[0K\r"
-	sleep 4
+	sleep 3
 	echo -ne "\033[0K\r"
 	###### check if a script update is in progress
 	if [ ! -f /tmp/update_in_progress ] ;
@@ -711,10 +706,10 @@ then
 			exit
 		else
 			echo -ne "Script Update Not Avaliable."
-			sleep 2
+			sleep 3
 			echo -ne "\033[0K\r"
 			echo -ne "Continuing...\033[0K\r"
-			sleep 2
+			sleep 3
 			echo -ne "\033[0K\r"
 		fi
 	fi
