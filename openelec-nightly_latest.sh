@@ -36,6 +36,7 @@ fi
 rsvers=$(curl --silent https://raw.github.com/wavrunrx/OpenELEC_Dev/master/openelec-nightly_latest.sh | grep "VERSION=" | grep -v grep | sed 's/[^0-9]*//g')
 if [ -f `dirname $0`/openelec-nightly_$rsvers.sh ] ;
 then
+	no_display="yes"
 	mv `dirname $0`/openelec-nightly_$rsvers.sh `dirname $0`/openelec-nightly_latest.sh
 	chmod 755 `dirname $0`/openelec-nightly_latest.sh
 fi
@@ -685,6 +686,7 @@ then
 			echo "*---| New Version: $rsvers"
 			echo
 			echo "Changelog:"
+			echo "----------"
 			changelog
 			sleep 3
 			echo
@@ -697,8 +699,7 @@ then
 			echo "Version: v$rsvers Has Been Downloaded."
 			sleep 1
 			echo "Running: v$rsvers Now..."
-			echo
-			echo
+			echo "------------------------"
 			###### indicate update in progress to next script instance
 			touch /tmp/update_in_progress
 			###### remove update indication flag
