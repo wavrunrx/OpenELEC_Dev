@@ -28,10 +28,22 @@ set -e
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+if [ -f /tmp/update_in_progress ] ;
+then
+	rm -f /tmp/update_in_progress
+fi
+
+rsvers=$(curl --silent https://raw.github.com/wavrunrx/OpenELEC_Dev/master/openelec-nightly_latest.sh | grep "VERSION=" | grep -v grep | sed 's/[^0-9]*//g')
+if [ -f `dirname $0`/openelec-nightly_$rsvers.sh ] ;
+then
+	mv `dirname $0`/openelec-nightly_$rsvers.sh `dirname $0`/openelec-nightly_latest.sh
+	chmod 755 `dirname $0`/openelec-nightly_latest.sh
+fi
+
 
 ###### script version
 
-VERSION="19"
+VERSION="18"
 
 
 ###### if no options specified; we continue as normal
@@ -66,6 +78,7 @@ then
 	temploc="/storage/downloads/xbmc-update"
 else
 	echo "Non-ARM Device Detected"
+	echo "OpenELEC_Dev v$VERSION"
 	echo
 	temploc="/dev/shm/xbmc-update"
 fi
@@ -644,6 +657,8 @@ fi
 
 ###### making sure github is alive and ready to update the script if nessessary.
 
+s_update ()
+{
 echo -ne "Please Wait...\033[0K\r"
 sleep 1
 echo -ne "\033[0K\r"
@@ -654,15 +669,14 @@ echo -ne "\033[0K\r"
 if [ "$?" = "0" ] ;
 then
 	echo -ne "Update Server Active.\033[0K\r"
-	sleep 2
+	sleep 3
 	echo -ne "\033[0K\r"
 	###### check if a script update is in progress
 	if [ ! -f /tmp/update_in_progress ] ;
 	then
-		###### file does not exist :: first run
-		###### checking script version; auto updating and re-running new version; if available
-		## curl --silent https://raw.github.com/wavrunrx/OpenELEC_Dev/master/openelec-nightly_latest.sh
-		rsvers=$(curl --silent -fksSL -A "Mozilla/5.0 (Windows NT 6.2; WOW64; rv:15.0) Gecko/20120910144328 Firefox/15.0.2" http://bit.ly/TOf3qf | grep "VERSION=" | grep -v grep | sed 's/[^0-9]*//g')
+		###### update_in_progress does not exist :: first run
+		###### checking script version; auto updating and re-running new version
+		rsvers=$(curl --silent https://raw.github.com/wavrunrx/OpenELEC_Dev/master/openelec-nightly_latest.sh | grep "VERSION=" | grep -v grep | sed 's/[^0-9]*//g')
 		if [ "$rsvers" -gt "$VERSION" ] ;
 		then
 			echo
@@ -671,26 +685,30 @@ then
 			echo "*---| New Version: $rsvers"
 			echo
 			echo "Changelog:"
-			echo
 			changelog
 			sleep 3
 			echo
-			echo "*---| Updating OpenELEC_DEV Now:"
+			echo "*---| Updating OpenELEC_DEV Now..."
 			sleep 1
 			curl --silent -fksSL -A "Mozilla/5.0 (Windows NT 6.2; WOW64; rv:15.0) Gecko/20120910144328 Firefox/15.0.2" http://bit.ly/TOf3qf > `dirname $0`/openelec-nightly_$rsvers.sh
 			echo "Done !"
+			no_display="yes"
+			echo
+			echo "Version: v$rsvers Has Been Downloaded."
+			sleep 1
+			echo "Running: v$rsvers Now..."
 			echo
 			echo
 			###### indicate update in progress to next script instance
 			touch /tmp/update_in_progress
-			###### run a new version of update script
-			sh `dirname $0`/openelec-nightly_$rsvers.sh
 			###### remove update indication flag
  			rm -f /tmp/update_in_progress
-			###### swapping  script old with new
+			###### swapping old script with new
 			rm -f `dirname $0`/openelec-nightly_latest.sh
 			mv `dirname $0`/openelec-nightly_$rsvers.sh `dirname $0`/openelec-nightly_latest.sh
 			chmod 755 `dirname $0`/openelec-nightly_latest.sh
+			###### run a new version of update script
+			sh `dirname $0`/openelec-nightly_latest.sh
 			###### exit old script
 			exit
 		else
@@ -711,6 +729,16 @@ else
 	sleep 3
 	echo -ne "\033[0K\r"
 	echo
+fi
+echo -ne "Script Update Not Avaliable."
+sleep 2
+echo -ne "\033[0K\r"
+echo -ne "Continuing...\033[0K\r"
+}
+
+if [ "$no_display" != "yes" ] ;
+then
+	s_update
 fi
 
 
