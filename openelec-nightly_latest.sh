@@ -570,9 +570,9 @@ ctrl_c ()
 echo -ne "\n\n"
 unsetv
 rm -rf $temploc/
+echo "User aborted process."
 echo -ne "SIGINT Interrupt caught"
 echo -ne "\nTemporary files removed\n"
-echo -ne "\nBye !\n"
 exit 1
 }
 
@@ -652,7 +652,7 @@ s_update ()
 echo -ne "Please Wait...\033[0K\r"
 sleep 2
 echo -ne "\033[0K\r"
-echo -ne "Checking Update Server's State...\033[0K\r"
+echo -ne "Checking Script Update Server's State...\033[0K\r"
 sleep 1
 ping -qc 3 raw.github.com > /dev/null
 echo -ne "\033[0K\r"
@@ -709,7 +709,7 @@ then
 			sleep 3
 			echo -ne "\033[0K\r"
 			echo -ne "Continuing...\033[0K\r"
-			sleep 3
+			sleep 2
 			echo -ne "\033[0K\r"
 		fi
 	fi
@@ -896,9 +896,7 @@ fi
 
 if [ "$PRESENT" -gt "$PAST" ] ;
 then
-	sleep 1
-	echo -ne "\033[0K\r"
-	echo
+	#echo -ne "\033[0K\r"
 	echo
 	echo "#### WARNING:"
 	echo "#### UPDATING TO OR FROM DEVELOPMENT BUILDS MAY HAVE POTENTIALLY UNPREDICTABLE EFFECTS"
@@ -908,9 +906,9 @@ then
 	echo
 	echo
 	echo -ne "Please Wait...\033[0K\r"
-	sleep 6
+	sleep 3
 	echo -ne "\033[0K\r"
-	echo "===| OpenELEC"
+	echo ">>>| OpenELEC"
 	echo "Updates Are Available."
 	echo "Local:   $PAST          Compiled: `cat /etc/version | cut -f 2-2 -d'-' | sed 's/......$//;s/./& /4' | sed 's/./& /7' | awk '{ print "[ "$2"/"$3"/"$1" ]" }'`" 
 	echo "Remote:  $PRESENT          Compiled: `echo $FOLDER | cut -f 4-4 -d'-' | sed 's/......$//;s/./& /4' | sed 's/./& /7' | awk '{ print "[ "$2"/"$3"/"$1" ]" }'`"
@@ -934,7 +932,6 @@ then
 		sleep .5
 		echo
 		echo
-		echo
 		echo "Downloading Image:"
 		wget $mode/`cat $temploc/temp2` -P "$temploc/"
 		echo "Done!"
@@ -956,7 +953,7 @@ else
 	rm -rf $temploc/
 	echo -ne "\033[0K\r"
 	echo
-	echo "===| OpenELEC"
+	echo ">>>| OpenELEC"
 	echo "No Updates Available."
 	echo "Local:   $PAST          Compiled: `cat /etc/version | cut -f 2-2 -d'-' | sed 's/......$//;s/./& /4' | sed 's/./& /7' | awk '{ print "[ "$2"/"$3"/"$1" ]" }'`" 
 	echo "Remote:  $PRESENT          Compiled: `echo $FOLDER | cut -f 4-4 -d'-' | sed 's/......$//;s/./& /4' | sed 's/./& /7' | awk '{ print "[ "$2"/"$3"/"$1" ]" }'`"
@@ -968,14 +965,32 @@ else
 fi
 
 
-###### extract/move SYSTEM & KERNEL images to the proper location for update
+###### some visual feedback for long operations
+
+spinner() {
+proc=$1
+while [ -d /proc/$proc ];do
+echo -ne '/' ; sleep 0.05
+echo -ne "\033[0K\r"
+echo -ne '-' ; sleep 0.05
+echo -ne "\033[0K\r"
+echo -ne '\' ; sleep 0.05
+echo -ne "\033[0K\r"
+echo -ne '|' ; sleep 0.05
+echo -ne "\033[0K\r"
+done
+return 0
+}
+
+###### extract SYSTEM & KERNEL images to the proper location for update
 
 echo
-echo "Extracting Files..."
-echo -ne "Please Wait...\033[0K\r"
-tar -xjf $extract -C $temploc/
-echo -ne "\033[0K\r"
+echo "Extracting Files:"
+tar -xjf $extract -C $temploc/ &
+pid=$!
+spinner $pid
 echo "Done!"
+unset pid
 sleep 2
 
 
@@ -983,11 +998,12 @@ sleep 2
 echo
 echo "Moving Images to /storage/.update"
 echo -ne "Please Wait...\033[0K\r"
-find $temploc -type f -name "KERNEL" -exec /bin/mv {} /storage/.update \;
-find $temploc -type f -name "SYSTEM" -exec /bin/mv {} /storage/.update \;
-mv $temploc/OpenELEC-*/target/*.md5 /storage/.update
+mv $temploc/OpenELEC-*/target/* /storage/.update &
+pid=$!
+spinner $pid
 echo -ne "\033[0K\r"
 echo "Done!"
+unset pid
 sleep 2
 
 
@@ -1003,6 +1019,7 @@ then
 	echo
 	echo "md5 ==> SYSTEM: OK!"
 	sys_return=0
+	sleep 1
 else
 	sys_return=1
 	echo "---   WARNING   ---"
@@ -1055,11 +1072,13 @@ then
 	exit 1
 fi
 
+sleep 1
 echo "File Integrity Check: PASSED!"
 echo
 echo -ne "Continuing...\033[0K\r"
-sleep 2
+sleep 3
 echo -ne "\033[0K\r"
+echo
 
 
 ###### create a backup of our current, and new build for easy access if needed for a emergency rollback
@@ -1069,30 +1088,47 @@ then
 	rm -rf /storage/downloads/OpenELEC_r$PAST
 fi
 
+echo "Creating backup of PREVIOUS SYSTEM & KERNEL images."
+echo -ne "Please Wait...\033[0K\r"
+mkdir /storage/downloads/OpenELEC_r$PAST
+cp /flash/KERNEL /flash/SYSTEM /storage/downloads/OpenELEC_r$PAST
+chmod +x /storage/downloads/OpenELEC_r$PAST/KERNEL
+chmod +x /storage/downloads/OpenELEC_r$PAST/SYSTEM
+md5sum /storage/downloads/OpenELEC_r$PAST/KERNEL > /storage/downloads/OpenELEC_r$PAST/KERNEL.md5 &
+pid=$!
+spinner $pid
+unset pid
+md5sum /storage/downloads/OpenELEC_r$PAST/SYSTEM > /storage/downloads/OpenELEC_r$PAST/SYSTEM.md5 &
+pid=$!
+spinner $pid
+unset pid
+echo -ne "\033[0K\r"
+echo
+echo "     Important Notice"
+echo "--------------------------"
+echo "     In the need of an emergency rollback:"
+echo "-->  A backup copy of your *PREVIOUS* SYSTEM & KERNEL images [ revision $PAST ] have been created here:"
+echo "     [  /storage/downloads/OpenELEC_r$PAST  ]"
+echo "     This will script automatically remove the oldest version during its next run."
+echo
+echo
 echo "Creating backup of NEW SYSTEM & KERNEL images."
 echo -ne "Please Wait...\033[0K\r"
 mkdir -p /storage/downloads/OpenELEC_r$PRESENT
-cp /storage/.update/KERNEL /storage/.update/SYSTEM /storage/.update/KERNEL.md5 /storage/.update/SYSTEM.md5 /storage/downloads/OpenELEC_r$PRESENT
+sleep 1
+cp /storage/.update/KERNEL /storage/.update/SYSTEM /storage/.update/KERNEL.md5 /storage/.update/SYSTEM.md5 /storage/downloads/OpenELEC_r$PRESENT &
+pid=$!
+spinner $pid
+unset pid
 echo -ne "\033[0K\r"
 echo
-echo "---- Important Notice ----"
+echo "     Important Notice"
+echo "--------------------------"
 echo "     In the need of an emergency rollback:"
-echo "-->  A backup copy of your *NEW* SYSTEM & KERNEL images (revision $PRESENT) have been created here:"
-echo "     /storage/downloads/OpenELEC_r$PRESENT"
+echo "-->  A backup copy of your *NEW* SYSTEM & KERNEL images [ revision $PRESENT ] have been created here:"
+echo "     [  /storage/downloads/OpenELEC_r$PRESENT  ]"
+echo "     This will script automatically remove the oldest version during its next run."
 echo
-echo "Creating backup of PREVIOUS SYSTEM & KERNEL images."
-echo -ne "Please Wait...\033[0K\r"
-mkdir -p /storage/downloads/OpenELEC_r$PAST
-cp /flash/KERNEL /flash/SYSTEM /storage/downloads/OpenELEC_r$PRESENT/KERNEL.md5 /storage/downloads/OpenELEC_r$PRESENT/SYSTEM.md5 /storage/downloads/OpenELEC_r$PAST
-echo -ne "\033[0K\r"
-echo
-echo "     In the need of an emergency rollback:"
-echo "-->  A backup copy of your *PREVIOUS* SYSTEM & KERNEL images (revision $PAST) have been created here:"
-echo "     /storage/downloads/OpenELEC_r$PAST"
-echo
-echo "---- Important Notice ----"
-echo "-->  NEVER mix SYSTEM & KERNEL images from differing architectures, or build revisions."
-echo "-->  You will cause irreparable damage to your operating system which will require a clean re-install."
 sleep 5
 
 
@@ -1134,6 +1170,7 @@ elif [[ "$reb" = "N" || "$reb" = "n" || "$reb" = "No" || "$reb" = "no" ]] ;
 then
 	sleep 1
 	echo
+	echo "User aborted process."
 	echo "Please reboot to complete the update."
 	echo "Exiting."
 	unsetv
