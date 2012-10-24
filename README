@@ -36,8 +36,8 @@ How to get it:
 Options:  ./openelec-nightly_latest.sh  [-ioacrlsbvh]
 
 
-	-i                   check if SYSTEM & KERNEL are already in-place; and suggest a reboot.
-	-o                   list all avaliable archival builds for your architecture.
+	-i                   check if SYSTEM & KERNEL are already in-place; suggest a reboot.
+	-o                   list all avaliable archived builds for your architecture.
 	-z                   roll back or forward to a version of our choosing.
 	-a                   list all avaliable builds for your architecture.
 	-c                   quick check to see if we're up-to-date.
