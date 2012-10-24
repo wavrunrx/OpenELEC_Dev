@@ -59,14 +59,7 @@ options_found="0"
 OPTIND="1"
 
 
-###### what branch do we use
-
-#if [ `cat /etc/arch | awk '{ print $1 }'` = "RPi.arm" ] ;
-#then
-#	mode="http://sources.openelec.tv/tmp/image/"
-#else
-#	mode="http://sources.openelec.tv/tmp/image/"
-#fi
+###### image location
 
 mode="http://sources.openelec.tv/tmp/image/"
 
@@ -81,7 +74,7 @@ then
 	temploc="/storage/downloads/xbmc-update"
 else
 	echo "Non-ARM Device Detected"
-	echo "OpenELEC_Dev v$VERSION"
+	echo "OpenELEC_Dev: v$VERSION"
 	echo
 	temploc="/dev/shm/xbmc-update"
 fi
@@ -214,6 +207,7 @@ do
 		echo
 		echo "Archival Builds Avaliable for your Architecture:  ($arch)"
 		echo "------------------------------------------------"
+		echo
 		if [[ -z `cat $temploc/temp` ]] ;
         then
         	echo
@@ -513,8 +507,6 @@ do
 	v)
 		options_found=1
 		# whats our script's version
-		echo
-		echo "OpenELEC_DEV Version: $VERSION"
 		;;
 
 	b)
@@ -663,7 +655,7 @@ fi
 s_update ()
 {
 echo -ne "Please Wait...\033[0K\r"
-sleep 1
+sleep 2
 echo -ne "\033[0K\r"
 echo -ne "Checking Update Server's State...\033[0K\r"
 sleep 1
@@ -672,7 +664,7 @@ echo -ne "\033[0K\r"
 if [ "$?" = "0" ] ;
 then
 	echo -ne "Update Server Active.\033[0K\r"
-	sleep 3
+	sleep 4
 	echo -ne "\033[0K\r"
 	###### check if a script update is in progress
 	if [ ! -f /tmp/update_in_progress ] ;
@@ -700,7 +692,7 @@ then
 			echo "Version: v$rsvers Has Been Downloaded."
 			sleep 1
 			echo "Running: v$rsvers Now..."
-			echo "------------------"
+			echo "-------------------"
 			echo
 			echo
 			###### indicate update in progress to next script instance
@@ -722,7 +714,7 @@ then
 			sleep 2
 			echo -ne "\033[0K\r"
 			echo -ne "Continuing...\033[0K\r"
-			sleep 1
+			sleep 2
 			echo -ne "\033[0K\r"
 		fi
 	fi
