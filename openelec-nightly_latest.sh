@@ -29,7 +29,7 @@ set -e
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-###### weve already updated; need to clean out some remaining files from out last script update, if any
+###### weve already been updated; need to remove update indicator from out last script update, if any
 
 if [ -f /tmp/update_in_progress ] ;
 then
@@ -158,7 +158,7 @@ do
         	exit 1
         fi
 		echo
-		echo "Newest Remote Release for [ $arch ] ==> `cat $temploc/temp2 | tail -c 15 | sed 's/.\{8\}$//' | tr -d "\-r"`"
+		echo "Newest Remote Release for [ $arch ] ---> `cat $temploc/temp2 | tail -c 15 | sed 's/.\{8\}$//' | tr -d "\-r"`"
 		rm -rf $temploc/
 		unset arch
 		;;
@@ -233,7 +233,7 @@ do
 			echo "Would you like to reboot now (y/n) ?"
 			read -n1 -p "==| " reb
 			echo
-				if [[ "$reb" != "Y" ]] && [[ "$reb" != "y" ]] && [[ "$reb" != "N" ]] && [[ "$reb" != "n" ]] && [[ "$reb" != "yes" ]] && [[ "$reb" != "no" ]] && [[ "$reb" != "Yes" ]] && [[ "$reb" != "No" ]] ;
+				if [[ "$reb" != "Y" ]] && [[ "$reb" != "y" ]] && [[ "$reb" != "N" ]] && [[ "$reb" != "n" ]] ;
 				then
 					echo
 					echo "Unrecognized Input."
@@ -242,7 +242,7 @@ do
 					echo
 					unset reb
 					exit 1
-				elif [[ "$reb" = "Y" || "$reb" = "y" || "$reb" = "Yes" || "$reb" = "yes" ]] ;
+				elif [[ "$reb" = "Y" || "$reb" = "y" ]] ;
 				then
 					sleep 1
 					echo
@@ -252,7 +252,7 @@ do
 					sleep 1
 					/sbin/reboot
 					exit 0
-				elif [[ "$reb" = "N" || "$reb" = "n" || "$reb" = "No" || "$reb" = "no" ]] ;
+				elif [[ "$reb" = "N" || "$reb" = "n" ]] ;
 				then
 					sleep 1
 					echo
@@ -270,7 +270,7 @@ do
 	s)
 		options_found=1
 		# checking for a script update, and notifying. no actual update going on here.
-		rsvers=$(curl --silent -fksSL -A "Mozilla/5.0 (Windows NT 6.2; WOW64; rv:15.0) Gecko/20120910144328 Firefox/15.0.2" http://bit.ly/TOf3qf | grep "VERSION=" | grep -v grep | sed 's/[^0-9]*//g')
+		rsvers=$(curl --silent https://raw.github.com/wavrunrx/OpenELEC_Dev/master/openelec-nightly_latest.sh | grep "VERSION=" | grep -v grep | sed 's/[^0-9]*//g')
 		if [ "$rsvers" -gt "$VERSION" ] ;
 		then
 			echo
@@ -308,7 +308,7 @@ do
 		echo
 		echo "Are you sure you want to switch to an older/newer Build (y/n) ?"
 		read -n1 -p "==| " old
-			if [[ $old != "Y" ]] && [[ $old != "y" ]] && [[ $old != "N" ]] && [[ $old != "n" ]] && [[ $old != "yes" ]] && [[ $old != "no" ]] && [[ $old != "Yes" ]] && [[ $old != "No" ]] ;
+			if [[ $old != "Y" ]] && [[ $old != "y" ]] && [[ $old != "N" ]] && [[ $old != "n" ]] ;
 			then
 				echo
 				echo
@@ -318,7 +318,7 @@ do
 				echo "Exiting."
 				echo
 				exit 1
-			elif [[ $old = "Y" || $old = "y" || $old = "Yes" || $old = "yes" ]] ;
+			elif [[ $old = "Y" || $old = "y" ]] ;
 			then
 				echo
 				echo
@@ -457,7 +457,7 @@ do
 				echo "You must reboot to complete the update."
 				echo "Would you like to reboot now (y/n) ?"
 				read -n1 -p "==| " reb
-				if [[ "$reb" != "Y" ]] && [[ "$reb" != "y" ]] && [[ "$reb" != "N" ]] && [[ "$reb" != "n" ]] && [[ "$reb" != "yes" ]] && [[ "$reb" != "no" ]] && [[ "$reb" != "Yes" ]] && [[ "$reb" != "No" ]] ;
+				if [[ "$reb" != "Y" ]] && [[ "$reb" != "y" ]] && [[ "$reb" != "N" ]] && [[ "$reb" != "n" ]] ;
 				then
 					echo
 					echo "Unrecognized Input."
@@ -465,7 +465,7 @@ do
 					echo "Exiting."
 					echo
 					exit 1
-				elif [[ "$reb" = "Y" || "$reb" = "y" || "$reb" = "Yes" || "$reb" = "yes" ]] ;
+				elif [[ "$reb" = "Y" || "$reb" = "y" ]] ;
 				then
 					sleep 1
 					echo
@@ -474,7 +474,7 @@ do
 					sleep 1
 					/sbin/reboot
 					exit 0
-					elif [[ "$reb" = "N" || "$reb" = "n" || "$reb" = "No" || "$reb" = "no" ]] ;
+					elif [[ "$reb" = "N" || "$reb" = "n" ]] ;
 					then
 						sleep 1
 						echo
@@ -485,7 +485,7 @@ do
 						fi
 				## everything went well: we're done !
 				exit 0	
-			elif [[ $old = "N" || $old = "n" || $old = "No" || $old = "no" ]] ;
+			elif [[ $old = "N" || $old = "n" ]] ;
 			then
 				echo
 				echo
@@ -500,8 +500,8 @@ do
 	v)
 		options_found=1
 		# whats our script's version
-		echo
-		echo "OpenELEC_DEV Version: $VERSION"
+		#echo
+		#echo "OpenELEC_DEV Version: $VERSION"
 		;;
 
 	b)
@@ -569,11 +569,11 @@ trap ctrl_c 2
 ctrl_c ()
 {
 echo -ne "\n\n"
-unsetv
 rm -rf $temploc/
 echo "User aborted process."
 echo -ne "SIGINT Interrupt caught"
 echo -ne "\nTemporary files removed\n"
+unsetv
 exit 1
 }
 
@@ -592,6 +592,7 @@ unset PRESENT
 unset VERSION
 unset kernmd5
 unset kernrom
+unset temploc
 unset sysrom
 unset OPTIND
 unset FOLDER
@@ -680,31 +681,58 @@ then
 			changelog
 			sleep 3
 			echo
-			echo "*---| Updating OpenELEC_DEV Now..."
-			sleep 1
-			curl --silent -fksSL -A "Mozilla/5.0 (Windows NT 6.2; WOW64; rv:15.0) Gecko/20120910144328 Firefox/15.0.2" http://bit.ly/TOf3qf > `dirname $0`/openelec-nightly_$rsvers.sh
-			echo "Done !"
 			echo
-			echo "Version: v$rsvers Has Been Downloaded."
-			sleep 1
-			echo "Running: v$rsvers Now..."
-			echo "-------------------"
-			echo
-			echo
-			###### indicate update in progress to next script instance
-			touch /tmp/update_in_progress
-			###### indicate no update check nessessary to next script instance
-			touch /tmp/no_display
-			###### remove update indication flag
- 			rm -f /tmp/update_in_progress
-			###### swapping old script with new
-			rm -f `dirname $0`/openelec-nightly_latest.sh
-			mv `dirname $0`/openelec-nightly_$rsvers.sh `dirname $0`/openelec-nightly_latest.sh
-			chmod 755 `dirname $0`/openelec-nightly_latest.sh
-			###### run a new version of update script
-			sh `dirname $0`/openelec-nightly_latest.sh
-			###### exit old script
-			exit
+			while true; do
+			echo "Would you like to update it now (y/n) ?"
+			read -n1 -p "==| " supdate
+			supdate=$supdate
+			if [[ $supdate != "Y" ]] && [[ $supdate != "y" ]] && [[ $supdate != "N" ]] && [[ $supdate != "n" ]] ;
+			then
+				echo
+				echo
+				echo "Unrecognized Input."
+				sleep 1
+				echo "Please answer (y/n)"
+				echo
+				continue
+			elif [[ $supdate = "Y" || $supdate = "y" ]] ;
+			then
+				echo
+				echo
+				echo
+				echo "*---| Updating OpenELEC_DEV:"
+				sleep 1
+				curl --silent -fksSL -A "Mozilla/5.0 (Windows NT 6.2; WOW64; rv:15.0) Gecko/20120910144328 Firefox/15.0.2" http://bit.ly/TOf3qf > `dirname $0`/openelec-nightly_$rsvers.sh
+				echo "Done !"
+				echo
+				sleep 1
+				echo "BEGIN: OpenELEC_DEV v$rsvers Now"
+				echo "--------------------------------"
+				echo
+				echo
+				echo
+				###### indicate update in progress to next script instance
+				touch /tmp/update_in_progress
+				###### indicate no update check nessessary to next script instance
+				touch /tmp/no_display
+				###### remove update indication flag
+			 	rm -f /tmp/update_in_progress
+				###### swapping old script with new
+				rm -f `dirname $0`/openelec-nightly_latest.sh
+				mv `dirname $0`/openelec-nightly_$rsvers.sh `dirname $0`/openelec-nightly_latest.sh
+				chmod 755 `dirname $0`/openelec-nightly_latest.sh
+				###### run a new version of update script
+				sh `dirname $0`/openelec-nightly_latest.sh
+				###### exit old script
+				exit
+			elif [[ $supdate = "N" || $supdate = "n" ]] ;
+			then
+				echo
+				echo
+				echo
+				break
+			fi
+			done
 		else
 			echo -ne "Script Update Not Avaliable."
 			sleep 3
@@ -754,7 +782,7 @@ echo "KERNEL & SYSTEM are already in place."
 echo "You must reboot to complete the update."
 echo "Would you like to reboot now (y/n) ?"
 read -n1 -p "==| " reb
-if [[ $reb != "Y" ]] && [[ $reb != "y" ]] && [[ $reb != "N" ]] && [[ $reb != "n" ]] && [[ $reb != "yes" ]] && [[ $reb != "no" ]] && [[ $reb != "Yes" ]] && [[ $reb != "No" ]] ;
+if [[ $reb != "Y" ]] && [[ $reb != "y" ]] && [[ $reb != "N" ]] && [[ $reb != "n" ]] ;
 then
 	echo
 	echo
@@ -766,7 +794,7 @@ then
 	unsetv
 	rm -rf $temploc/
 	exit 1
-elif [[ $reb = "Y" || $reb = "y" || $reb = "Yes" || $reb = "yes" ]] ;
+elif [[ $reb = "Y" || $reb = "y" ]] ;
 then
 	echo
 	echo
@@ -778,7 +806,7 @@ then
 	sleep 2
 	/sbin/reboot
 	exit 0
-elif [[ $reb = "N" || $reb = "n" || $reb = "No" || $reb = "no" ]] ;
+elif [[ $reb = "N" || $reb = "n" ]] ;
 then
 	echo
 	echo
@@ -804,10 +832,11 @@ fi
 
 
 ###### if there are no builds avaliable on the server for your specific architecture, we are going to notify you, and gracefully exit
+###### also captures remote filename & extension
 
 arch=$(cat /etc/arch)
-curl --silent $mode/ | grep $arch | sed -e 's/<li><a href="//' -e 's/[^ ]* //' -e 's/<\/a><\/li>//' > $temploc/temp3
-if [[ -z `cat $temploc/temp3` ]] ;
+curl --silent $mode/ | grep $arch | sed -e 's/<li><a href="//' -e 's/[^ ]* //' -e 's/<\/a><\/li>//' > $temploc/temp
+if [[ -z `cat $temploc/temp` ]] ;
 then
         echo "There are either no available builds for your architecture at this time, or"
         echo "the only build avaliable, is the same build revision you are currently on."
@@ -819,12 +848,6 @@ then
         unsetv
         exit 1
 fi
-
-
-###### Captures remote filename & extension
-
-arch=$(cat /etc/arch)
-curl --silent $mode/ | grep $arch | sed -e 's/<li><a href="//' -e 's/[^ ]* //' -e 's/<\/a><\/li>//' > $temploc/temp
 
 
 ###### remove all but the newest build from out list
@@ -917,7 +940,7 @@ then
 	## The remote build is newer then our local build. Asking for input.
 	echo "Would you like to update (y/n) ?"
 	read -n1 -p "==| " yn
-	if [[ $yn != "Y" ]] && [[ $yn != "y" ]] && [[ $yn != "N" ]] && [[ $yn != "n" ]] && [[ $yn != "yes" ]] && [[ $yn != "no" ]] && [[ $yn != "Yes" ]] && [[ $yn != "No" ]] ;
+	if [[ $yn != "Y" ]] && [[ $yn != "y" ]] && [[ $yn != "N" ]] && [[ $yn != "n" ]] ;
 	then
 		echo
 		echo
@@ -928,7 +951,7 @@ then
 		echo
 		unsetv
 		exit 1
-	elif [[ $yn = "Y" || $yn = "y" || $yn = "Yes" || $yn = "yes" ]] ;
+	elif [[ $yn = "Y" || $yn = "y" ]] ;
 	then
 		sleep .5
 		echo
@@ -938,7 +961,7 @@ then
 		echo "Done!"
 		extract="$temploc/$FOLDER.tar.bz2"
 		sleep 1
-	elif [[ $yn = "N" || $yn = "n" || $yn = "No" || $yn = "no" ]] ;
+	elif [[ $yn = "N" || $yn = "n" ]] ;
 	then
 		echo
 		echo
@@ -1148,7 +1171,7 @@ echo "You must reboot to finish the update."
 echo "Would you like to reboot now (y/n) ?"
 read -n1 -p "==| " reb
 echo
-if [[ "$reb" != "Y" ]] && [[ "$reb" != "y" ]] && [[ "$reb" != "N" ]] && [[ "$reb" != "n" ]] && [[ "$reb" != "yes" ]] && [[ "$reb" != "no" ]] && [[ "$reb" != "Yes" ]] && [[ "$reb" != "No" ]] ;
+if [[ "$reb" != "Y" ]] && [[ "$reb" != "y" ]] && [[ "$reb" != "N" ]] && [[ "$reb" != "n" ]] ;
 then
 	echo
 	echo "Unrecognized Input."
@@ -1157,7 +1180,7 @@ then
 	echo
 	unsetv
 	exit 1
-elif [[ "$reb" = "Y" || "$reb" = "y" || "$reb" = "Yes" || "$reb" = "yes" ]] ;
+elif [[ "$reb" = "Y" || "$reb" = "y" ]] ;
 then
 	sleep 1
 	echo
@@ -1167,7 +1190,7 @@ then
 	sleep 1
 	/sbin/reboot
 	exit 0
-elif [[ "$reb" = "N" || "$reb" = "n" || "$reb" = "No" || "$reb" = "no" ]] ;
+elif [[ "$reb" = "N" || "$reb" = "n" ]] ;
 then
 	sleep 1
 	echo
