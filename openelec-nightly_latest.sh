@@ -307,8 +307,8 @@ do
 		# roll back or forward to a version of our choosing
 		echo
 		echo "Are you sure you want to switch to an older/newer Build (y/n) ?"
-		read -n1 -p "==| " old
-			if [[ $old != "Y" ]] && [[ $old != "y" ]] && [[ $old != "N" ]] && [[ $old != "n" ]] ;
+		read -n1 -p "==| " alt
+			if [[ $alt != "Y" ]] && [[ $alt != "y" ]] && [[ $alt != "N" ]] && [[ $alt != "n" ]] ;
 			then
 				echo
 				echo
@@ -318,7 +318,7 @@ do
 				echo "Exiting."
 				echo
 				exit 1
-			elif [[ $old = "Y" || $old = "y" ]] ;
+			elif [[ $alt = "Y" || $alt = "y" ]] ;
 			then
 				echo
 				echo
@@ -372,6 +372,7 @@ do
 					wget -O $temploc/$fn $mode/archive/$fn
 				fi
 				echo -ne "\033[0K\r"
+				echo "Done!"
 				extract="$temploc/$fn"
 				echo
 				echo "Extracting Files..."
@@ -384,9 +385,7 @@ do
 				###### Move KERNEL & SYSTEM to /storage/.update/
 				echo "Moving Images to /storage/.update"
 				echo -ne "Please Wait...\033[0K\r"
-				find $temploc -type f -name "KERNEL" -exec /bin/mv {} /storage/.update \;
-				find $temploc -type f -name "SYSTEM" -exec /bin/mv {} /storage/.update \;
-				mv $temploc/OpenELEC-*/target/*.md5 /storage/.update
+				mv $temploc/OpenELEC-*/target/* /storage/.update
 				echo -ne "\033[0K\r"
 				echo "Done!"
 				sleep 2
@@ -401,6 +400,7 @@ do
 					echo "md5 ==> SYSTEM: OK!"
 					rm -f /storage/.update/SYSTEM.md5
 					sys_return=0
+					sleep 2
 				else
 					sys_return=1
 				echo "---   WARNING   ---"
@@ -438,7 +438,7 @@ do
 				return=$(($kern_return+$sys_return))
 				if [[ "$return" = "2" ]] ;
 				then
-					echo "md5 mismatch detected."
+					echo "md5 Mismatch Detected."
 					echo "Update Terminated."
 					unsetv
 					exit 1
@@ -474,18 +474,17 @@ do
 					sleep 1
 					/sbin/reboot
 					exit 0
-					elif [[ "$reb" = "N" || "$reb" = "n" ]] ;
-					then
-						sleep 1
-						echo
-						echo
-						echo "Please reboot to complete the update."
-						echo "Exiting."
-						exit 0
-						fi
-				## everything went well: we're done !
+				elif [[ "$reb" = "N" || "$reb" = "n" ]] ;
+				then
+					sleep 1
+					echo
+					echo
+					echo "Please reboot to complete the update."
+					echo "Exiting."
+					exit 0
+					fi
 				exit 0	
-			elif [[ $old = "N" || $old = "n" ]] ;
+			elif [[ $alt = "N" || $alt = "n" ]] ;
 			then
 				echo
 				echo
@@ -499,9 +498,6 @@ do
 
 	v)
 		options_found=1
-		# whats our script's version
-		#echo
-		#echo "OpenELEC_DEV Version: $VERSION"
 		;;
 
 	b)
@@ -541,7 +537,7 @@ do
 done
 
 
-###### allows multiple options to be calculated and displayed as if it were the only one passed
+###### allows multiple options to be calculated and displayed
 
 shift $(($OPTIND - 1))
 
@@ -604,8 +600,26 @@ unset PAST
 unset mode
 unset arch
 unset reb
-unset old
+unset alt
 unset yn
+}
+
+
+###### some visual feedback for long operations
+
+spinner() {
+proc=$1
+while [ -d /proc/$proc ];do
+echo -ne '/' ; sleep 0.05
+echo -ne "\033[0K\r"
+echo -ne '-' ; sleep 0.05
+echo -ne "\033[0K\r"
+echo -ne '\' ; sleep 0.05
+echo -ne "\033[0K\r"
+echo -ne '|' ; sleep 0.05
+echo -ne "\033[0K\r"
+done
+return 0
 }
 
 
@@ -654,9 +668,12 @@ s_update ()
 echo -ne "Please Wait...\033[0K\r"
 sleep 2
 echo -ne "\033[0K\r"
-echo -ne "Checking Script Update Server's State...\033[0K\r"
+echo -ne "Checking Script Update Server State...\033[0K\r"
 sleep 1
-ping -qc 3 raw.github.com > /dev/null
+ping -qc 4 raw.github.com > /dev/null &
+pid=$!
+spinner $pid
+unset pid
 echo -ne "\033[0K\r"
 if [ "$?" = "0" ] ;
 then
@@ -701,13 +718,19 @@ then
 				echo
 				echo
 				echo "*---| Updating OpenELEC_DEV:"
+				echo -ne "      Please Wait...\033[0K\r"
 				sleep 1
-				curl --silent -fksSL -A "Mozilla/5.0 (Windows NT 6.2; WOW64; rv:15.0) Gecko/20120910144328 Firefox/15.0.2" http://bit.ly/TOf3qf > `dirname $0`/openelec-nightly_$rsvers.sh
+				curl --silent -fksSL -A "Mozilla/5.0 (Windows NT 6.2; WOW64; rv:15.0) Gecko/20120910144328 Firefox/15.0.2" http://bit.ly/TOf3qf > `dirname $0`/openelec-nightly_$rsvers.sh &
+				pid=$!
+				spinner $pid
+				unset pid
+				echo -ne "\033[0K\r"
 				echo "Done !"
+				echo
 				echo
 				sleep 1
 				echo "BEGIN: OpenELEC_DEV v$rsvers Now"
-				echo "--------------------------------"
+				echo "---------------------------"
 				echo
 				echo
 				echo
@@ -746,7 +769,7 @@ else
 	echo 
 	echo "* Script Update Server Not Responding"
 	echo "* Checking again on the next run."
-	echo "---------------------------------"
+	echo "  -------------------------------"
 	echo -ne "Continuing...\033[0K\r"
 	sleep 3
 	echo -ne "\033[0K\r"
@@ -791,8 +814,8 @@ then
 	echo "Please answer (y/n)"
 	echo "Exiting."
 	echo
-	unsetv
 	rm -rf $temploc/
+	unsetv
 	exit 1
 elif [[ $reb = "Y" || $reb = "y" ]] ;
 then
@@ -800,8 +823,8 @@ then
 	echo
 	echo
 	echo "Rebooting..."
-	unsetv
 	rm -rf $temploc/
+	unsetv
 	sync
 	sleep 2
 	/sbin/reboot
@@ -813,8 +836,8 @@ then
 	echo "Please reboot to complete the update."
 	sleep 2
 	echo "Exiting."
-	unsetv
 	rm -rf $temploc/
+	unsetv
 	exit 0
 	fi
 fi
@@ -989,23 +1012,6 @@ else
 fi
 
 
-###### some visual feedback for long operations
-
-spinner() {
-proc=$1
-while [ -d /proc/$proc ];do
-echo -ne '/' ; sleep 0.05
-echo -ne "\033[0K\r"
-echo -ne '-' ; sleep 0.05
-echo -ne "\033[0K\r"
-echo -ne '\' ; sleep 0.05
-echo -ne "\033[0K\r"
-echo -ne '|' ; sleep 0.05
-echo -ne "\033[0K\r"
-done
-return 0
-}
-
 ###### extract SYSTEM & KERNEL images to the proper location for update
 
 echo
@@ -1043,7 +1049,7 @@ then
 	echo
 	echo "md5 ==> SYSTEM: OK!"
 	sys_return=0
-	sleep 1
+	sleep 2
 else
 	sys_return=1
 	echo "---   WARNING   ---"
@@ -1058,8 +1064,6 @@ else
 	rm -rf $temploc/
 	sync
 fi
-
-sleep 1
 
 if [ "$kernmd5" = "$kernrom" ] ;
 then
@@ -1084,13 +1088,13 @@ fi
 ###### the system rom is evaluated first.
 ###### if an error is found, the process is terminated and we would never know if the kernel image was broken as well or not.
 ######
-###### this way we know that if the sum of $kern_return, and $sys_return is anything over "1", that one or both of the images are broken, and we've already been
+###### this way we know that if the sum of $kern_return, and $sys_return is over "1", that one or both of the images are broken, and we've already been
 ###### notified which one it was above. exit.
 
 return=$(($kern_return+$sys_return))
 if [[ "$return" = "2" ]] ;
 then
-	echo "md5 mismatch detected."
+	echo "md5 Mismatch Detected."
 	echo "Update Terminated."
 	unsetv
 	exit 1
