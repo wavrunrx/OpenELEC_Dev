@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 set -e
 
-# "OpenELEC_DEV" ; An automated development build updater script for OpenELEC
+# "OpenELEC_DEV" ; An automated development build updater script for OpenELEC nightlies
 #
-# Copyright (c) February 2012, Eric Bixler
+# Copyright (c) February 2012, Eric Andrew Bixler
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -13,20 +13,20 @@ set -e
 #	* Redistributions in binary form must reproduce the above copyright
 #	  notice, this list of conditions and the following disclaimer in the
 #	  documentation and/or other materials provided with the distribution.
-#	* Neither the name of the <organization> nor the
-#	  names of its contributors may be used to endorse or promote products
-#	  derived from this software without specific prior written permission.
+#	* Neither the name of the <organization> nor the names of its contributors
+#     may be used to endorse or promote products derived from this software
+#     without specific prior written permission.
 #
-# THIS SOFTWARE IS PROVIDED BY Eric Bixler ''AS IS'' AND ANY
-# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# THIS SOFTWARE IS PROVIDED BY Eric Andrew Bixler ''AS IS'' AND ANY EXPRESS
+# OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
 # WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-# DISCLAIMED. IN NO EVENT SHALL Eric Bixler BE LIABLE FOR ANY
-# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# DISCLAIMED. IN NO EVENT SHALL Eric Bixler BE LIABLE FOR ANY DIRECT, 
+# INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
 # (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
 # LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
 # ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+# THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
 ###### weve already been updated; need to remove update indicator from out last script update, if any
@@ -303,6 +303,20 @@ do
 		
 	z)	
 		options_found=1
+		spinner() {
+		proc=$1
+		while [ -d /proc/$proc ];do
+		echo -ne '/' ; sleep 0.05
+		echo -ne "\033[0K\r"
+		echo -ne '-' ; sleep 0.05
+		echo -ne "\033[0K\r"
+		echo -ne '\' ; sleep 0.05
+		echo -ne "\033[0K\r"
+		echo -ne '|' ; sleep 0.05
+		echo -ne "\033[0K\r"
+		done
+		return 0
+		}
 		arch=$(cat /etc/arch)
 		# roll back or forward to a version of our choosing
 		echo
@@ -375,19 +389,26 @@ do
 				echo "Done!"
 				extract="$temploc/$fn"
 				echo
-				echo "Extracting Files..."
+				echo
+				echo "Extracting Files:"
 				echo -ne "Please Wait...\033[0K\r"
-				tar -xjf $extract -C $temploc/
+				tar -xjf $extract -C $temploc/ &
 				echo -ne "\033[0K\r"
+				pid=$!
+				spinner $pid
 				echo "Done!"
+				unset pid
 				sleep 2
 				echo
-				###### Move KERNEL & SYSTEM to /storage/.update/
+				###### Move KERNEL & SYSTEM  and respective md5's to /storage/.update/
 				echo "Moving Images to /storage/.update"
 				echo -ne "Please Wait...\033[0K\r"
-				mv $temploc/OpenELEC-*/target/* /storage/.update
+				mv $temploc/OpenELEC-*/target/* /storage/.update &
+				pid=$!
+				spinner $pid
 				echo -ne "\033[0K\r"
 				echo "Done!"
+				unset pid
 				sleep 2
 				###### Compare md5-sums
 				sysmd5=$(cat /storage/.update/SYSTEM.md5 | awk '{print $1}')
@@ -398,7 +419,6 @@ do
 				then
 					echo
 					echo "md5 ==> SYSTEM: OK!"
-					rm -f /storage/.update/SYSTEM.md5
 					sys_return=0
 					sleep 2
 				else
@@ -415,11 +435,9 @@ do
 				rm -rf $temploc/
 				sync
 				fi
-				sleep 1
 				if [ "$kernmd5" = "$kernrom" ] ;
 				then
 					echo "md5 ==> KERNEL: OK!"
-					rm -f /storage/.update/KERNEL.md5
 					kern_return=0
 				else
 				kern_return=1
