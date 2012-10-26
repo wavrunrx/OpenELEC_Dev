@@ -73,6 +73,16 @@ else
 fi
 
 
+###### going to check for avaliable RAM on other platforms, and if there isnt more then 300MB free; well just use the harddisk; this will override the variable set above
+
+ram_mb=$((`cat /proc/meminfo | sed -n 2p | awk '{print $2}'`/1024))
+if [ "$ram_mb" -lt "300" ] ;
+then
+	temploc="/storage/downloads/xbmc-update"
+	unset ram_mb
+fi
+
+
 ###### options
 
 while getopts ":craospilqzvbh--:help" opt ;
@@ -300,12 +310,13 @@ do
 		options_found=0
 		update_yes=1
 		;;
-		
+
 	z)	
 		options_found=1
 		spinner() {
 		proc=$1
-		while [ -d /proc/$proc ];do
+		while [ -d /proc/$proc ] ;
+		do
 		echo -ne '/' ; sleep 0.05
 		echo -ne "\033[0K\r"
 		echo -ne '-' ; sleep 0.05
@@ -317,11 +328,26 @@ do
 		done
 		return 0
 		}
+		trap ctrl_c 2
+		ctrl_c ()
+		{
+		echo -ne "\n\n"
+		if [ -d $temploc/ ] ;
+		then
+			rm -rf $temploc/
+		fi
+		echo "User aborted process."
+		echo -ne "SIGINT Interrupt caught"
+		echo -ne "\nTemporary files removed\n"
+		exit 1
+		}
 		arch=$(cat /etc/arch)
 		# roll back or forward to a version of our choosing
+		while true; do
 		echo
 		echo "Are you sure you want to switch to an older/newer Build (y/n) ?"
 		read -n1 -p "==| " alt
+		alt=$alt
 			if [[ $alt != "Y" ]] && [[ $alt != "y" ]] && [[ $alt != "N" ]] && [[ $alt != "n" ]] ;
 			then
 				echo
@@ -329,21 +355,17 @@ do
 				echo "Unrecognized Input."
 				sleep 2
 				echo "Please answer (y/n)"
-				echo "Exiting."
-				echo
-				exit 1
+				continue
 			elif [[ $alt = "Y" || $alt = "y" ]] ;
 			then
 				echo
 				echo
 				echo -ne "Please Wait...\033[0K\r"
-				arch=$(cat /etc/arch)
 				mkdir -p $temploc/
 				curl --silent $mode/archive/ | grep $arch | sed -e 's/<li><a href="//' -e 's/[^ ]* //' -e 's/<\/a><\/li>//' > $temploc/temp
 				echo -ne "\033[0K\r"
 				echo
 				echo "Builds Available for your Architecture: ($arch)"
-				## sed '$d' removes first result
 				cat $temploc/temp | sort -n > $temploc/temp3
 				echo "---------------------------------------"
 				echo
@@ -364,19 +386,23 @@ do
 
 				echo "----------------------------------"
 				echo
-				echo "Enter the build number you want from the above list (Ex: "11327")"
+				while true; do
+				echo "Enter the build number you want from the list above (Ex: "11327")"
 				read -p "==| " fbrev
+				fbrev=$fbrev
 				if ! [[ "$fbrev" =~ ^[0-9]+$ ]] ; 
 				then
 					echo
 					echo "Error: Not a valid Build"
-					echo "Please enter ONLY the build number from the list displayed above"
-					rm -rf $temploc/
-					exit 1
+					echo "Please enter ONLY a build number you want from the list displayed above."
+					echo
+					continue
 				fi
+				break
+				done
 				fn=$(grep "$fbrev" $temploc/temp3 | awk '{print $1}')
 				echo
-				echo "Downloading..."
+				echo "Downloading:"
 				echo -ne "Please Wait..\033[0K\r"
 				fe=$(curl --silent $mode/$fn --head | head -n1 | wc -m)
 				if [ "$fe" = "17" ] ;
@@ -462,37 +488,44 @@ do
 					exit 1
 				fi
 				###### some feedback
+				sleep 2
 				echo "File Integrity: PASSED!"
 				echo
+				sleep 1
 				echo -ne "Continuing...\033[0K\r"
 				sleep 2
 				echo -ne "\033[0K\r"
 				###### Cleanup
 				rm -rf $temploc/
 				###### ask if we want to reboot now
+				while true; do
+				echo
 				echo "Update Preperation Complete."
 				sleep 2
 				echo "You must reboot to complete the update."
 				echo "Would you like to reboot now (y/n) ?"
 				read -n1 -p "==| " reb
+				reb=$reb
 				if [[ "$reb" != "Y" ]] && [[ "$reb" != "y" ]] && [[ "$reb" != "N" ]] && [[ "$reb" != "n" ]] ;
 				then
+					echo
 					echo
 					echo "Unrecognized Input."
 					echo "Please answer (y/n)"
 					echo "Exiting."
 					echo
-					exit 1
-				elif [[ "$reb" = "Y" || "$reb" = "y" ]] ;
+					continue
+				elif [[ "$reb" = "Y" || "$reb" = "y" || "$reb" = "Yes" || "$reb" = "yes" ]] ;
 				then
 					sleep 1
+					echo
 					echo
 					echo "Rebooting..."
 					sync
 					sleep 1
 					/sbin/reboot
 					exit 0
-				elif [[ "$reb" = "N" || "$reb" = "n" ]] ;
+				elif [[ "$reb" = "N" || "$reb" = "n" || "$reb" = "No" || "$reb" = "no" ]] ;
 				then
 					sleep 1
 					echo
@@ -500,9 +533,11 @@ do
 					echo "Please reboot to complete the update."
 					echo "Exiting."
 					exit 0
-					fi
+				fi
+				done
+				## everything went well: we're done !
 				exit 0	
-			elif [[ $alt = "N" || $alt = "n" ]] ;
+			elif [[ $alt = "N" || $alt = "n" || $alt = "No" || $alt = "no" ]] ;
 			then
 				echo
 				echo
@@ -512,6 +547,7 @@ do
 				echo
 				exit 0
 			fi
+			done
 		;;
 
 	v)
@@ -1023,7 +1059,8 @@ else
 	echo "Local:   $PAST          Compiled: `cat /etc/version | cut -f 2-2 -d'-' | sed 's/......$//;s/./& /4' | sed 's/./& /7' | awk '{ print "[ "$2"/"$3"/"$1" ]" }'`" 
 	echo "Remote:  $PRESENT          Compiled: `echo $FOLDER | cut -f 4-4 -d'-' | sed 's/......$//;s/./& /4' | sed 's/./& /7' | awk '{ print "[ "$2"/"$3"/"$1" ]" }'`"
 	echo
-	echo "Check back later."
+	echo "You are on the latest build for your platform."
+	echo "Please check back later."
 	echo
 	unsetv
 	exit 0
