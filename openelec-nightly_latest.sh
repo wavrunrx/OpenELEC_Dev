@@ -39,7 +39,7 @@ fi
 
 ###### script version
 
-VERSION="23"
+VERSION="24"
 
 
 ###### if no options specified; we continue as normal
