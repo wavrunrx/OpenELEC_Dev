@@ -92,7 +92,7 @@ do
 	c)
 		options_found=1
 		# quick check to see if we're up-to-date
-		mkdir -p $temploc/
+		mkdir -p $temploc
 		arch=$(cat /etc/arch)
 		curl --silent $mode/ | grep $arch | sed -e 's/<li><a href="//' -e 's/[^ ]* //' -e 's/<\/a><\/li>//' > $temploc/temp
 		if [ $(wc -l $temploc/temp | cut -c -1) -gt "1" ] ;
@@ -111,7 +111,7 @@ do
 			echo "http://sources.openelec.tv/tmp/image/"
         	echo
         	echo "Exiting Now."
-        	rm -rf $temploc/
+        	rm -rf $temploc
         	unset arch
         	exit 1
         fi
@@ -135,7 +135,7 @@ do
 			echo
 			echo "No Updates Available"
 		fi
-		rm -rf $temploc/
+		rm -rf $temploc
 		unset arch
 		unset PAST
 		unset PRESENT
@@ -144,7 +144,7 @@ do
 	r)
 		options_found=1
 		# displays the remote build number
-		mkdir -p $temploc/
+		mkdir -p $temploc
 		arch=$(cat /etc/arch)
 		curl --silent $mode/ | grep $arch | sed -e 's/<li><a href="//' -e 's/[^ ]* //' -e 's/<\/a><\/li>//' > $temploc/temp
 		if [ $(wc -l $temploc/temp | cut -c -1) -gt "1" ] ;
@@ -163,13 +163,13 @@ do
 			echo "http://sources.openelec.tv/tmp/image/"
         	echo
         	echo "Exiting Now."
-			rm -rf $temploc/
+			rm -rf $temploc
 			unset arch
         	exit 1
         fi
 		echo
 		echo "Newest Remote Release for [ $arch ] ---> `cat $temploc/temp2 | tail -c 15 | sed 's/.\{8\}$//' | tr -d "\-r"`"
-		rm -rf $temploc/
+		rm -rf $temploc
 		unset arch
 		;;
 			
@@ -177,7 +177,7 @@ do
 		options_found=1
 		# show all remotely available builds for your architecture, and build date
 		arch=$(cat /etc/arch)
-		mkdir -p $temploc/
+		mkdir -p $temploc
 		curl --silent $mode/ | grep $arch | sed -e 's/<li><a href="//' -e 's/[^ ]* //' -e 's/<\/a><\/li>//' > $temploc/temp3
 		echo
 		echo "Builds Available for your Architecture:  ($arch)"
@@ -190,7 +190,7 @@ do
         	echo "Please check again later."
         	echo
 			echo "Exiting Now."
-			rm -rf $temploc/
+			rm -rf $temploc
 			unset arch
         	exit 1
         fi
@@ -198,7 +198,7 @@ do
 		do
 		    echo -n "$i  --->  Compiled On: "; echo -n "$i" | cut -f 4-4 -d'-' | sed 's/......$//;s/./& /4' | sed 's/./& /7' | awk '{ print "[ "$2"/"$3"/"$1" ]" }'
 		done
-		rm -rf $temploc/
+		rm -rf $temploc
 		unset arch
 		;;
 
@@ -206,7 +206,7 @@ do
 		options_found=1
 		# show all old archived builds for your architecture, as well as compilation date
 		arch=$(cat /etc/arch)
-		mkdir -p $temploc/
+		mkdir -p $temploc
 		curl --silent $mode/archive/ | grep $arch | sed -e 's/<li><a href="//' -e 's/[^ ]* //' -e 's/<\/a><\/li>//' > $temploc/temp
 		echo
 		echo "Archival Builds Avaliable for your Architecture:  ($arch)"
@@ -225,7 +225,7 @@ do
 		do
 			echo -n "$i  --->  Compiled On: "; echo -n "$i" | cut -f 4-4 -d'-' | sed 's/......$//;s/./& /4' | sed 's/./& /7' | awk '{ print "[ "$2"/"$3"/"$1" ]" }'
 		done
-		rm -rf $temploc/
+		rm -rf $temploc
 		unset arch
 		;;
 
@@ -332,9 +332,9 @@ do
 		ctrl_c ()
 		{
 		echo -ne "\n\n"
-		if [ -d $temploc/ ] ;
+		if [ -d $temploc ] ;
 		then
-			rm -rf $temploc/
+			rm -rf $temploc
 		fi
 		echo "User aborted process."
 		echo -ne "SIGINT Interrupt caught"
@@ -361,7 +361,7 @@ do
 				echo
 				echo
 				echo -ne "Please Wait...\033[0K\r"
-				mkdir -p $temploc/
+				mkdir -p $temploc
 				curl --silent $mode/archive/ | grep $arch | sed -e 's/<li><a href="//' -e 's/[^ ]* //' -e 's/<\/a><\/li>//' > $temploc/temp
 				echo -ne "\033[0K\r"
 				echo
@@ -418,7 +418,7 @@ do
 				echo
 				echo "Extracting Files:"
 				echo -ne "Please Wait...\033[0K\r"
-				tar -xjf $extract -C $temploc/ &
+				tar -xjf $extract -C $temploc &
 				echo -ne "\033[0K\r"
 				pid=$!
 				spinner $pid
@@ -458,7 +458,7 @@ do
 				sleep 3
 				rm -f /storage/.update/SYSTEM
 				rm -f /storage/.update/SYSTEM.md5
-				rm -rf $temploc/
+				rm -rf $temploc
 				sync
 				fi
 				if [ "$kernmd5" = "$kernrom" ] ;
@@ -476,7 +476,7 @@ do
 				sleep 3
 				rm -f /storage/.update/KERNEL
 				rm -f /storage/.update/KERNEL.md5
-				rm -rf $temploc/
+				rm -rf $temploc
 				sync
 				fi
 				return=$(($kern_return+$sys_return))
@@ -496,7 +496,7 @@ do
 				sleep 2
 				echo -ne "\033[0K\r"
 				###### Cleanup
-				rm -rf $temploc/
+				rm -rf $temploc
 				###### ask if we want to reboot now
 				while true; do
 				echo
@@ -619,7 +619,7 @@ trap ctrl_c 2
 ctrl_c ()
 {
 echo -ne "\n\n"
-rm -rf $temploc/
+rm -rf $temploc
 echo "User aborted process."
 echo -ne "SIGINT Interrupt caught"
 echo -ne "\nTemporary files removed\n"
@@ -868,7 +868,7 @@ then
 	echo "Please answer (y/n)"
 	echo "Exiting."
 	echo
-	rm -rf $temploc/
+	rm -rf $temploc
 	unsetv
 	exit 1
 elif [[ $reb = "Y" || $reb = "y" ]] ;
@@ -877,7 +877,7 @@ then
 	echo
 	echo
 	echo "Rebooting..."
-	rm -rf $temploc/
+	rm -rf $temploc
 	unsetv
 	sync
 	sleep 2
@@ -890,7 +890,7 @@ then
 	echo "Please reboot to complete the update."
 	sleep 2
 	echo "Exiting."
-	rm -rf $temploc/
+	rm -rf $temploc
 	unsetv
 	exit 0
 	fi
@@ -901,7 +901,7 @@ fi
 
 if [ -d "$temploc" ] ;
 then
-	rm -rf $temploc/
+	rm -rf $temploc
 	mkdir -p $temploc
 else
 	mkdir -p $temploc
@@ -921,7 +921,7 @@ then
         echo "http://sources.openelec.tv/tmp/image/"
         echo
         echo "Exiting Now."
-        rm -rf $temploc/
+        rm -rf $temploc
         unsetv
         exit 1
 fi
@@ -1034,7 +1034,7 @@ then
 		echo
 		echo
 		echo "Downloading Image:"
-		wget $mode/`cat $temploc/temp2` -P "$temploc/"
+		wget $mode/`cat $temploc/temp2` -P "$temploc"
 		echo "Done!"
 		extract="$temploc/$FOLDER.tar.bz2"
 		sleep 1
@@ -1051,7 +1051,7 @@ then
 	fi
 else
 	## The remote build is not newer then what we've got already. Exit.
-	rm -rf $temploc/
+	rm -rf $temploc
 	echo -ne "\033[0K\r"
 	echo
 	echo ">>>| OpenELEC"
@@ -1071,7 +1071,7 @@ fi
 
 echo
 echo "Extracting Files:"
-tar -xjf $extract -C $temploc/ &
+tar -xjf $extract -C $temploc &
 pid=$!
 spinner $pid
 echo "Done!"
@@ -1116,7 +1116,7 @@ else
 	sleep 3
 	rm -f /storage/.update/SYSTEM
 	rm -f /storage/.update/SYSTEM.md5
-	rm -rf $temploc/
+	rm -rf $temploc
 	sync
 fi
 
@@ -1135,7 +1135,7 @@ else
 	sleep 3
 	rm -f /storage/.update/KERNEL
 	rm -f /storage/.update/KERNEL.md5
-	rm -rf $temploc/
+	rm -rf $temploc
 	sync
 fi
 
@@ -1217,7 +1217,7 @@ sleep 5
 
 ###### Cleanup
 
-rm -rf $temploc/
+rm -rf $temploc
 
 
 ###### ask if we want to reboot now
