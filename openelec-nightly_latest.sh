@@ -386,20 +386,32 @@ do
 
 				echo "----------------------------------"
 				echo
-				while true; do
-				echo "Enter the build number you want from the list above (Ex: "11327")"
-				read -p "==| " fbrev
-				fbrev=$fbrev
-				if ! [[ "$fbrev" =~ ^[0-9]+$ ]] ; 
-				then
-					echo
-					echo "Error: Not a valid Build"
-					echo "Please enter ONLY a build number you want from the list displayed above."
-					echo
-					continue
-				fi
-				break
+				numbers=$(cat $temploc/temp)
+				for i in $numbers; do
+		        	echo $i | tail -c 15 | sed 's/.\{8\}$//' | tr -d "\-r" >> $temploc/numbers
 				done
+				list=$(cat $temploc/numbers)
+				while true; do
+					echo "Enter the build number you want from the list above (Ex: "11327")"
+					read -p "==| " fbrev
+					while true; do
+						if ! [[ $list =~ $fbrev ]] ;
+						then
+							echo
+							echo "Error: [ $fbrev ] is not a valid build number"
+							echo "It does not exist or is not a numerical value"
+							echo "Please enter only one build number you want from the list above."
+							read -p "==| " fbrev
+							echo
+							continue
+
+						fi
+						break
+					done
+					break
+				done
+				unset numbers
+				unset list
 				fn=$(grep "$fbrev" $temploc/temp3 | awk '{print $1}')
 				echo
 				echo "Downloading:"
