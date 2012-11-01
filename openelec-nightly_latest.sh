@@ -766,7 +766,7 @@ then
 			echo
 			echo
 			while true; do
-			echo "Would you like to update it now (y/n) ?"
+			echo "Would you like to update the script now (y/n) ?"
 			read -n1 -p "==| " supdate
 			supdate=$supdate
 			if [[ $supdate != "Y" ]] && [[ $supdate != "y" ]] && [[ $supdate != "N" ]] && [[ $supdate != "n" ]] ;
@@ -786,7 +786,7 @@ then
 				echo "*---| Updating OpenELEC_DEV:"
 				echo -ne "      Please Wait...\033[0K\r"
 				sleep 1
-				curl --silent -fksSL -A "Mozilla/5.0 (Windows NT 6.2; WOW64; rv:15.0) Gecko/20120910144328 Firefox/15.0.2" http://bit.ly/TOf3qf > `dirname $0`/openelec-nightly_$rsvers.sh &
+				curl --silent -fksSL -A "`curl -V | head -1 | awk '{print $2}'`" http://bit.ly/TOf3qf > `dirname $0`/openelec-nightly_$rsvers.sh &
 				pid=$!
 				spinner $pid
 				unset pid
