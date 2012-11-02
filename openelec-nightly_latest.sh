@@ -1183,6 +1183,10 @@ then
 	rm -rf /storage/downloads/OpenELEC_r$PAST
 fi
 
+###### make sure 'downloads' exists; it should by default, but some users remove it.
+mkdir -p /storage/downloads
+
+
 echo "Creating backup of PREVIOUS SYSTEM & KERNEL images."
 echo -ne "Please Wait...\033[0K\r"
 mkdir /storage/downloads/OpenELEC_r$PAST
