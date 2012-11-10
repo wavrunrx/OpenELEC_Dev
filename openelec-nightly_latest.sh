@@ -667,6 +667,7 @@ unset mode
 unset arch
 unset reb
 unset alt
+unset pid
 unset yn
 }
 
@@ -744,11 +745,13 @@ echo -ne "\033[0K\r"
 if [ "$?" = "0" ] ;
 then
 	echo -ne "Update Server Active.\033[0K\r"
-	sleep 3
+	sleep 2
 	echo -ne "\033[0K\r"
+
 	###### check if a script update is in progress
 	if [ ! -f /tmp/update_in_progress ] ;
 	then
+
 		###### update_in_progress does not exist :: first run
 		###### checking script version; auto updating and re-running new version
 		rsvers=$(curl --silent https://raw.github.com/wavrunrx/OpenELEC_Dev/master/openelec-nightly_latest.sh | grep "VERSION=" | grep -v grep | sed 's/[^0-9]*//g')
@@ -824,7 +827,7 @@ then
 			done
 		else
 			echo -ne "Script Update Not Avaliable."
-			sleep 3
+			sleep 2
 			echo -ne "\033[0K\r"
 			echo -ne "Continuing...\033[0K\r"
 			sleep 2
@@ -837,7 +840,7 @@ else
 	echo "* Checking again on the next run."
 	echo "  -------------------------------"
 	echo -ne "Continuing...\033[0K\r"
-	sleep 3
+	sleep 2
 	echo -ne "\033[0K\r"
 	echo
 fi
@@ -1012,10 +1015,10 @@ then
 	#echo -ne "\033[0K\r"
 	echo
 	echo "#### WARNING:"
-	echo "#### UPDATING TO OR FROM DEVELOPMENT BUILDS MAY HAVE POTENTIALLY UNPREDICTABLE EFFECTS"
-	echo "#### ON THE STABILITY AND OVERALL USABILITY OF YOUR SYSTEM. SINCE NEW CODE IS LARGELY"
-	echo "#### UNTESTED, DO NOT EXPECT SUPPORT ON ANY ISSUES YOU MAY ENCOUNTER AFTER UPDATING."
-	echo "#### IF WERE TO BE OFFERED, IT WILL BE LIMITED TO DEVELOPMENT LEVEL DEBUGGING."
+	echo "#### UPDATING TO OR FROM DEVELOPMENT BUILDS MAY HAVE POTENTIALLY UNPREDICTABLE"
+	echo "#### EFFECTS ON THE STABILITY AND OVERALL USABILITY OF YOUR SYSTEM. SINCE NEW CODE"
+	echo "#### IS LARGELY UNTESTED, DO NOT EXPECT SUPPORT ON ANY ISSUES YOU MAY ENCOUNTER."
+	echo "#### IF IT WERE TO BE OFFERED, IT WILL BE LIMITED TO DEVELOPMENT LEVEL DEBUGGING."
 	echo
 	echo
 	echo -ne "Please Wait...\033[0K\r"
@@ -1206,8 +1209,8 @@ echo
 echo "     Important Notice"
 echo "--------------------------"
 echo "     In the need of an emergency rollback:"
-echo "-->  A backup copy of your *PREVIOUS* SYSTEM & KERNEL images [ revision $PAST ] have been created here:"
-echo "     [  /storage/downloads/OpenELEC_r$PAST  ]"
+echo "-->  A backup copy of your *PREVIOUS* SYSTEM & KERNEL images [ revision $PAST ]"
+echo "     have been created here:  /storage/downloads/OpenELEC_r$PAST"
 echo "     This will script automatically remove the oldest version during its next run."
 echo
 echo
@@ -1224,8 +1227,8 @@ echo
 echo "     Important Notice"
 echo "--------------------------"
 echo "     In the need of an emergency rollback:"
-echo "-->  A backup copy of your *NEW* SYSTEM & KERNEL images [ revision $PRESENT ] have been created here:"
-echo "     [  /storage/downloads/OpenELEC_r$PRESENT  ]"
+echo "-->  A backup copy of your *NEW* SYSTEM & KERNEL images [ revision $PRESENT ]"
+echo "     have been created here:  /storage/downloads/OpenELEC_r$PRESENT"
 echo "     This will script automatically remove the oldest version during its next run."
 echo
 sleep 5
