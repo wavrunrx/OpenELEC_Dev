@@ -65,15 +65,23 @@ then
 	echo "RaspberryPi Detected"
 	echo
 	temploc="/storage/downloads/xbmc-update"
+	dkernel="kernel.img"
+	dsystem="SYSTEM"
+	dkmd5="kernel.md5"
+	dsmd5="SYSTEM.md5"
 else
 	echo "Non-ARM Device Detected"
 	echo "OpenELEC_Dev: v$VERSION"
 	echo
 	temploc="/dev/shm/xbmc-update"
+	dkernel="KERNEL"
+	dsystem="SYSTEM"
+	dkmd5="KERNEL.md5"
+	dsmd5="SYSTEM.md5"
 fi
 
 
-###### going to check for avaliable RAM on other platforms, and if there isnt more then 300MB free; well just use the harddisk; this will override the variable set above
+###### going to check for avaliable RAM, and if there isnt more then 300MB free; well just use the harddisk; this will override the variable set above
 
 ram_mb=$((`cat /proc/meminfo | sed -n 2p | awk '{print $2}'`/1024))
 if [ "$ram_mb" -lt "300" ] ;
@@ -449,10 +457,10 @@ do
 				unset pid
 				sleep 2
 				###### Compare md5-sums
-				sysmd5=$(cat /storage/.update/SYSTEM.md5 | awk '{print $1}')
-				kernmd5=$(cat /storage/.update/KERNEL.md5 | awk '{print $1}')
-				kernrom=$(md5sum /storage/.update/KERNEL | awk '{print $1}')
-				sysrom=$(md5sum /storage/.update/SYSTEM | awk '{print $1}')
+				sysmd5=$(cat /storage/.update/$dsmd5 | awk '{print $1}')
+				kernmd5=$(cat /storage/.update/$dkmd5 | awk '{print $1}')
+				kernrom=$(md5sum /storage/.update/$dkernel | awk '{print $1}')
+				sysrom=$(md5sum /storage/.update/$dsystem | awk '{print $1}')
 				if [ "$sysmd5" = "$sysrom" ] ;
 				then
 					echo
@@ -468,8 +476,8 @@ do
 				echo "Notify one of the developers on the Forums or IRC that"
 				echo "the SYSTEM image of $fn.tar.bz2 is corrupt"
 				sleep 3
-				rm -f /storage/.update/SYSTEM
-				rm -f /storage/.update/SYSTEM.md5
+				rm -f /storage/.update/$dsystem
+				rm -f /storage/.update/$dsmd5
 				rm -rf $temploc
 				sync
 				fi
@@ -486,8 +494,8 @@ do
 				echo "Notify one of the developers on the Forums or IRC that"
 				echo "the KERNEL image of $fn.tar.bz2 is corrupt"
 				sleep 3
-				rm -f /storage/.update/KERNEL
-				rm -f /storage/.update/KERNEL.md5
+				rm -f /storage/.update/$dkernel
+				rm -f /storage/.update/$dkmd5
 				rm -rf $temploc
 				sync
 				fi
@@ -655,6 +663,8 @@ unset VERSION
 unset kernmd5
 unset kernrom
 unset temploc
+unset dkernel
+unset dsystem
 unset sysrom
 unset OPTIND
 unset FOLDER
@@ -662,6 +672,8 @@ unset branch
 unset sysmd5
 unset rsvers
 unset status
+unset dkmd5
+unset dsmd5
 unset PAST
 unset mode
 unset arch
@@ -1109,10 +1121,10 @@ sleep 2
 
 ###### Compare md5-sums
 
-sysmd5=$(cat /storage/.update/SYSTEM.md5 | awk '{print $1}')
-kernmd5=$(cat /storage/.update/KERNEL.md5 | awk '{print $1}')
-kernrom=$(md5sum /storage/.update/KERNEL | awk '{print $1}')
-sysrom=$(md5sum /storage/.update/SYSTEM | awk '{print $1}')
+sysmd5=$(cat /storage/.update/$dsmd5 | awk '{print $1}')
+kernmd5=$(cat /storage/.update/$dkmd5 | awk '{print $1}')
+kernrom=$(md5sum /storage/.update/$dkernel | awk '{print $1}')
+sysrom=$(md5sum /storage/.update/$dsystem | awk '{print $1}')
 
 if [ "$sysmd5" = "$sysrom" ] ;
 then
@@ -1129,8 +1141,8 @@ else
 	echo "Notify one of the developers on the Forums or IRC that"
 	echo "the SYSTEM image of $fn.tar.bz2 is corrupt"
 	sleep 3
-	rm -f /storage/.update/SYSTEM
-	rm -f /storage/.update/SYSTEM.md5
+	rm -f /storage/.update/$dsystem
+	rm -f /storage/.update/$dsmd5
 	rm -rf $temploc
 	sync
 fi
@@ -1148,8 +1160,8 @@ else
 	echo "Notify one of the developers on the Forums or IRC that"
 	echo "the SYSTEM image of $fn.tar.bz2 is corrupt"
 	sleep 3
-	rm -f /storage/.update/KERNEL
-	rm -f /storage/.update/KERNEL.md5
+	rm -f /storage/.update/$dkernel
+	rm -f /storage/.update/$dkmd5
 	rm -rf $temploc
 	sync
 fi
@@ -1193,14 +1205,14 @@ mkdir -p /storage/downloads
 echo "Creating backup of PREVIOUS SYSTEM & KERNEL images."
 echo -ne "Please Wait...\033[0K\r"
 mkdir /storage/downloads/OpenELEC_r$PAST
-cp /flash/KERNEL /flash/SYSTEM /storage/downloads/OpenELEC_r$PAST
-chmod +x /storage/downloads/OpenELEC_r$PAST/KERNEL
-chmod +x /storage/downloads/OpenELEC_r$PAST/SYSTEM
-md5sum /storage/downloads/OpenELEC_r$PAST/KERNEL > /storage/downloads/OpenELEC_r$PAST/KERNEL.md5 &
+cp /flash/$dkernel /flash/$dsystem /storage/downloads/OpenELEC_r$PAST
+chmod +x /storage/downloads/OpenELEC_r$PAST/$dkernel
+chmod +x /storage/downloads/OpenELEC_r$PAST/$dsystem
+md5sum /storage/downloads/OpenELEC_r$PAST/$dkernel > /storage/downloads/OpenELEC_r$PAST/$dkmd5 &
 pid=$!
 spinner $pid
 unset pid
-md5sum /storage/downloads/OpenELEC_r$PAST/SYSTEM > /storage/downloads/OpenELEC_r$PAST/SYSTEM.md5 &
+md5sum /storage/downloads/OpenELEC_r$PAST/$dsystem > /storage/downloads/OpenELEC_r$PAST/$dsmd5 &
 pid=$!
 spinner $pid
 unset pid
@@ -1218,7 +1230,7 @@ echo "Creating backup of NEW SYSTEM & KERNEL images."
 echo -ne "Please Wait...\033[0K\r"
 mkdir -p /storage/downloads/OpenELEC_r$PRESENT
 sleep 1
-cp /storage/.update/KERNEL /storage/.update/SYSTEM /storage/.update/KERNEL.md5 /storage/.update/SYSTEM.md5 /storage/downloads/OpenELEC_r$PRESENT &
+cp /storage/.update/$dkernel /storage/.update/$dsystem /storage/.update/$dkmd5 /storage/.update/$dsmd5 /storage/downloads/OpenELEC_r$PRESENT &
 pid=$!
 spinner $pid
 unset pid
