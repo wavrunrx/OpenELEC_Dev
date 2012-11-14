@@ -748,8 +748,7 @@ echo -ne "Please Wait...\033[0K\r"
 sleep 2
 echo -ne "\033[0K\r"
 echo -ne "Checking Script Update Server State...\033[0K\r"
-sleep 1
-ping -qc 4 raw.github.com > /dev/null &
+ping -qc 5 raw.github.com > /dev/null &
 pid=$!
 spinner $pid
 unset pid
@@ -924,7 +923,7 @@ then
 fi
 
 
-###### create the temporary working directory; delete if it already exists; (script would terminate if anything is already in there)
+###### delete the temporary working directory; create if doesnt exist
 
 if [ -d "$temploc" ] ;
 then
@@ -966,26 +965,14 @@ fi
 
 #####
 
-## filename w/o extension (architecture agnostic)
-FOLDER=$(cat $temploc/temp2 | sed '$s/........$//')
+## filename, no extension
+FOLDER=$(cat $temploc/temp2 | sed 's/.tar.bz2//g')
 
 ## capture local build revision
-PAST=$(cat /etc/version | tail -c 6 | tr -d 'r')
+PAST=$(cat /etc/version | awk '{gsub(/[[:punct:]]/," ")}1' |  awk '{print $3}' | tr -d 'r')
 
-## capture remote build revision (allows revision growth to 5 digits)
-PRESENT=$(cat $temploc/temp2 | tail -c 15 | cut -c 0-5)
-
-
-###### remote build revision (allows revision growth to 5 digits -- 0-9999, & 10000-99999)
-
-if [ `printf $PRESENT | sed 's/.\{4\}$//'` == "-" ] ;
-then
-	# this is for coming from revisions 9999 and lower ... hopefully nobody's using any nightly builds this old !
-	PRESENT=$(cat $temploc/temp2 | tail -c 15 | sed 's/.\{8\}$//' | tr -d "\-r"})
-else
-	# this is for coming from revisions 10000 and higher
-	PRESENT=$(cat $temploc/temp2 | tail -c 15 | sed 's/.\{8\}$//' | tr -d "r")
-fi
+## capture remote build revision (allows infinite revision growth)
+PRESENT=$(cat $temploc/temp2 | awk '{gsub(/[[:punct:]]/," ")}1' |  awk '{print $6}' | tr -d 'r')
 
 
 ###### this checks to make sure we are actually running an official development build. if we dont check this; the comparison routine will freak out if our local
@@ -995,11 +982,11 @@ if [ "$PRESENT" -lt "$PAST" ] ;
 then
 	echo
 	echo "You are currently using an unofficial development build of OpenELEC."
-	echo "This isn't supported, and will yield unusual results if we continue."
+	echo "This isn't supported, and will yield unexpected results if we continue."
 	echo "Your build is a higher revision then whats available on the official"
 	echo "snapshot server, as seen here: http://sources.openelec.tv/tmp/image/"
 	echo "In order to use this update script, you |*MUST*| be using an official"
-	echo "build, that is avaliable on the public snapshot server."
+	echo "build, that was obtained from the snapshot server."
 	echo
 	echo "Local:  $PAST"
 	echo "Remote: $PRESENT"
@@ -1026,11 +1013,12 @@ if [ "$PRESENT" -gt "$PAST" ] ;
 then
 	#echo -ne "\033[0K\r"
 	echo
-	echo "#### WARNING:"
-	echo "#### UPDATING TO OR FROM DEVELOPMENT BUILDS MAY HAVE POTENTIALLY UNPREDICTABLE"
-	echo "#### EFFECTS ON THE STABILITY AND OVERALL USABILITY OF YOUR SYSTEM. SINCE NEW CODE"
-	echo "#### IS LARGELY UNTESTED, DO NOT EXPECT SUPPORT ON ANY ISSUES YOU MAY ENCOUNTER."
-	echo "#### IF IT WERE TO BE OFFERED, IT WILL BE LIMITED TO DEVELOPMENT LEVEL DEBUGGING."
+	echo "### WARNING:"
+	echo "### UPDATING TO OR FROM DEVELOPMENT BUILDS MAY HAVE POTENTIALLY UNPREDICTABLE"
+	echo "### EFFECTS ON THE STABILITY AND OVERALL USABILITY OF YOUR SYSTEM. SINCE NEW"
+	echo "### CODE IS LARGELY UNTESTED, DO NOT EXPECT SUPPORT ON ANY ISSUES YOU MAY"
+	echo "### ENCOUNTER. IF IT WERE TO BE OFFERED, IT WILL BE LIMITED TO DEVELOPMENT"
+	echo "### LEVEL DEBUGGING."
 	echo
 	echo
 	echo -ne "Please Wait...\033[0K\r"
