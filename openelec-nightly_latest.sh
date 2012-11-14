@@ -70,7 +70,7 @@ then
 	dkmd5="kernel.md5"
 	dsmd5="SYSTEM.md5"
 else
-	echo "Non-ARM Device Detected"
+	echo "[ `cat /etc/arch | sed 's/\./ /g' | awk '{print $1}'` ] Device Detected"
 	echo "OpenELEC_Dev: v$VERSION"
 	echo
 	temploc="/dev/shm/xbmc-update"
@@ -81,10 +81,10 @@ else
 fi
 
 
-###### going to check for avaliable RAM, and if there isnt more then 300MB free; well just use the harddisk; this will override the variable set above
+###### going to check for avaliable RAM, and if there isnt more then 300MB free; just use the harddisk; this will override the variable set just above
 
 ram_mb=$((`cat /proc/meminfo | sed -n 2p | awk '{print $2}'`/1024))
-if [ "$ram_mb" -lt "300" ] ;
+if [ "$ram_mb" -lt "200" ] ;
 then
 	temploc="/storage/downloads/xbmc-update"
 	unset ram_mb
