@@ -890,51 +890,48 @@ mkdir -p /storage/.update
 ###### checking for a previous run: if SYSTEM & KERNEL files are still in ~/.update then we havent rebooted since we last ran.
 ###### this check prevents us from unnecessarily redownloading the update package.
 
-SYS_KERN=$(ls /storage/.update/* | wc -l)
-if [ "$SYS_KERN" = "4" ] ;
-then
-echo
-echo
-echo "KERNEL & SYSTEM are already in place."
-echo "You must reboot to complete the update."
-echo "Would you like to reboot now (y/n) ?"
-read -n1 -p "==| " reb
-if [[ $reb != "Y" ]] && [[ $reb != "y" ]] && [[ $reb != "N" ]] && [[ $reb != "n" ]] ;
-then
-	echo
-	echo
-	echo "Unrecognized Input."
-	sleep 2
-	echo "Please answer (y/n)"
-	echo "Exiting."
-	echo
-	rm -rf $temploc
-	unsetv
-	exit 1
-elif [[ $reb = "Y" || $reb = "y" ]] ;
-then
-	echo
-	echo
-	echo
-	echo "Rebooting..."
-	rm -rf $temploc
-	unsetv
-	sync
-	sleep 2
-	/sbin/reboot
-	exit 0
-elif [[ $reb = "N" || $reb = "n" ]] ;
-then
-	echo
-	echo
-	echo "Please reboot to complete the update."
-	sleep 2
-	echo "Exiting."
-	rm -rf $temploc
-	unsetv
-	exit 0
+while true; do
+	SYS_KERN=$(ls /storage/.update/* | wc -l)
+	if [ "$SYS_KERN" = "4" ] ;
+	then
+		echo
+		echo
+		echo "KERNEL & SYSTEM are already in place."
+		echo "You must reboot to complete the update."
+		echo "Would you like to reboot now (y/n) ?"
+		read -n1 -p "==| " reb
+	if [[ $reb != "Y" ]] && [[ $reb != "y" ]] && [[ $reb != "N" ]] && [[ $reb != "n" ]] ;
+	then
+		echo
+		echo
+		echo "Unrecognized Input."
+		sleep 2
+		echo "Please answer (y/n)"
+		continue
+	elif [[ $reb = "Y" || $reb = "y" ]] ;
+	then
+		echo
+		echo
+		echo
+		echo "Rebooting..."
+		rm -rf $temploc
+		unsetv
+		sync
+		sleep 2
+		/sbin/reboot
+	elif [[ $reb = "N" || $reb = "n" ]] ;
+	then
+		echo
+		echo
+		echo "Please reboot to complete the update."
+		sleep 2
+		echo "Exiting."
+		rm -rf $temploc
+		unsetv
+		exit 0
+		fi
 	fi
-fi
+done
 
 
 ###### delete the temporary working directory; create if doesnt exist
