@@ -890,8 +890,8 @@ mkdir -p /storage/.update
 ###### checking for a previous run: if SYSTEM & KERNEL files are still in ~/.update then we havent rebooted since we last ran.
 ###### this check prevents us from unnecessarily redownloading the update package.
 
-SYS_KERN=$(ls /storage/.update/* 2> /dev/null | wc -l)
-if [ "$SYS_KERN" = "2" ] ;
+SYS_KERN=$(ls /storage/.update/* | wc -l)
+if [ "$SYS_KERN" = "4" ] ;
 then
 echo
 echo
