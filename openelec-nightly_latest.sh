@@ -972,12 +972,14 @@ fi
 if [ $(wc -l $temploc/temp | cut -c -1) -gt "1" ] ;
 then
 	cat $temploc/temp | tail -n 1 > $temploc/temp2
-	rm $temploc/temp
 else
 	mv $temploc/temp $temploc/temp2
-	rm $temploc/temp
 fi
 
+if [ -f $temploc/temp ] ;
+then
+	rm $temploc/temp
+fi
 
 #####
 
@@ -1055,7 +1057,7 @@ then
 	echo "Updates Are Available."
 	echo "Local:   $PAST          Compiled: `cat /etc/version | cut -f 2-2 -d'-' | sed 's/......$//;s/./& /4' | sed 's/./& /7' | awk '{ print "[ "$2"/"$3"/"$1" ]" }'`" 
 	echo "Remote:  $PRESENT          Compiled: `echo $FOLDER | cut -f 4-4 -d'-' | sed 's/......$//;s/./& /4' | sed 's/./& /7' | awk '{ print "[ "$2"/"$3"/"$1" ]" }'`"
-	curl -v -H "Content-type: application/json" -u $user:$pass -X POST -d '{"id":1,"jsonrpc":"2.0","method":"GUI.ShowNotification","params":{"title":"OpenELEC_Dev","message":"Update Found ! Remote Build: $PRESENT","displaytime":8000}}' http://localhost:$port/jsonrpc
+	#curl -v -H "Content-type: application/json" -u $user:$pass -X POST -d '{"id":1,"jsonrpc":"2.0","method":"GUI.ShowNotification","params":{"title":"OpenELEC_Dev","message":"Update Found ! Remote Build: $PRESENT","displaytime":8000}}' http://localhost:$port/jsonrpc
 	echo
 	## The remote build is newer then our local build. Asking for input.
 	echo "Would you like to update (y/n) ?"
