@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 set -e
 
-# "OpenELEC_DEV" ; An automated development build updater script for OpenELEC nightlies
+
+# "OpenELEC_DEV" ; An automated development build updater script for OpenELEC nightly builds
 #
 # Copyright (c) February 2012, Eric Andrew Bixler
 # All rights reserved.
@@ -16,11 +17,12 @@ set -e
 #	* Neither the name of the <organization> nor the names of its contributors
 #     may be used to endorse or promote products derived from this software
 #     without specific prior written permission.
-#
+
+
 # THIS SOFTWARE IS PROVIDED BY Eric Andrew Bixler ''AS IS'' AND ANY EXPRESS
 # OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
 # WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-# DISCLAIMED. IN NO EVENT SHALL Eric Bixler BE LIABLE FOR ANY DIRECT, 
+# DISCLAIMED. IN NO EVENT SHALL Eric Andrew Bixler BE LIABLE FOR ANY DIRECT, 
 # INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
 # (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
 # LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
@@ -29,7 +31,7 @@ set -e
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-###### weve already been updated; need to remove update indicator from out last script update, if any
+###### we've already been updated; need to remove update indicator from out last script update run
 
 if [ -f /tmp/update_in_progress ] ;
 then
@@ -227,6 +229,7 @@ do
         	echo "Please check again later."
         	echo
 			echo "Exiting Now."
+			rm -rf $temploc
         	exit 1
         fi
 		for i in `cat $temploc/temp`
@@ -258,6 +261,7 @@ do
 					echo "Please answer (y/n)"
 					echo "Exiting Now."
 					echo
+					rm -rf $temploc
 					unset reb
 					exit 1
 				elif [[ "$reb" = "Y" || "$reb" = "y" ]] ;
@@ -375,6 +379,7 @@ do
 				echo
 				echo "Builds Available for your Architecture: ($arch)"
 				cat $temploc/temp | sort -n > $temploc/temp3
+				rm $temploc/temp
 				echo "---------------------------------------"
 				echo
 				if [[ -z `cat $temploc/temp3` ]] ;
@@ -385,6 +390,8 @@ do
 					echo "http://sources.openelec.tv/tmp/image/"
         			echo
         			echo "Exiting Now."
+					rm -rf $temploc
+					unsetv
         			exit 1
         		fi
 				for i in `cat $temploc/temp3`
@@ -394,13 +401,13 @@ do
 
 				echo "----------------------------------"
 				echo
-				numbers=$(cat $temploc/temp)
+				numbers=$(cat $temploc/temp3)
 				for i in $numbers; do
 		        	echo $i | tail -c 15 | sed 's/.\{8\}$//' | tr -d "\-r" >> $temploc/numbers
 				done
 				list=$(cat $temploc/numbers)
 				while true; do
-					echo "Enter the build number you want from the list above (Ex: "11327")"
+					echo "Enter the build number you want from the list above (Ex: "`head -1 $temploc/numbers`")"
 					read -p "==| " fbrev
 					while true; do
 						if ! [[ $list =~ $fbrev ]] ;
@@ -504,6 +511,7 @@ do
 				then
 					echo "md5 Mismatch Detected."
 					echo "Update Terminated."
+					rm -rf $temploc
 					unsetv
 					exit 1
 				fi
@@ -515,8 +523,6 @@ do
 				echo -ne "Continuing...\033[0K\r"
 				sleep 2
 				echo -ne "\033[0K\r"
-				###### Cleanup
-				rm -rf $temploc
 				###### ask if we want to reboot now
 				while true; do
 				echo
@@ -532,7 +538,6 @@ do
 					echo
 					echo "Unrecognized Input."
 					echo "Please answer (y/n)"
-					echo "Exiting."
 					echo
 					continue
 				elif [[ "$reb" = "Y" || "$reb" = "y" || "$reb" = "Yes" || "$reb" = "yes" ]] ;
@@ -541,6 +546,7 @@ do
 					echo
 					echo
 					echo "Rebooting..."
+					rm -rf $temploc
 					sync
 					sleep 1
 					/sbin/reboot
@@ -552,10 +558,12 @@ do
 					echo
 					echo "Please reboot to complete the update."
 					echo "Exiting."
+					rm -rf $temploc
 					exit 0
 				fi
 				done
 				## everything went well: we're done !
+				rm -rf $temploc
 				exit 0	
 			elif [[ $alt = "N" || $alt = "n" || $alt = "No" || $alt = "no" ]] ;
 			then
@@ -564,6 +572,7 @@ do
 				echo "User aborted process."
 				sleep 2
 				echo "Exiting."
+				rm -rf $temploc
 				echo
 				exit 0
 			fi
@@ -597,7 +606,8 @@ do
 		echo "-b                   reboot OpenELEC"
 		echo "-v                   script version."
 		echo "-h/--help            help."
-		exit
+		echo
+		exit 0
 		;;
 
 	\?)
@@ -639,10 +649,10 @@ trap ctrl_c 2
 ctrl_c ()
 {
 echo -ne "\n\n"
-rm -rf $temploc
 echo "User aborted process."
 echo -ne "SIGINT Interrupt caught"
 echo -ne "\nTemporary files removed\n"
+rm -rf $temploc
 unsetv
 exit 1
 }
@@ -676,6 +686,9 @@ unset dkmd5
 unset dsmd5
 unset PAST
 unset mode
+unset port
+unset pass
+unset user
 unset arch
 unset reb
 unset alt
@@ -736,6 +749,7 @@ then
 	echo
 	echo "Exiting Now."
 	echo
+	unsetv
 	exit 1
 fi
 
@@ -958,8 +972,10 @@ fi
 if [ $(wc -l $temploc/temp | cut -c -1) -gt "1" ] ;
 then
 	cat $temploc/temp | tail -n 1 > $temploc/temp2
+	rm $temploc/temp
 else
 	mv $temploc/temp $temploc/temp2
+	rm $temploc/temp
 fi
 
 
@@ -994,6 +1010,7 @@ then
 	sleep 2
 	echo "Exiting Now."
 	echo
+	rm -rf $temploc
 	unsetv
 	exit 1
 fi
@@ -1007,6 +1024,16 @@ then
 fi
 
 
+###### variables used for GUI notifications
+
+## xbmc webserver port
+port=$(cat /storage/.xbmc/userdata/guisettings.xml | grep "<webserverport>" | sed 's/[^0-9]*//g')
+## xbmc webserver password
+pass=$(cat /storage/.xbmc/userdata/guisettings.xml | grep "<webserverpassword>" | grep -Eio "[a-z]+" | sed -n 2p)
+## xbmc webserver username
+user=$(cat /storage/.xbmc/userdata/guisettings.xml | grep "<webserverusername>" | grep -Eio "[a-z]+" | sed -n 2p)
+
+
 ###### compare local and remote revisions; decide if we have updates ready
 
 if [ "$PRESENT" -gt "$PAST" ] ;
@@ -1017,8 +1044,8 @@ then
 	echo "### UPDATING TO OR FROM DEVELOPMENT BUILDS MAY HAVE POTENTIALLY UNPREDICTABLE"
 	echo "### EFFECTS ON THE STABILITY AND OVERALL USABILITY OF YOUR SYSTEM. SINCE NEW"
 	echo "### CODE IS LARGELY UNTESTED, DO NOT EXPECT SUPPORT ON ANY ISSUES YOU MAY"
-	echo "### ENCOUNTER. IF IT WERE TO BE OFFERED, IT WILL BE LIMITED TO DEVELOPMENT"
-	echo "### LEVEL DEBUGGING."
+	echo "### ENCOUNTER. IF SUPPORT WERE TO BE OFFERED, IT WILL BE LIMITED TO"
+	echo "### DEVELOPMENT LEVEL DEBUGGING."
 	echo
 	echo
 	echo -ne "Please Wait...\033[0K\r"
@@ -1028,6 +1055,7 @@ then
 	echo "Updates Are Available."
 	echo "Local:   $PAST          Compiled: `cat /etc/version | cut -f 2-2 -d'-' | sed 's/......$//;s/./& /4' | sed 's/./& /7' | awk '{ print "[ "$2"/"$3"/"$1" ]" }'`" 
 	echo "Remote:  $PRESENT          Compiled: `echo $FOLDER | cut -f 4-4 -d'-' | sed 's/......$//;s/./& /4' | sed 's/./& /7' | awk '{ print "[ "$2"/"$3"/"$1" ]" }'`"
+	curl -v -H "Content-type: application/json" -u $user:$pass -X POST -d '{"id":1,"jsonrpc":"2.0","method":"GUI.ShowNotification","params":{"title":"OpenELEC_Dev","message":"Update Found ! Remote Build: $PRESENT","displaytime":8000}}' http://localhost:$port/jsonrpc
 	echo
 	## The remote build is newer then our local build. Asking for input.
 	echo "Would you like to update (y/n) ?"
@@ -1041,6 +1069,7 @@ then
 		echo "Please answer (y/n)"
 		echo "Exiting."
 		echo
+		rm -rf $temploc
 		unsetv
 		exit 1
 	elif [[ $yn = "Y" || $yn = "y" ]] ;
@@ -1061,12 +1090,12 @@ then
 		sleep 2
 		echo "Exiting."
 		echo
+		rm -rf $temploc
 		unsetv
 		exit 0
 	fi
 else
 	## The remote build is not newer then what we've got already. Exit.
-	rm -rf $temploc
 	echo -ne "\033[0K\r"
 	echo
 	echo ">>>| OpenELEC"
@@ -1077,6 +1106,7 @@ else
 	echo "You are on the latest build for your platform."
 	echo "Please check back later."
 	echo
+	rm -rf $temploc
 	unsetv
 	exit 0
 fi
@@ -1166,6 +1196,7 @@ if [[ "$return" = "2" ]] ;
 then
 	echo "md5 Mismatch Detected."
 	echo "Update Terminated."
+	rm -rf $temploc
 	unsetv
 	exit 1
 fi
@@ -1186,7 +1217,9 @@ then
 	rm -rf /storage/downloads/OpenELEC_r$PAST
 fi
 
-###### make sure 'downloads' exists; it should by default, but some users remove it.
+
+###### make sure 'downloads' exists; doesnt get created untill the "Downloads" smb share is accessed for the first time.
+
 mkdir -p /storage/downloads
 
 
@@ -1234,11 +1267,6 @@ echo
 sleep 5
 
 
-###### Cleanup
-
-rm -rf $temploc
-
-
 ###### ask if we want to reboot now
 
 echo
@@ -1256,6 +1284,7 @@ then
 	echo "Please answer (y/n)"
 	echo "Exiting."
 	echo
+	rm -rf $temploc
 	unsetv
 	exit 1
 elif [[ "$reb" = "Y" || "$reb" = "y" ]] ;
@@ -1263,6 +1292,7 @@ then
 	sleep 1
 	echo
 	echo "Rebooting..."
+	rm -rf $temploc
 	unsetv
 	sync
 	sleep 1
@@ -1275,6 +1305,7 @@ then
 	echo "User aborted process."
 	echo "Please reboot to complete the update."
 	echo "Exiting."
+	rm -rf $temploc
 	unsetv
 	exit 0
 fi
