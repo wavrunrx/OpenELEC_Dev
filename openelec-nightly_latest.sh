@@ -56,7 +56,7 @@ OPTIND="1"
 
 ###### image location
 
-mode="http://sources.openelec.tv/tmp/image/"
+mode="http://sources.openelec.tv/tmp/image"
 
 
 ###### set the temporary file location based on what device we are using...(the rPi does not have enough RAM to download the image to /dev/shm
