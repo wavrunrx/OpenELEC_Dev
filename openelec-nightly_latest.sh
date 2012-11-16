@@ -41,7 +41,7 @@ fi
 
 ###### script version
 
-VERSION="27"
+VERSION="28"
 
 
 ###### if no options specified; we continue as normal
@@ -596,6 +596,7 @@ do
 	b)
 		# reboot
 		options_found=1
+		echo "Rebooting..."
 		/sbin/reboot
 		;;
 
