@@ -941,6 +941,7 @@ while true; do
 		exit 0
 		fi
 	fi
+	break
 done
 
 
