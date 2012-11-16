@@ -357,7 +357,7 @@ do
 		# roll back or forward to a version of our choosing
 		while true; do
 		echo
-		echo "Are you sure you want to switch to an older/newer Build (y/n) ?"
+		echo "Are you sure you want to switch to a newer/older build (y/n) ?"
 		read -n1 -p "==| " alt
 		alt=$alt
 			if [[ $alt != "Y" ]] && [[ $alt != "y" ]] && [[ $alt != "N" ]] && [[ $alt != "n" ]] ;
@@ -374,7 +374,8 @@ do
 				echo
 				echo -ne "Please Wait...\033[0K\r"
 				mkdir -p $temploc
-				curl --silent $mode/archive/ | grep $arch | sed -e 's/<li><a href="//' -e 's/[^ ]* //' -e 's/<\/a><\/li>//' > $temploc/temp
+				curl --silent $mode/ | grep $arch | sed -e 's/<li><a href="//' -e 's/[^ ]* //' -e 's/<\/a><\/li>//' > $temploc/temp
+				curl --silent $mode/archive/ | grep $arch | sed -e 's/<li><a href="//' -e 's/[^ ]* //' -e 's/<\/a><\/li>//' >> $temploc/temp
 				echo -ne "\033[0K\r"
 				echo
 				echo "Builds Available for your Architecture: ($arch)"
@@ -406,23 +407,31 @@ do
 		        	echo $i | tail -c 15 | sed 's/.\{8\}$//' | tr -d "\-r" >> $temploc/numbers
 				done
 				list=$(cat $temploc/numbers)
+				count=$(cat $temploc/numbers | sed -n 1p | wc -m)
+				fbrevd=$(($count-1))
 				while true; do
 					echo "Enter the build number you want from the list above (Ex: "`head -1 $temploc/numbers`")"
+					echo "Note: This list may be longer then your scrollback buffer will show"
 					read -p "==| " fbrev
-					while true; do
-						if ! [[ $list =~ $fbrev ]] ;
-						then
-							echo
-							echo "Error: [ $fbrev ] is not a valid build number"
-							echo "It does not exist or is not a numerical value"
-							echo "Please enter only one build number you want from the list above."
-							read -p "==| " fbrev
-							echo
-							continue
-
-						fi
-						break
-					done
+					count2=$(echo -n $fbrev | wc -m)
+					if (( "$count2" < "$fbrevd" )) ;
+					then
+						echo
+						echo "Error: [ $fbrev ] is not a valid build number."
+						echo "It does not exist, or is not a numerical value"
+						echo "Please double check your entry."
+						echo "not 5 digits"
+						continue
+					fi
+					if ! [[ "$list" =~ "$fbrev" ]] ;
+					then
+						echo
+						echo "Error: [ $fbrev ] is not a valid build number."
+						echo "It does not exist, or is not a numerical value"
+						echo "Please double check your entry."
+						echo "not in list"
+						continue
+					fi
 					break
 				done
 				unset numbers
@@ -440,6 +449,7 @@ do
 				fi
 				echo -ne "\033[0K\r"
 				echo "Done!"
+				rm $temploc/temp3
 				extract="$temploc/$fn"
 				echo
 				echo
@@ -596,12 +606,12 @@ do
 		echo "Usage:  $0 [-iozacrlsbvh]"
 		echo
 		echo "-i                   check if SYSTEM & KERNEL are already in-place; suggest reboot."
-		echo "-o                   list all avaliable archival builds for your architecture."
-		echo "-z                   roll back or forward to a version of our choosing."
+		echo "-o                   list all avaliable archived builds for your architecture."
+		echo "-z                   roll back or forward to a version of your choosing."
 		echo "-a                   list all avaliable builds for your architecture."
 		echo "-c                   quick check to see if we're up-to-date."
 		echo "-r                   check the remote build revision."
-		echo "-l                   what's our local build revision."
+		echo "-l                   check our local build revision."
 		echo "-s                   check for new script version"
 		echo "-b                   reboot OpenELEC"
 		echo "-v                   script version."
@@ -905,7 +915,7 @@ while true; do
 		echo
 		echo
 		echo "Unrecognized Input."
-		sleep 2
+		sleep 1
 		echo "Please answer (y/n)"
 		continue
 	elif [[ $reb = "Y" || $reb = "y" ]] ;
@@ -924,7 +934,7 @@ while true; do
 		echo
 		echo
 		echo "Please reboot to complete the update."
-		sleep 2
+		sleep 1
 		echo "Exiting."
 		rm -rf $temploc
 		unsetv
@@ -953,9 +963,8 @@ curl --silent $mode/ | grep $arch | sed -e 's/<li><a href="//' -e 's/[^ ]* //' -
 if [[ -z `cat $temploc/temp` ]] ;
 then
         echo "There are either no available builds for your architecture at this time, or"
-        echo "the only build avaliable, is the same build revision you are currently on."
-        echo "Please check again later. You may also check manually for yourself here:"
-        echo "http://sources.openelec.tv/tmp/image/"
+        echo "the only build avaliable is the same revision you are already on."
+        echo "Please check again later."
         echo
         echo "Exiting Now."
         rm -rf $temploc
@@ -984,10 +993,10 @@ fi
 FOLDER=$(cat $temploc/temp2 | sed 's/.tar.bz2//g')
 
 ## capture local build revision
-PAST=$(cat /etc/version | awk '{gsub(/[[:punct:]]/," ")}1' |  awk '{print $3}' | tr -d 'r')
+PAST=$(cat /etc/version | awk '{gsub(/[[:punct:]]/," ")}1' | awk '{print $3}' | tr -d 'r')
 
 ## capture remote build revision (allows infinite revision growth)
-PRESENT=$(cat $temploc/temp2 | awk '{gsub(/[[:punct:]]/," ")}1' |  awk '{print $6}' | tr -d 'r')
+PRESENT=$(cat $temploc/temp2 | awk '{gsub(/[[:punct:]]/," ")}1' | awk '{print $6}' | tr -d 'r')
 
 
 ###### this checks to make sure we are actually running an official development build. if we dont check this; the comparison routine will freak out if our local
@@ -998,10 +1007,10 @@ then
 	echo
 	echo "You are currently using an unofficial development build of OpenELEC."
 	echo "This isn't supported, and will yield unexpected results if we continue."
-	echo "Your build is a higher revision then whats available on the official"
-	echo "snapshot server, as seen here: http://sources.openelec.tv/tmp/image/"
-	echo "In order to use this update script, you |*MUST*| be using an official"
-	echo "build, that was obtained from the snapshot server."
+	echo "Your build is a higher revision then the highest available on the official"
+	echo "snapshot server as seen here: http://sources.openelec.tv/tmp/image/"
+	echo "In order to use this update script, you *MUST* be using an official"
+	echo "build, that was obtained from the aforementioned snapshot server."
 	echo
 	echo "Local:  $PAST"
 	echo "Remote: $PRESENT"
@@ -1037,7 +1046,6 @@ user=$(cat /storage/.xbmc/userdata/guisettings.xml | grep "<webserverusername>" 
 
 if [ "$PRESENT" -gt "$PAST" ] ;
 then
-	#echo -ne "\033[0K\r"
 	echo
 	echo "### WARNING:"
 	echo "### UPDATING TO OR FROM DEVELOPMENT BUILDS MAY HAVE POTENTIALLY UNPREDICTABLE"
