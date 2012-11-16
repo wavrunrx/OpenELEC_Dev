@@ -901,7 +901,7 @@ mkdir -p /storage/.update
 ###### this check prevents us from unnecessarily redownloading the update package.
 
 while true; do
-	SYS_KERN=$(ls /storage/.update/ | wc -l)
+	SYS_KERN=$(ls /storage/.update/* 2> /dev/null | wc -l)
 	if [ "$SYS_KERN" = "4" ] ;
 	then
 		echo
