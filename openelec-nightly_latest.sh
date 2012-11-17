@@ -72,9 +72,11 @@ then
 	echo "RaspberryPi Detected"
 	echo
 	temploc="/storage/downloads/xbmc-update"
-	dkernel="kernel.img"
+	dkernel="KERNEL"
 	dsystem="SYSTEM"
-	dkmd5="kernel.md5"
+	akernel="kernel.img"
+	asystem="SYSTEM"
+	dkmd5="KERNEL.md5"
 	dsmd5="SYSTEM.md5"
 else
 	echo "Device Detected: `cat /etc/arch | sed 's/\./ /g' | awk '{print $1}'`"
@@ -83,6 +85,8 @@ else
 	temploc="/dev/shm/xbmc-update"
 	dkernel="KERNEL"
 	dsystem="SYSTEM"
+	akernel=$dkernel
+	asystem=$dsystem
 	dkmd5="KERNEL.md5"
 	dsmd5="SYSTEM.md5"
 fi
@@ -683,6 +687,8 @@ unset VERSION
 unset kernmd5
 unset kernrom
 unset temploc
+unset akernel
+unset asystem
 unset dkernel
 unset dsystem
 unset sysrom
@@ -1246,7 +1252,8 @@ mkdir -p /storage/downloads
 echo "Creating backup of PREVIOUS SYSTEM & KERNEL images."
 echo -ne "Please Wait...\033[0K\r"
 mkdir /storage/downloads/OpenELEC_r$PAST
-cp /flash/$dkernel /flash/$dsystem /storage/downloads/OpenELEC_r$PAST
+cp /flash/$akernel /storage/downloads/OpenELEC_r$PAST/$dkernel
+cp /flash/$asystem /storage/downloads/OpenELEC_r$PAST/$dsystem
 chmod +x /storage/downloads/OpenELEC_r$PAST/$dkernel
 chmod +x /storage/downloads/OpenELEC_r$PAST/$dsystem
 md5sum /storage/downloads/OpenELEC_r$PAST/$dkernel > /storage/downloads/OpenELEC_r$PAST/$dkmd5 &
