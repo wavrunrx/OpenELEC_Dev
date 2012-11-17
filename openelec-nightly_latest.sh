@@ -876,6 +876,7 @@ then
 			echo -ne "Continuing...\033[0K\r"
 			sleep 2
 			echo -ne "\033[0K\r"
+			break
 		fi
 		done
 	fi
