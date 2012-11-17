@@ -39,6 +39,11 @@ then
 fi
 
 
+###### temporarily disable script updates ?
+
+Allow_Update="YES"
+
+
 ###### script version
 
 VERSION="28"
@@ -72,7 +77,7 @@ then
 	dkmd5="kernel.md5"
 	dsmd5="SYSTEM.md5"
 else
-	echo "[ `cat /etc/arch | sed 's/\./ /g' | awk '{print $1}'` ] Device Detected"
+	echo "Device Detected: `cat /etc/arch | sed 's/\./ /g' | awk '{print $1}'`"
 	echo "OpenELEC_Dev: v$VERSION"
 	echo
 	temploc="/dev/shm/xbmc-update"
@@ -190,8 +195,8 @@ do
 		mkdir -p $temploc
 		curl --silent $mode/ | grep $arch | sed -e 's/<li><a href="//' -e 's/[^ ]* //' -e 's/<\/a><\/li>//' > $temploc/temp3
 		echo
-		echo "Builds Available for your Architecture:  ($arch)"
-		echo "---------------------------------------"
+		echo "New Builds Available for your Architecture:  ($arch)"
+		echo "-------------------------------------------"
 		echo
 		if [[ -z `cat $temploc/temp3` ]] ;
         then
@@ -645,15 +650,6 @@ then
 fi
 
 
-###### changelog
-
-changelog ()
-{
-echo "Github Commit/Change Log:"
-echo "https://github.com/wavrunrx/OpenELEC_Dev/commits/master"
-}
-
-
 ###### removes temporary files that have been created if the user prematurly aborts the update process; i.e. CTRL + C
 
 trap ctrl_c 2
@@ -663,7 +659,10 @@ echo -ne "\n\n"
 echo "User aborted process."
 echo -ne "SIGINT Interrupt caught"
 echo -ne "\nTemporary files removed\n"
-rm -rf $temploc
+if [ -d $temploc ] ;
+then
+	rm -rf $temploc
+fi
 unsetv
 exit 1
 }
@@ -693,6 +692,7 @@ unset branch
 unset sysmd5
 unset rsvers
 unset status
+unset ALLOW
 unset dkmd5
 unset dsmd5
 unset PAST
@@ -783,24 +783,32 @@ then
 	echo -ne "Update Server Active.\033[0K\r"
 	sleep 2
 	echo -ne "\033[0K\r"
-
 	###### check if a script update is in progress
 	if [ ! -f /tmp/update_in_progress ] ;
 	then
-
 		###### update_in_progress does not exist :: first run
 		###### checking script version; auto updating and re-running new version
-		rsvers=$(curl --silent https://raw.github.com/wavrunrx/OpenELEC_Dev/master/openelec-nightly_latest.sh | grep "VERSION=" | grep -v grep | sed 's/[^0-9]*//g')
+		mkdir -p $temploc
+		curl --silent https://raw.github.com/wavrunrx/OpenELEC_Dev/master/openelec-nightly_latest.sh > $temploc/tempscript
+		Allow=$(grep "Allow_Update=" $temploc/tempscript | grep -v grep | sed 's/=/ /g' | awk '{print $2}' | awk '{gsub(/[[:punct:]]/,"")}1')
+		rsvers=$(grep "VERSION=" $temploc/tempscript | grep -v grep | sed 's/[^0-9]*//g')
+		while true; do
 		if [ "$rsvers" -gt "$VERSION" ] ;
 		then
+			if [ "$Allow" = "NO" ] ;
+			then
+				echo "| Script Updates are temporarily disabled |"
+				echo
+				break
+			fi
 			echo
 			echo "*---| Script Update Available."
 			echo "*---| Current Version: $VERSION"
 			echo "*---| New Version: $rsvers"
 			echo
-			echo "Changelog:"
-			echo "----------"
-			changelog
+			echo "Github Commit/Change Log:"
+			echo "-------------------------"
+			echo "https://github.com/wavrunrx/OpenELEC_Dev/commits/master"
 			sleep 3
 			echo
 			echo
@@ -869,6 +877,7 @@ then
 			sleep 2
 			echo -ne "\033[0K\r"
 		fi
+		done
 	fi
 else
 	echo 
@@ -881,6 +890,7 @@ else
 	echo
 fi
 }
+
 
 if [ ! -f /tmp/no_display ] ;
 then
@@ -989,7 +999,7 @@ then
 	rm $temploc/temp
 fi
 
-#####
+######
 
 ## filename, no extension
 FOLDER=$(cat $temploc/temp2 | sed 's/.tar.bz2//g')
@@ -1058,7 +1068,7 @@ then
 	echo
 	echo
 	echo -ne "Please Wait...\033[0K\r"
-	sleep 3
+	sleep 2
 	echo -ne "\033[0K\r"
 	echo ">>>| OpenELEC"
 	echo "Updates Are Available."
@@ -1253,7 +1263,6 @@ echo "--------------------------"
 echo "     In the need of an emergency rollback:"
 echo "-->  A backup copy of your *PREVIOUS* SYSTEM & KERNEL images [ revision $PAST ]"
 echo "     have been created here:  /storage/downloads/OpenELEC_r$PAST"
-echo "     This will script automatically remove the oldest version during its next run."
 echo
 echo
 echo "Creating backup of NEW SYSTEM & KERNEL images."
@@ -1271,7 +1280,6 @@ echo "--------------------------"
 echo "     In the need of an emergency rollback:"
 echo "-->  A backup copy of your *NEW* SYSTEM & KERNEL images [ revision $PRESENT ]"
 echo "     have been created here:  /storage/downloads/OpenELEC_r$PRESENT"
-echo "     This will script automatically remove the oldest version during its next run."
 echo
 sleep 5
 
