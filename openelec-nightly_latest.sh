@@ -1236,10 +1236,10 @@ echo -ne "\033[0K\r"
 echo
 
 
-if [ -d /storage/downloads/OpenELEC_r$PAST ] ;
-then
-	rm -rf /storage/downloads/OpenELEC_r$PAST
-fi
+#if [ -d /storage/downloads/OpenELEC_r ] ;
+#then
+#	rm -rf /storage/downloads/OpenELEC_r
+#fi
 
 
 ###### make sure 'downloads' exists; doesnt get created untill the "Downloads" smb share is accessed for the first time.
