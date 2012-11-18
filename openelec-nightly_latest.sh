@@ -1231,12 +1231,10 @@ sleep 1
 echo "File Integrity Check: PASSED!"
 echo
 echo -ne "Continuing...\033[0K\r"
-sleep 3
+sleep 2
 echo -ne "\033[0K\r"
 echo
 
-
-###### create a backup of our current, and new build for easy access if needed for a emergency rollback
 
 if [ -d /storage/downloads/OpenELEC_r$PAST ] ;
 then
@@ -1248,6 +1246,8 @@ fi
 
 mkdir -p /storage/downloads
 
+
+###### create a backup of our current, and new build for easy access if needed for a emergency rollback
 
 echo "Creating backup of PREVIOUS SYSTEM & KERNEL images."
 echo -ne "Please Wait...\033[0K\r"
