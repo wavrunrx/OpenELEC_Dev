@@ -779,7 +779,7 @@ echo -ne "Please Wait...\033[0K\r"
 sleep 2
 echo -ne "\033[0K\r"
 echo -ne "Checking Script Update Server State...\033[0K\r"
-ping -qc 5 raw.github.com > /dev/null &
+ping -qc 3 raw.github.com > /dev/null &
 pid=$!
 spinner $pid
 unset pid
@@ -815,7 +815,7 @@ then
 			echo "Github Commit/Change Log:"
 			echo "-------------------------"
 			echo "https://github.com/wavrunrx/OpenELEC_Dev/commits/master"
-			sleep 3
+			sleep 2
 			echo
 			echo
 			while true; do
@@ -1236,10 +1236,7 @@ echo -ne "\033[0K\r"
 echo
 
 
-#if [ -d /storage/downloads/OpenELEC_r ] ;
-#then
-#	rm -rf /storage/downloads/OpenELEC_r
-#fi
+rm -f OpenELEC_r*
 
 
 ###### make sure 'downloads' exists; doesnt get created untill the "Downloads" smb share is accessed for the first time.
