@@ -1006,7 +1006,10 @@ then
 	rm $temploc/temp
 fi
 
+
 ######
+
+instruction_set=$(cat /etc/arch | sed 's/\./ /g' | awk '{print $2}')
 
 ## filename, no extension
 FOLDER=$(cat $temploc/temp2 | sed 's/.tar.bz2//g')
@@ -1016,6 +1019,14 @@ PAST=$(cat /etc/version | awk '{gsub(/[[:punct:]]/," ")}1' | awk '{print $3}' | 
 
 ## capture remote build revision (allows infinite revision growth)
 PRESENT=$(cat $temploc/temp2 | awk '{gsub(/[[:punct:]]/," ")}1' | awk '{print $6}' | tr -d 'r')
+
+
+###### set $PRESENT properly for 64-bit machines
+
+if [ "$instruction_set" = "x86_64" ] ;
+then
+	PRESENT=$(cat $temploc/temp2 | awk '{gsub(/[[:punct:]]/," ")}1' | awk '{print $7}' | tr -d 'r')
+fi
 
 
 ###### this checks to make sure we are actually running an official development build. if we dont check this; the comparison routine will freak out if our local
