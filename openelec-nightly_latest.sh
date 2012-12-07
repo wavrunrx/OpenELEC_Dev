@@ -1247,7 +1247,7 @@ echo -ne "\033[0K\r"
 echo
 
 
-rm -f OpenELEC_r*
+rm -rf OpenELEC_r*
 
 
 ###### make sure 'downloads' exists; doesnt get created untill the "Downloads" smb share is accessed for the first time.
