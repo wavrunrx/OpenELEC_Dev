@@ -41,7 +41,7 @@ fi
 
 ###### temporarily disable script updates ?
 
-Allow_Update="YES"
+Allow_Update="NO"
 
 
 ###### script version
