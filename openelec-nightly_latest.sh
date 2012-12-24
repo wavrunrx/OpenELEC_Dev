@@ -804,6 +804,7 @@ then
 			if [ "$Allow" = "NO" ] ;
 			then
 				echo "| Script Updates are temporarily disabled |"
+				echo "| Continuing..."
 				echo
 				break
 			fi
@@ -876,7 +877,7 @@ then
 			fi
 			done
 		else
-			echo -ne "Script Update Not Avaliable."
+			echo -ne "Script Update Not Avaliable.\033[0K\r"
 			sleep 2
 			echo -ne "\033[0K\r"
 			echo -ne "Continuing...\033[0K\r"
