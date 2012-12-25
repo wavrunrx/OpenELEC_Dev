@@ -46,7 +46,7 @@ Allow_Update="YES"
 
 ###### script version
 
-VERSION="31"
+VERSION="32"
 
 
 ###### if no options specified; we continue as normal
