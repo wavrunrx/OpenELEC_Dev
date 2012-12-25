@@ -780,11 +780,12 @@ sleep 2
 echo -ne "\033[0K\r"
 echo -ne "Checking Script Update Server State...\033[0K\r"
 ping -qc 3 raw.github.com > /dev/null &
+outcome="$?"
 pid=$!
 spinner $pid
 unset pid
 echo -ne "\033[0K\r"
-if [ "$?" = "0" ] ;
+if [ "$outcome" = "0" ] ;
 then
 	echo -ne "Update Server Active.\033[0K\r"
 	sleep 2
@@ -813,10 +814,9 @@ then
 			echo "*---| Current Version: $VERSION"
 			echo "*---| New Version: $rsvers"
 			echo
-			echo "Github Commit/Change Log:"
-			echo "-------------------------"
+			echo "Commit/Change Log:"
+			echo "------------------"
 			echo "https://github.com/wavrunrx/OpenELEC_Dev/commits/master"
-			sleep 2
 			echo
 			echo
 			while true; do
@@ -840,7 +840,7 @@ then
 				echo "*---| Updating OpenELEC_DEV:"
 				echo -ne "      Please Wait...\033[0K\r"
 				sleep 1
-				curl --silent -fksSL -A "`curl -V | head -1 | awk '{print $2}'`" http://bit.ly/TOf3qf > `dirname $0`/openelec-nightly_$rsvers.sh &
+				curl --silent -fksSL -A "`curl -V | head -1 | awk '{print $1, $2, $3}'`" http://bit.ly/TOf3qf > `dirname $0`/openelec-nightly_$rsvers.sh &
 				pid=$!
 				spinner $pid
 				unset pid
@@ -856,7 +856,7 @@ then
 				echo
 				###### indicate update in progress to next script instance
 				touch /tmp/update_in_progress
-				###### indicate no update check nessessary to next script instance
+				###### indicate no update check nessessary to next script instance since we've just finished a check
 				touch /tmp/no_display
 				###### remove update indication flag
 			 	rm -f /tmp/update_in_progress
@@ -889,8 +889,8 @@ then
 	fi
 else
 	echo 
-	echo "* Script Update Server Not Responding"
-	echo "* Checking again on the next run."
+	echo "* Script Update Server Not Responding."
+	echo "* Try again later."
 	echo "  -------------------------------"
 	echo -ne "Continuing...\033[0K\r"
 	sleep 2
@@ -900,24 +900,26 @@ fi
 }
 
 
+###### if 'no_display' exists, we are going to skip the update check; otherwise, we're going to check
+
 if [ ! -f /tmp/no_display ] ;
 then
 	s_update
 fi
 
 
-###### remove no update check nessessary indicator so next time we manually run the script, we will actually check for updates
+###### remove no update check nessessary indicator so next time we run the script we will again check for updates
 
 rm -f /tmp/no_display
 
 
-###### make .update
+###### create the .update directory for OpenELEC
 
 mkdir -p /storage/.update
 
 
-###### checking for a previous run: if SYSTEM & KERNEL files are still in ~/.update then we havent rebooted since we last ran.
-###### this check prevents us from unnecessarily redownloading the update package.
+###### checking for a previous run :: if SYSTEM & KERNEL files are still in ~/.update then we havent rebooted since we last ran.
+###### this check prevents us from redownloading the update package.
 
 while true; do
 	SYS_KERN=$(ls /storage/.update/* 2> /dev/null | wc -l)
@@ -976,7 +978,7 @@ fi
 
 
 ###### if there are no builds avaliable on the server for your specific architecture, we are going to notify you, and gracefully exit
-###### also captures remote filename & extension
+###### also captures remote filename & extension to be used at later times
 
 arch=$(cat /etc/arch)
 curl --silent $mode/ | grep $arch | sed -e 's/<li><a href="//' -e 's/[^ ]* //' -e 's/<\/a><\/li>//' > $temploc/temp
@@ -1008,8 +1010,7 @@ then
 fi
 
 
-######
-
+###### i386, or x86_64 ?
 instruction_set=$(cat /etc/arch | sed 's/\./ /g' | awk '{print $2}')
 
 ## filename, no extension
@@ -1030,8 +1031,8 @@ then
 fi
 
 
-###### this checks to make sure we are actually running an official development build. if we dont check this; the comparison routine will freak out if our local
-###### build is larger then the largest (newest) build on the openelec snapshot server.
+###### checking to make sure we are actually running an official development build. if we dont check this; the comparison routine will freak out if our local
+###### build is larger then the largest (newest) build on the official openelec snapshot server.
 
 if [ "$PRESENT" -lt "$PAST" ] ;
 then
@@ -1055,7 +1056,7 @@ then
 fi
 
 
-###### this is only comes into play if the option -q is passed. if so, we supress output if an update isnt available. if one is, we dont care, and want to exit (this will be used in the addon gui)
+###### this is only comes into play if the option -q is passed. if so, we supress output if an update isnt available. if one is, we dont care, and want to exit (this will be used for the addon gui sometime in the future)
 
 if [ "$update_yes" = "1" ] ;
 then
@@ -1067,13 +1068,15 @@ fi
 
 ## xbmc webserver port
 port=$(cat /storage/.xbmc/userdata/guisettings.xml | grep "<webserverport>" | sed 's/[^0-9]*//g')
+
 ## xbmc webserver password
 pass=$(cat /storage/.xbmc/userdata/guisettings.xml | grep "<webserverpassword>" | grep -Eio "[a-z]+" | sed -n 2p)
+
 ## xbmc webserver username
 user=$(cat /storage/.xbmc/userdata/guisettings.xml | grep "<webserverusername>" | grep -Eio "[a-z]+" | sed -n 2p)
 
 
-###### compare local and remote revisions; decide if we have updates ready
+###### compare local and remote revisions; decide if we have updates ready to donwload
 
 if [ "$PRESENT" -gt "$PAST" ] ;
 then
@@ -1133,7 +1136,7 @@ then
 		exit 0
 	fi
 else
-	## The remote build is not newer then what we've got already. Exit.
+	## remote build is not newer then what we've got already. Exit.
 	echo -ne "\033[0K\r"
 	echo
 	echo ">>>| OpenELEC"
@@ -1194,7 +1197,7 @@ else
 	echo "SYSTEM md5 MISMATCH!"
 	echo "--------------------"
 	echo "There is an integrity problem with the SYSTEM package"
-	echo "Notify one of the developers on the Forums or IRC that"
+	echo "Notify one of the developers in the Forums or IRC that"
 	echo "the SYSTEM image of $fn.tar.bz2 is corrupt"
 	sleep 3
 	rm -f /storage/.update/$dsystem
@@ -1213,7 +1216,7 @@ else
 	echo "KERNEL md5 MISMATCH!"
 	echo "--------------------"
 	echo "There is an integrity problem with the KERNEL package"
-	echo "Notify one of the developers on the Forums or IRC that"
+	echo "Notify one of the developers in the Forums or IRC that"
 	echo "the SYSTEM image of $fn.tar.bz2 is corrupt"
 	sleep 3
 	rm -f /storage/.update/$dkernel
@@ -1224,10 +1227,10 @@ fi
 
 
 ###### the system rom is evaluated first.
-###### if an error is found, the process is terminated and we would never know if the kernel image was broken as well or not.
+###### if an error is found, the process is terminated and we wouldnt know if the kernel image was broken as well.
 ######
-###### this way we know that if the sum of $kern_return, and $sys_return is over "1", that one or both of the images are broken, and we've already been
-###### notified which one it was above. exit.
+###### here we know that if the sum of $kern_return, and $sys_return is over "1", that one or both of the images are broken, and we've already been
+###### notified which one it was above. Exit.
 
 return=$(($kern_return+$sys_return))
 if [[ "$return" = "2" ]] ;
@@ -1248,7 +1251,9 @@ echo -ne "\033[0K\r"
 echo
 
 
-rm -rf OpenELEC_r*
+###### remove old backup builds
+
+rm -rf /storage/downloads/OpenELEC_r*
 
 
 ###### make sure 'downloads' exists; doesnt get created untill the "Downloads" smb share is accessed for the first time.
