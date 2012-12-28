@@ -31,6 +31,50 @@ set -e
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
+###### stable/beta release check
+
+stable ()
+{
+currentsys=$(cat /etc/version | cut -f 1 -d'-')
+if [ "$currentsys" != "devel" ] ;
+then
+	echo
+	echo "Your Version:"
+	echo "Release: $currentsys"
+	echo
+	echo "You're currently on a Stable release of OpenELEC."
+	echo "To use this script, you first need to manually"
+	echo "migrate OpenELEC to a development build."
+	echo "Be aware that development builds are inherently"
+	echo "unstable and should not be used in production"
+	echo "enviroments."
+	echo "Usability of your HTPC may be adversly effected."
+	echo
+	echo "Once you are running a development build, you may"
+	echo "keep your system up-to-date by re-running this script"
+	echo
+	echo "Visit the following locations to get started if you"
+	echo "accept the risks of using pre-release software:"
+	echo "---------------------------------------------------"
+	echo
+	echo "A How-To for Manually Updating OpenELEC:"
+	echo "http://wiki.openelec.tv/index.php?title=Updating_OpenELEC"
+	echo 
+	echo "Location of development builds:"
+	echo "http://sources.openelec.tv/tmp/image/"
+	echo
+	echo "---------------------------------------------------"
+	echo
+	echo "Exiting Now."
+	echo
+	unsetv
+	exit 1
+fi
+}
+
+stable
+
+
 ###### we've already been updated; need to remove update indicator from out last script update run
 
 if [ -f /tmp/update_in_progress ] ;
@@ -732,44 +776,9 @@ return 0
 }
 
 
-###### check that were actually running a devel build already; otherwise cancel the opertation, with an explanation of why
+###### check that were actually running a devel build already; otherwise cancel the opertation, with an explanation of why (this function is defined above)
 
-currentsys=$(cat /etc/version | cut -f 1 -d'-')
-if [ "$currentsys" != "devel" ] ;
-then
-	echo
-	echo "Your Version:"
-	echo "Release: $currentsys"
-	echo
-	echo "You're currently on a Stable release of OpenELEC."
-	echo "To use this script, you first need to manually"
-	echo "migrate OpenELEC to a development build. Be aware"
-	echo "that development builds are inherently unstable"
-	echo "and should not be used in production enviroments."
-	echo "Usability of your HTPC may be adversly effected."
-	echo
-	echo "Once you are running a development build, you may"
-	echo "keep your system up-to-date by re-running this script"
-	echo "from time to time."
-	echo
-	echo "Visit the following locations to get started if you"
-	echo "accept the risks of using pre-release software:"
-	echo "---------------------------------------------------"
-	echo
-	echo "A How-To for Manually Updating OpenELEC:"
-	echo "http://wiki.openelec.tv/index.php?title=Updating_OpenELEC"
-	echo 
-	echo "Location of development builds:"
-	echo "http://sources.openelec.tv/tmp/image/"
-	echo
-	echo "---------------------------------------------------"
-	echo
-	echo "Exiting Now."
-	echo
-	unsetv
-	exit 1
-fi
-
+stable
 
 ###### making sure github is alive and ready to update the script if nessessary.
 
