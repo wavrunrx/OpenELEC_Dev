@@ -115,6 +115,8 @@ if [ "$arch" = "RPi.arm" ] ;
 then
 	echo "RaspberryPi Detected"
 	echo
+	unset mode
+	mode='http://openelec.thestateofme.com'
 	temploc="/storage/downloads/xbmc-update"
 	dkernel="KERNEL"
 	dsystem="SYSTEM"
