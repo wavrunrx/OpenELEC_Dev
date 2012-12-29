@@ -85,12 +85,12 @@ fi
 
 ###### temporarily disable script updates ?
 
-Allow_Update="NO"
+Allow_Update="YES"
 
 
 ###### script version
 
-VERSION="33"
+VERSION="32"
 
 
 ###### if no options specified; we continue as normal
@@ -115,8 +115,6 @@ if [ "$arch" = "RPi.arm" ] ;
 then
 	echo "RaspberryPi Detected"
 	echo
-	unset mode
-	mode='http://openelec.thestateofme.com'
 	temploc="/storage/downloads/xbmc-update"
 	dkernel="KERNEL"
 	dsystem="SYSTEM"
