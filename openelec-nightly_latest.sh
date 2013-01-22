@@ -122,6 +122,7 @@ then
 	asystem="SYSTEM"
 	dkmd5="KERNEL.md5"
 	dsmd5="SYSTEM.md5"
+	mode="http://openelec.thestateofme.com"
 else
 	echo "Device Detected: `cat /etc/arch | sed 's/\./ /g' | awk '{print $1}'`"
 	echo "OpenELEC_Dev: v$VERSION"
@@ -157,7 +158,7 @@ do
 		# quick check to see if we're up-to-date
 		mkdir -p $temploc
 		arch=$(cat /etc/arch)
-		curl --silent $mode/ | grep $arch | sed -e 's/<li><a href="//' -e 's/[^ ]* //' -e 's/<\/a><\/li>//' > $temploc/temp
+		curl --silent $mode/ | grep $arch | sed -e ';s/.*<a href="//' -e 's/">.*//' > $temploc/temp
 		if [ $(wc -l $temploc/temp | cut -c -1) -gt "1" ] ;
 		then
 			cat $temploc/temp | tail -1 > $temploc/temp2
@@ -209,7 +210,7 @@ do
 		# displays the remote build number
 		mkdir -p $temploc
 		arch=$(cat /etc/arch)
-		curl --silent $mode/ | grep $arch | sed -e 's/<li><a href="//' -e 's/[^ ]* //' -e 's/<\/a><\/li>//' > $temploc/temp
+		curl --silent $mode/ | grep $arch | sed -e ';s/.*<a href="//' -e 's/">.*//' > $temploc/temp
 		if [ $(wc -l $temploc/temp | cut -c -1) -gt "1" ] ;
 		then
 			cat $temploc/temp | tail -1 > $temploc/temp2
@@ -241,7 +242,7 @@ do
 		# show all remotely available builds for your architecture, and build date
 		arch=$(cat /etc/arch)
 		mkdir -p $temploc
-		curl --silent $mode/ | grep $arch | sed -e 's/<li><a href="//' -e 's/[^ ]* //' -e 's/<\/a><\/li>//' > $temploc/temp3
+		curl --silent $mode/ | grep $arch | sed -e ';s/.*<a href="//' -e 's/">.*//' > $temploc/temp3
 		echo
 		echo "New Builds Available for your Architecture:  ($arch)"
 		echo "-------------------------------------------"
@@ -270,7 +271,7 @@ do
 		# show all old archived builds for your architecture, as well as compilation date
 		arch=$(cat /etc/arch)
 		mkdir -p $temploc
-		curl --silent $mode/archive/ | grep $arch | sed -e 's/<li><a href="//' -e 's/[^ ]* //' -e 's/<\/a><\/li>//' > $temploc/temp
+		curl --silent $mode/archive/ | grep $arch | sed -e ';s/.*<a href="//' -e 's/">.*//' > $temploc/temp
 		echo
 		echo "Archival Builds Avaliable for your Architecture:  ($arch)"
 		echo "------------------------------------------------"
@@ -427,8 +428,8 @@ do
 				echo
 				echo -ne "Please Wait...\033[0K\r"
 				mkdir -p $temploc
-				curl --silent $mode/ | grep $arch | sed -e 's/<li><a href="//' -e 's/[^ ]* //' -e 's/<\/a><\/li>//' > $temploc/temp
-				curl --silent $mode/archive/ | grep $arch | sed -e 's/<li><a href="//' -e 's/[^ ]* //' -e 's/<\/a><\/li>//' >> $temploc/temp
+				curl --silent $mode/ | grep $arch | sed -e ';s/.*<a href="//' -e 's/">.*//' > $temploc/temp
+				curl --silent $mode/archive/ | grep $arch | sed -e ';s/.*<a href="//' -e 's/">.*//' >> $temploc/temp
 				echo -ne "\033[0K\r"
 				echo
 				echo "Builds Available for your Architecture: ($arch)"
@@ -990,7 +991,7 @@ fi
 ###### also captures remote filename & extension to be used at later times
 
 arch=$(cat /etc/arch)
-curl --silent $mode/ | grep $arch | sed -e 's/<li><a href="//' -e 's/[^ ]* //' -e 's/<\/a><\/li>//' > $temploc/temp
+curl --silent $mode/ | grep $arch | sed -e ';s/.*<a href="//' -e 's/">.*//' > $temploc/temp
 if [[ -z `cat $temploc/temp` ]] ;
 then
         echo "There are either no available builds for your architecture at this time, or"
