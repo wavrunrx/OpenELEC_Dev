@@ -1111,6 +1111,10 @@ then
 		echo
 		echo "RPi Build Source:"
 		echo "http://openelec.thestateofme.com"
+	else
+		echo
+		echo "`cat /etc/arch | sed 's/\./ /g' | awk '{print $1}'` Build Source:"
+		echo "http://sources.openelec.tv/tmp/image"
 	fi
 	#curl -v -H "Content-type: application/json" -u $user:$pass -X POST -d '{"id":1,"jsonrpc":"2.0","method":"GUI.ShowNotification","params":{"title":"OpenELEC_Dev","message":"Update Found ! Remote Build: $PRESENT","displaytime":8000}}' http://localhost:$port/jsonrpc
 	echo
