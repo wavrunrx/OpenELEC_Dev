@@ -103,7 +103,7 @@ options_found="0"
 OPTIND="1"
 
 
-###### image location
+###### default image location
 
 mode="http://sources.openelec.tv/tmp/image"
 
@@ -137,7 +137,7 @@ else
 fi
 
 
-###### going to check for avaliable RAM, and if there isnt more then 300MB free; just use the harddisk; this will override the variable set just above
+###### going to check for avaliable RAM, and if there isnt more then 200MB free; just use the harddisk; this will override the variable set just above
 
 ram_mb=$((`cat /proc/meminfo | sed -n 2p | awk '{print $2}'`/1024))
 if [ "$ram_mb" -lt "200" ] ;
@@ -699,7 +699,7 @@ then
 fi
 
 
-###### removes temporary files that have been created if the user prematurly aborts the update process; i.e. CTRL + C
+###### removes temporary files that have been created if the user prematurly aborts the update process
 
 trap ctrl_c 2
 ctrl_c ()
@@ -759,7 +759,7 @@ unset yn
 }
 
 
-###### some visual feedback for long operations
+###### some visual feedback for long operations; especially useful on the RPi
 
 spinner() {
 proc=$1
@@ -910,7 +910,7 @@ fi
 }
 
 
-###### if 'no_display' exists, we are going to skip the update check; otherwise, we're going to check
+###### if 'no_display' exists, we are going to skip the update check; otherwise, we check
 
 if [ ! -f /tmp/no_display ] ;
 then
@@ -1005,7 +1005,7 @@ then
 fi
 
 
-###### remove all but the newest build from out list
+###### remove all but the newest build from our list
 
 if [ $(wc -l $temploc/temp | cut -c -1) -gt "1" ] ;
 then
@@ -1106,6 +1106,12 @@ then
 	echo "Updates Are Available."
 	echo "Local:   $PAST          Compiled: `cat /etc/version | cut -f 2-2 -d'-' | sed 's/......$//;s/./& /4' | sed 's/./& /7' | awk '{ print "[ "$2"/"$3"/"$1" ]" }'`" 
 	echo "Remote:  $PRESENT          Compiled: `echo $FOLDER | cut -f 4-4 -d'-' | sed 's/......$//;s/./& /4' | sed 's/./& /7' | awk '{ print "[ "$2"/"$3"/"$1" ]" }'`"
+	if [ "$arch" = "RPi.arm" ] ;
+	then
+		echo
+		echo "RPi Build Source:"
+		echo "http://openelec.thestateofme.com"
+	fi
 	#curl -v -H "Content-type: application/json" -u $user:$pass -X POST -d '{"id":1,"jsonrpc":"2.0","method":"GUI.ShowNotification","params":{"title":"OpenELEC_Dev","message":"Update Found ! Remote Build: $PRESENT","displaytime":8000}}' http://localhost:$port/jsonrpc
 	echo
 	## The remote build is newer then our local build. Asking for input.
