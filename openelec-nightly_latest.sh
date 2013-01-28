@@ -546,6 +546,9 @@ do
 				echo "There is an integrity problem with the SYSTEM package"
 				echo "Notify one of the developers on the Forums or IRC that"
 				echo "the SYSTEM image of $fn.tar.bz2 is corrupt"
+				echo
+				echo "IRC Webchat:"
+				echo "http://webchat.freenode.net/?channels=openelec"
 				sleep 3
 				rm -f /storage/.update/$dsystem
 				rm -f /storage/.update/$dsmd5
@@ -564,6 +567,9 @@ do
 				echo "There is an integrity problem with the KERNEL package"
 				echo "Notify one of the developers on the Forums or IRC that"
 				echo "the KERNEL image of $fn.tar.bz2 is corrupt"
+				echo
+				echo "IRC Webchat:"
+				echo "http://webchat.freenode.net/?channels=openelec"
 				sleep 3
 				rm -f /storage/.update/$dkernel
 				rm -f /storage/.update/$dkmd5
@@ -1219,6 +1225,9 @@ else
 	echo "There is an integrity problem with the SYSTEM package"
 	echo "Notify one of the developers in the Forums or IRC that"
 	echo "the SYSTEM image of $fn.tar.bz2 is corrupt"
+	echo
+	echo "IRC Webchat:"
+	echo "http://webchat.freenode.net/?channels=openelec"
 	sleep 3
 	rm -f /storage/.update/$dsystem
 	rm -f /storage/.update/$dsmd5
@@ -1238,6 +1247,9 @@ else
 	echo "There is an integrity problem with the KERNEL package"
 	echo "Notify one of the developers in the Forums or IRC that"
 	echo "the SYSTEM image of $fn.tar.bz2 is corrupt"
+	echo
+	echo "IRC Webchat:"
+	echo "http://webchat.freenode.net/?channels=openelec"
 	sleep 3
 	rm -f /storage/.update/$dkernel
 	rm -f /storage/.update/$dkmd5
