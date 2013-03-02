@@ -20,9 +20,9 @@ set -e
 
 
 # THIS SOFTWARE IS PROVIDED BY Eric Andrew Bixler ''AS IS'' AND ANY EXPRESS
-# OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
+# OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
 # WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-# DISCLAIMED. IN NO EVENT SHALL Eric Andrew Bixler BE LIABLE FOR ANY DIRECT, 
+# DISCLAIMED. IN NO EVENT SHALL Eric Andrew Bixler BE LIABLE FOR ANY DIRECT,
 # INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
 # (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
 # LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
@@ -59,7 +59,7 @@ then
 	echo
 	echo "A How-To for Manually Updating OpenELEC:"
 	echo "http://wiki.openelec.tv/index.php?title=Updating_OpenELEC"
-	echo 
+	echo
 	echo "Location of development builds:"
 	echo "http://sources.openelec.tv/tmp/image/"
 	echo
@@ -67,7 +67,6 @@ then
 	echo
 	echo "Exiting Now."
 	echo
-	unsetv
 	exit 1
 fi
 }
@@ -236,7 +235,7 @@ do
 		rm -rf $temploc
 		unset arch
 		;;
-			
+
 	a)
 		options_found=1
 		# show all remotely available builds for your architecture, and build date
@@ -369,7 +368,7 @@ do
 		echo "My Local Build: `cat /etc/version | tail -c 6 | tr -d 'r'`"
 		;;
 
-	q)	
+	q)
 		options_found=1
 		# supress output -- intentionally undocumented (needed only for GUI interaction)
 		echo() { :; }
@@ -377,7 +376,7 @@ do
 		update_yes=1
 		;;
 
-	z)	
+	z)
 		options_found=1
 		spinner() {
 		proc=$1
@@ -438,8 +437,8 @@ do
 				echo "---------------------------------------"
 				echo
 				if [[ -z `cat $temploc/temp3` ]] ;
-        		then
-        			echo "There are either no available builds for your architecture at this time, or"
+		then
+			echo "There are either no available builds for your architecture at this time, or"
 					echo "the only build avaliable, is the same build revision you are currently on."
 					echo "Please check again later. You may also check manually for yourself here:"
 					echo "http://sources.openelec.tv/tmp/image/"
@@ -634,7 +633,7 @@ do
 				done
 				## everything went well: we're done !
 				rm -rf $temploc
-				exit 0	
+				exit 0
 			elif [[ $alt = "N" || $alt = "n" || $alt = "No" || $alt = "no" ]] ;
 			then
 				echo
@@ -904,7 +903,7 @@ then
 		done
 	fi
 else
-	echo 
+	echo
 	echo "* Script Update Server Not Responding."
 	echo "* Try again later."
 	echo "  -------------------------------"
@@ -1110,7 +1109,7 @@ then
 	echo -ne "\033[0K\r"
 	echo ">>>| OpenELEC"
 	echo "Updates Are Available."
-	echo "Local:   $PAST          Compiled: `cat /etc/version | cut -f 2-2 -d'-' | sed 's/......$//;s/./& /4' | sed 's/./& /7' | awk '{ print "[ "$2"/"$3"/"$1" ]" }'`" 
+	echo "Local:   $PAST          Compiled: `cat /etc/version | cut -f 2-2 -d'-' | sed 's/......$//;s/./& /4' | sed 's/./& /7' | awk '{ print "[ "$2"/"$3"/"$1" ]" }'`"
 	echo "Remote:  $PRESENT          Compiled: `echo $FOLDER | cut -f 4-4 -d'-' | sed 's/......$//;s/./& /4' | sed 's/./& /7' | awk '{ print "[ "$2"/"$3"/"$1" ]" }'`"
 	if [ "$arch" = "RPi.arm" ] ;
 	then
@@ -1167,7 +1166,7 @@ else
 	echo
 	echo ">>>| OpenELEC"
 	echo "No Updates Available."
-	echo "Local:   $PAST          Compiled: `cat /etc/version | cut -f 2-2 -d'-' | sed 's/......$//;s/./& /4' | sed 's/./& /7' | awk '{ print "[ "$2"/"$3"/"$1" ]" }'`" 
+	echo "Local:   $PAST          Compiled: `cat /etc/version | cut -f 2-2 -d'-' | sed 's/......$//;s/./& /4' | sed 's/./& /7' | awk '{ print "[ "$2"/"$3"/"$1" ]" }'`"
 	echo "Remote:  $PRESENT          Compiled: `echo $FOLDER | cut -f 4-4 -d'-' | sed 's/......$//;s/./& /4' | sed 's/./& /7' | awk '{ print "[ "$2"/"$3"/"$1" ]" }'`"
 	echo
 	echo "You are on the latest build for your platform."
