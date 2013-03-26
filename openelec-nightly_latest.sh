@@ -121,7 +121,7 @@ then
 	asystem="SYSTEM"
 	dkmd5="KERNEL.md5"
 	dsmd5="SYSTEM.md5"
-	mode="http://openelec.thestateofme.com"
+	mode="http://openelec.thestateofme.com/dev_builds/"
 else
 	echo "Device Detected: `cat /etc/arch | sed 's/\./ /g' | awk '{print $1}'`"
 	echo "OpenELEC_Dev: v$VERSION"
@@ -1056,6 +1056,7 @@ then
 	echo "This isn't supported, and will yield unexpected results if we continue."
 	echo "Your build is a higher revision then the highest available on the official"
 	echo "snapshot server as seen here: http://sources.openelec.tv/tmp/image/"
+	echo "((RaspberryPi, see here: http://openelec.thestateofme.com/dev_builds/ ))"
 	echo "In order to use this update script, you *MUST* be using an official"
 	echo "build, that was obtained from the aforementioned snapshot server."
 	echo
@@ -1115,7 +1116,7 @@ then
 	then
 		echo
 		echo "RPi Build Source:"
-		echo "http://openelec.thestateofme.com"
+		echo "http://openelec.thestateofme.com/dev_builds/"
 	else
 		echo
 		echo "`cat /etc/arch | sed 's/\./ /g' | awk '{print $1}'` Build Source:"
