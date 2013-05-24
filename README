@@ -1,0 +1,61 @@
+
+OpenELEC_DEV ; 
+will update from one nightly build, to any current or past build you wish.
+OpenELEC has an automatic update feature already built in, but its for going from one stable build to another.
+if you like to live on the bleeding edge of new code, this script will make the whole update process a simple affair
+normally requiring minimal input.
+
+it can be run off any currently available architecture [as of 10/22/2012].
+(ION, Generic, Intel, Fusion, RaspberryPi)
+
+the script has a mechanism which will always keep itself up-to-date, so you only need to download it once.
+anytime i push an update, you will have the option accept it or not. if you do, it will replace the old version
+and restart itself automatically.
+
+
+================================================================================================================
+
+
+How to get it:
+
+1) open a ssh session and run the following:
+
+
+	curl https://raw.github.com/wavrunrx/OpenELEC_Dev/master/openelec-nightly_latest.sh > ./openelec-nightly_latest.sh && chmod +x openelec-nightly_latest.sh
+
+
+2) now, run it ! (see below for available options)
+
+
+	sh ./openelec-nightly_latest.sh
+
+
+================================================================================================================
+
+
+Options:  ./openelec-nightly_latest.sh  [-ioacrlsbvh]
+
+
+	-i                   check if SYSTEM & KERNEL are already in-place; suggest a reboot.
+	-o                   list all avaliable archived builds for your architecture.
+	-z                   roll back or forward to a version of our choosing.
+	-a                   list all avaliable builds for your architecture.
+	-c                   quick check to see if we're up-to-date.
+	-r                   check the remote build revision.
+	-l                   what's our local build revision.
+	-s                   check for new script version.
+	-b                   reboot OpenELEC
+	-v                   script version.
+	-h/--help            help.
+
+
+===========================================================================================
+
+
+NOTE:
+As a general rule of thumb; using user built version's of OpenELEC (any build NOT avaliable on the OpenELEC development build server: http://sources.openelec.tv/tmp/image/) will seriously break usage of this script; i've built in some checks to look for this; but i can't possibly code for all the potential possibilities; therefore i need to leave some of the decision up to you:
+
+IF YOU ARE USING ANY UNOFFICIAL BUILD THAT'S NOT AVAILABLE ON OPENELEC'S SERVER
+(IE sources.openelec.tv/tmp/image/) THEN DO NOT EXPECT MY SCRIPT TO FUNCTION PROPERLY 
+IT WILL MOST LIKELY BREAK YOUR SYSTEM. ONLY WHEN YOU ARE RUNNING AN OFFICIAL BUILD, SHOULD
+YOU CONSIDER USING THIS SCRIPT.
