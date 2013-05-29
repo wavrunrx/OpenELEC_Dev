@@ -1170,8 +1170,8 @@ else
 	echo "Local:   $PAST          Compiled: `cat /etc/version | cut -f 2-2 -d'-' | sed 's/......$//;s/./& /4' | sed 's/./& /7' | awk '{ print "[ "$2"/"$3"/"$1" ]" }'`"
 	echo "Remote:  $PRESENT          Compiled: `echo $FOLDER | cut -f 4-4 -d'-' | sed 's/......$//;s/./& /4' | sed 's/./& /7' | awk '{ print "[ "$2"/"$3"/"$1" ]" }'`"
 	echo
-	echo "You are on the latest build for your platform."
-	echo "Please check back later."
+	echo "You are on the latest build for your platform [`cat /etc/arch`]"
+	echo "Check again later."
 	echo
 	rm -rf $temploc
 	unsetv
@@ -1345,6 +1345,7 @@ echo
 echo
 echo "Update Preperation Complete !"
 sleep 2
+while true; do
 echo
 echo "You must reboot to finish the update."
 echo "Would you like to reboot now (y/n) ?"
@@ -1357,9 +1358,7 @@ then
 	echo "Please answer (y/n)"
 	echo "Exiting."
 	echo
-	rm -rf $temploc
-	unsetv
-	exit 1
+	continue
 elif [[ "$reb" = "Y" || "$reb" = "y" ]] ;
 then
 	sleep 1
@@ -1387,4 +1386,3 @@ fi
 ## everything went well: we're done !
 
 exit 0
-
