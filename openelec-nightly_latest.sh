@@ -300,7 +300,7 @@ do
 		if [ "$SYS_KERN" = "4" ] ;
 		then
 			echo
-			echo "KERNEL & SYSTEM images are already in place."
+			echo "A KERNEL, & SYSTEM image are already in place."
 			echo "Please reboot your HTPC when possible"
 			echo "to complete the update."
 			echo
@@ -1193,7 +1193,7 @@ sleep 2
 
 ###### Move KERNEL & SYSTEM  and respective md5's to /storage/.update/
 echo
-echo "Moving Images to /storage/.update"
+echo "Moving Images To: /storage/.update"
 echo -ne "Please Wait...\033[0K\r"
 mv $temploc/OpenELEC-*/target/* /storage/.update &
 pid=$!
@@ -1211,6 +1211,7 @@ kernmd5=$(cat /storage/.update/$dkmd5 | awk '{print $1}')
 kernrom=$(md5sum /storage/.update/$dkernel | awk '{print $1}')
 sysrom=$(md5sum /storage/.update/$dsystem | awk '{print $1}')
 
+echo "Data Integrity Check:"
 if [ "$sysmd5" = "$sysrom" ] ;
 then
 	echo
@@ -1295,7 +1296,7 @@ mkdir -p /storage/downloads
 
 ###### create a backup of our current, and new build for easy access if needed for a emergency rollback
 
-echo "Creating backup of PREVIOUS SYSTEM & KERNEL images."
+echo "Creating a backup of your PREVIOUS [ SYSTEM & KERNEL ] images."
 echo -ne "Please Wait...\033[0K\r"
 mkdir /storage/downloads/OpenELEC_r$PAST
 cp /flash/$akernel /storage/downloads/OpenELEC_r$PAST/$dkernel
@@ -1319,7 +1320,7 @@ echo "-->  A backup copy of your *PREVIOUS* SYSTEM & KERNEL images [ revision $P
 echo "     have been created here:  /storage/downloads/OpenELEC_r$PAST"
 echo
 echo
-echo "Creating backup of NEW SYSTEM & KERNEL images."
+echo "Creating a backup of your NEW [ SYSTEM & KERNEL ] images."
 echo -ne "Please Wait...\033[0K\r"
 mkdir -p /storage/downloads/OpenELEC_r$PRESENT
 sleep 1
@@ -1342,8 +1343,9 @@ sleep 5
 
 echo
 echo
-echo "Update Preperation Complete."
+echo "Update Preperation Complete !"
 sleep 2
+echo
 echo "You must reboot to finish the update."
 echo "Would you like to reboot now (y/n) ?"
 read -n1 -p "==| " reb
