@@ -89,7 +89,7 @@ Allow_Update="YES"
 
 ###### script version
 
-VERSION="36"
+VERSION="37"
 
 
 ###### if no options specified; we continue as normal
