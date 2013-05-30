@@ -1356,7 +1356,6 @@ then
 	echo
 	echo "Unrecognized Input."
 	echo "Please answer (y/n)"
-	echo "Exiting."
 	echo
 	continue
 elif [[ "$reb" = "Y" || "$reb" = "y" ]] ;
@@ -1381,6 +1380,7 @@ then
 	unsetv
 	exit 0
 fi
+done
 
 
 ## everything went well: we're done !
