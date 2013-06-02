@@ -165,19 +165,19 @@ do
 			mv $temploc/temp $temploc/temp2
 		fi
 		if [[ -z `cat $temploc/temp2` ]] ;
-        then
-        	echo
-        	echo "There are either no available builds for your architecture at this time, or"
+		then
+			echo
+ 			echo "There are either no available builds for your architecture at this time, or"
 			echo "the only build avaliable, is the same build revision you are currently on."
 			echo "Unable to check remote revision number."
 			echo "Please check again later. You may also check manually for yourself here:"
 			echo "http://sources.openelec.tv/tmp/image/"
-        	echo
-        	echo "Exiting Now."
-        	rm -rf $temploc
-        	unset arch
-        	exit 1
-        fi
+			echo
+			echo "Exiting Now."
+ 			rm -rf $temploc
+ 			unset arch
+			exit 1
+		fi
 		PAST=$(cat /etc/version | tail -c 6 | tr -d 'r')
 		PRESENT=$(cat $temploc/temp2 | tail -c 15 | cut -c 0-5)
 		if [ `echo $PRESENT | sed 's/.\{4\}$//'` == "-" ] ;
@@ -217,21 +217,21 @@ do
 			mv $temploc/temp $temploc/temp2
 		fi
 		if [[ -z `cat $temploc/temp2` ]] ;
-        then
-        	echo
-        	echo "There are either no available builds for your architecture at this time, or"
+		then
+			echo
+			echo "There are either no available builds for your architecture at this time, or"
 			echo "the only build avaliable, is the same build revision you are currently on."
 			echo "Unable to display remote revision number."
 			echo "Please check again later. You may also check manually for yourself here:"
 			echo "http://sources.openelec.tv/tmp/image/"
-        	echo
-        	echo "Exiting Now."
+			echo
+			echo "Exiting Now."
 			rm -rf $temploc
 			unset arch
-        	exit 1
-        fi
+			exit 1
+		fi
 		echo
-		echo "Newest Remote Release for [ $arch ] ---> `cat $temploc/temp2 | tail -c 15 | sed 's/.\{8\}$//' | tr -d "\-r"`"
+		echo "Newest Remote Release for [ $arch ] is ---> `cat $temploc/temp2 | tail -c 15 | sed 's/.\{8\}$//' | tr -d "\-r"`"
 		rm -rf $temploc
 		unset arch
 		;;
@@ -247,19 +247,19 @@ do
 		echo "-------------------------------------------"
 		echo
 		if [[ -z `cat $temploc/temp3` ]] ;
-        then
-        	echo
-        	echo "There are no available builds for your architecture at this time."
-        	echo "Please check again later."
-        	echo
+		then
+			echo
+			echo "There are no available builds for your architecture at this time."
+			echo "Please check again later."
+			echo
 			echo "Exiting Now."
 			rm -rf $temploc
 			unset arch
-        	exit 1
-        fi
+			exit 1
+		fi
 		for i in `cat $temploc/temp3`
 		do
-		    echo -n "$i  --->  Compiled On: "; echo -n "$i" | cut -f 4-4 -d'-' | sed 's/......$//;s/./& /4' | sed 's/./& /7' | awk '{ print "[ "$2"/"$3"/"$1" ]" }'
+		echo -n "$i  --->  Compiled On: "; echo -n "$i" | cut -f 4-4 -d'-' | sed 's/......$//;s/./& /4' | sed 's/./& /7' | awk '{ print "[ "$2"/"$3"/"$1" ]" }'
 		done
 		rm -rf $temploc
 		unset arch
@@ -270,21 +270,21 @@ do
 		# show all old archived builds for your architecture, as well as compilation date
 		arch=$(cat /etc/arch)
 		mkdir -p $temploc
-		curl --silent $mode/archive/ | grep $arch | sed -e ';s/.*<a href="//' -e 's/">.*//' > $temploc/temp
+		curl --silent $mode/old/ | grep $arch | sed -e ';s/.*<a href="//' -e 's/">.*//' > $temploc/temp
 		echo
 		echo "Archival Builds Avaliable for your Architecture:  ($arch)"
 		echo "------------------------------------------------"
 		echo
 		if [[ -z `cat $temploc/temp` ]] ;
-        then
-        	echo
-        	echo "There are no archived builds for your architecture at this time."
-        	echo "Please check again later."
-        	echo
+		then
+			echo
+			echo "There are no archived builds for your architecture at this time."
+			echo "Please check again later."
+			echo
 			echo "Exiting Now."
 			rm -rf $temploc
-        	exit 1
-        fi
+			exit 1
+		fi
 		for i in `cat $temploc/temp`
 		do
 			echo -n "$i  --->  Compiled On: "; echo -n "$i" | cut -f 4-4 -d'-' | sed 's/......$//;s/./& /4' | sed 's/./& /7' | awk '{ print "[ "$2"/"$3"/"$1" ]" }'
@@ -307,39 +307,39 @@ do
 			echo "Would you like to reboot now (y/n) ?"
 			read -n1 -p "==| " reb
 			echo
-				if [[ "$reb" != "Y" ]] && [[ "$reb" != "y" ]] && [[ "$reb" != "N" ]] && [[ "$reb" != "n" ]] ;
-				then
-					echo
-					echo "Unrecognized Input."
-					echo "Please answer (y/n)"
-					echo "Exiting Now."
-					echo
-					rm -rf $temploc
-					unset reb
-					exit 1
-				elif [[ "$reb" = "Y" || "$reb" = "y" ]] ;
-				then
-					sleep 1
-					echo
-					echo "Rebooting..."
-					unset reb
-					sync
-					sleep 1
-					/sbin/reboot
-					exit 0
-				elif [[ "$reb" = "N" || "$reb" = "n" ]] ;
-				then
-					sleep 1
-					echo
-					echo "Exiting Now."
-					echo
-					unset reb
-					exit 0
-				fi
+			if [[ "$reb" != "Y" ]] && [[ "$reb" != "y" ]] && [[ "$reb" != "N" ]] && [[ "$reb" != "n" ]] ;
+			then
+				echo
+				echo "Unrecognized Input."
+				echo "Please answer (y/n)"
+				echo "Exiting Now."
+				echo
+				rm -rf $temploc
+				unset reb
+				exit 1
+			elif [[ "$reb" = "Y" || "$reb" = "y" ]] ;
+			then
+				sleep 1
+				echo
+				echo "Rebooting..."
+				unset reb
+				sync
+				sleep 1
+				/sbin/reboot
+				exit 0
+			elif [[ "$reb" = "N" || "$reb" = "n" ]] ;
+			then
+				sleep 1
+				echo
+				echo "Exiting Now."
+				echo
+				unset reb
+				exit 0
+			fi
 		else
 			echo
 			echo "No KERNEL/SYSTEM images are in-place."
-			fi
+		fi
 		;;
 
 	s)
@@ -382,14 +382,14 @@ do
 		proc=$1
 		while [ -d /proc/$proc ] ;
 		do
-		echo -ne '/' ; sleep 0.05
-		echo -ne "\033[0K\r"
-		echo -ne '-' ; sleep 0.05
-		echo -ne "\033[0K\r"
-		echo -ne '\' ; sleep 0.05
-		echo -ne "\033[0K\r"
-		echo -ne '|' ; sleep 0.05
-		echo -ne "\033[0K\r"
+			echo -ne '/' ; sleep 0.05
+			echo -ne "\033[0K\r"
+			echo -ne '-' ; sleep 0.05
+			echo -ne "\033[0K\r"
+			echo -ne '\' ; sleep 0.05
+			echo -ne "\033[0K\r"
+			echo -ne '|' ; sleep 0.05
+			echo -ne "\033[0K\r"
 		done
 		return 0
 		}
@@ -409,55 +409,54 @@ do
 		arch=$(cat /etc/arch)
 		# roll back or forward to a version of our choosing
 		while true; do
-		echo
-		echo "Are you sure you want to switch to a newer/older build (y/n) ?"
-		read -n1 -p "==| " alt
-		alt=$alt
-			if [[ $alt != "Y" ]] && [[ $alt != "y" ]] && [[ $alt != "N" ]] && [[ $alt != "n" ]] ;
-			then
-				echo
-				echo
-				echo "Unrecognized Input."
-				sleep 2
-				echo "Please answer (y/n)"
-				continue
-			elif [[ $alt = "Y" || $alt = "y" ]] ;
-			then
-				echo
-				echo
-				echo -ne "Please Wait...\033[0K\r"
-				mkdir -p $temploc
-				curl --silent $mode/ | grep $arch | sed -e ';s/.*<a href="//' -e 's/">.*//' > $temploc/temp
-				curl --silent $mode/archive/ | grep $arch | sed -e ';s/.*<a href="//' -e 's/">.*//' >> $temploc/temp
-				echo -ne "\033[0K\r"
-				echo
-				echo "Builds Available for your Architecture: ($arch)"
-				cat $temploc/temp | sort -n > $temploc/temp3
-				rm $temploc/temp
-				echo "---------------------------------------"
-				echo
-				if [[ -z `cat $temploc/temp3` ]] ;
+			echo
+			echo "Are you sure you want to switch to a newer/older build (y/n) ?"
+			read -n1 -p "==| " alt
+			alt=$alt
+		if [[ $alt != "Y" ]] && [[ $alt != "y" ]] && [[ $alt != "N" ]] && [[ $alt != "n" ]] ;
 		then
-			echo "There are either no available builds for your architecture at this time, or"
-					echo "the only build avaliable, is the same build revision you are currently on."
-					echo "Please check again later. You may also check manually for yourself here:"
-					echo "http://sources.openelec.tv/tmp/image/"
-        			echo
-        			echo "Exiting Now."
-					rm -rf $temploc
-					unsetv
-        			exit 1
-        		fi
+			echo
+			echo
+			echo "Unrecognized Input."
+			sleep 2
+			echo "Please answer (y/n)"
+			continue
+		elif [[ $alt = "Y" || $alt = "y" ]] ;
+		then
+			echo
+			echo
+			echo -ne "Please Wait...\033[0K\r"
+			mkdir -p $temploc
+			curl --silent $mode/ | grep $arch | sed -e ';s/.*<a href="//' -e 's/">.*//' > $temploc/temp
+			curl --silent $mode/old/ | grep $arch | sed -e ';s/.*<a href="//' -e 's/">.*//' >> $temploc/temp
+			echo -ne "\033[0K\r"
+			echo
+			echo "Builds Available for your Architecture: ($arch)"
+			cat $temploc/temp | sort -n > $temploc/temp3
+			rm $temploc/temp
+			echo "---------------------------------------"
+			echo
+			if [[ -z `cat $temploc/temp3` ]] ;
+			then
+				echo "There are either no available builds for your architecture at this time, or"
+				echo "the only build avaliable, is the same build revision you are currently on."
+				echo "Please check again later. You may also check manually for yourself here:"
+				echo "http://sources.openelec.tv/tmp/image/"
+				echo
+				echo "Exiting Now."
+				rm -rf $temploc
+				unsetv
+				exit 1
+				fi
 				for i in `cat $temploc/temp3`
 				do
 					echo -n "Build: " ; echo -n "$i" | cut -f 5-5 -d'-' | sed '$s/........$//' | tr -d "r" ; echo -n "-----> Compiled On: " ; echo -n "$i" | cut -f 4-4 -d'-' | sed 's/......$//;s/./& /4' | sed 's/./& /7' | awk '{ print "[ "$2"/"$3"/"$1" ]" }' ; echo
 				done
-
 				echo "----------------------------------"
 				echo
 				numbers=$(cat $temploc/temp3)
 				for i in $numbers; do
-		        	echo $i | tail -c 15 | sed 's/.\{8\}$//' | tr -d "\-r" >> $temploc/numbers
+					echo $i | tail -c 15 | sed 's/.\{8\}$//' | tr -d "\-r" >> $temploc/numbers
 				done
 				list=$(cat $temploc/numbers)
 				count=$(cat $temploc/numbers | sed -n 1p | wc -m)
@@ -467,25 +466,25 @@ do
 					echo "Note: This list may be longer then your scrollback buffer will show"
 					read -p "==| " fbrev
 					count2=$(echo -n $fbrev | wc -m)
-					if (( "$count2" < "$fbrevd" )) ;
-					then
-						echo
-						echo "Error: [ $fbrev ] is not a valid build number."
-						echo "It does not exist, or is not a numerical value"
-						echo "Please double check your entry."
-						echo "not 5 digits"
-						continue
-					fi
-					if ! [[ "$list" =~ "$fbrev" ]] ;
-					then
-						echo
-						echo "Error: [ $fbrev ] is not a valid build number."
-						echo "It does not exist, or is not a numerical value"
-						echo "Please double check your entry."
-						echo "not in list"
-						continue
-					fi
-					break
+				if (( "$count2" < "$fbrevd" )) ;
+				then
+					echo
+					echo "Error: [ $fbrev ] is not a valid build number."
+					echo "It does not exist, or is not a numerical value"
+					echo "Please double check your entry."
+					echo "not 5 digits"
+				continue
+				fi
+				if ! [[ "$list" =~ "$fbrev" ]] ;
+				then
+					echo
+					echo "Error: [ $fbrev ] is not a valid build number."
+					echo "It does not exist, or is not a numerical value"
+					echo "Please double check your entry."
+					echo "not in list"
+					continue
+				fi
+				break
 				done
 				unset numbers
 				unset list
@@ -498,7 +497,7 @@ do
 				then
 					wget -O $temploc/$fn $mode/$fn
 				else
-					wget -O $temploc/$fn $mode/archive/$fn
+					wget -O $temploc/$fn $mode/old/$fn
 				fi
 				echo -ne "\033[0K\r"
 				echo "Done!"
@@ -594,13 +593,13 @@ do
 				echo -ne "\033[0K\r"
 				###### ask if we want to reboot now
 				while true; do
-				echo
-				echo "Update Preperation Complete."
-				sleep 2
-				echo "You must reboot to complete the update."
-				echo "Would you like to reboot now (y/n) ?"
-				read -n1 -p "==| " reb
-				reb=$reb
+					echo
+					echo "Update Preperation Complete."
+					sleep 2
+					echo "You must reboot to complete the update."
+					echo "Would you like to reboot now (y/n) ?"
+					read -n1 -p "==| " reb
+					reb=$reb
 				if [[ "$reb" != "Y" ]] && [[ "$reb" != "y" ]] && [[ "$reb" != "N" ]] && [[ "$reb" != "n" ]] ;
 				then
 					echo
@@ -634,18 +633,18 @@ do
 				## everything went well: we're done !
 				rm -rf $temploc
 				exit 0
-			elif [[ $alt = "N" || $alt = "n" || $alt = "No" || $alt = "no" ]] ;
-			then
-				echo
-				echo
-				echo "User aborted process."
-				sleep 2
-				echo "Exiting."
-				rm -rf $temploc
-				echo
-				exit 0
-			fi
-			done
+				elif [[ $alt = "N" || $alt = "n" || $alt = "No" || $alt = "no" ]] ;
+				then
+					echo
+					echo
+					echo "User aborted process."
+					sleep 2
+					echo "Exiting."
+					rm -rf $temploc
+					echo
+					exit 0
+				fi
+				done
 		;;
 
 	v)
@@ -668,7 +667,7 @@ do
 		echo "-i                   check if SYSTEM & KERNEL are already in-place; suggest reboot."
 		echo "-o                   list all avaliable archived builds for your architecture."
 		echo "-z                   roll back or forward to a version of your choosing."
-		echo "-a                   list all avaliable builds for your architecture."
+		echo "-a                   list all current builds for your architecture."
 		echo "-c                   quick check to see if we're up-to-date."
 		echo "-r                   check the remote build revision."
 		echo "-l                   check our local build revision."
@@ -682,10 +681,10 @@ do
 
 	\?)
 		# terminate if invalid option is used
-				echo "Invalid option used: -$OPTARG" >&2
-				echo "Run with -h/--help"
-				echo
-				exit 1
+		echo "Invalid option used: -$OPTARG" >&2
+		echo "Run with -h/--help"
+		echo
+		exit 1
 		;;
 	esac
 done
@@ -1366,7 +1365,6 @@ then
 	rm -rf $temploc
 	unsetv
 	sync
-	sleep 1
 	/sbin/reboot
 	exit 0
 elif [[ "$reb" = "N" || "$reb" = "n" ]] ;
@@ -1378,7 +1376,7 @@ then
 	echo "Exiting."
 	rm -rf $temploc
 	unsetv
-	exit 0
+	exit 1
 fi
 done
 
