@@ -463,16 +463,16 @@ do
 				fbrevd=$(($count-1))
 				while true; do
 					echo "Enter the build number you want from the list above (Ex: "`head -1 $temploc/numbers`")"
-					echo "Note: This list may be longer then your scrollback buffer will show"
+					echo "Note: This list may be longer then your scrollback buffer will show."
 					read -p "==| " fbrev
 					count2=$(echo -n $fbrev | wc -m)
 				if (( "$count2" < "$fbrevd" )) ;
 				then
 					echo
-					echo "Error: [ $fbrev ] is not a valid build number."
-					echo "It does not exist, or is not a numerical value"
-					echo "Please double check your entry."
-					echo "not 5 digits"
+					echo "Error: [ $fbrev ] is not a valid build."
+					echo "It does not exist; or is not a numerical value as expected."
+					echo "Please check your entry, and try again."
+					echo
 				continue
 				fi
 				if ! [[ "$list" =~ "$fbrev" ]] ;
