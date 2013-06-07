@@ -1363,10 +1363,8 @@ then
 	echo
 	echo "Rebooting..."
 	rm -rf $temploc
-	unsetv
 	sync
 	/sbin/reboot
-	exit 0
 elif [[ "$reb" = "N" || "$reb" = "n" ]] ;
 then
 	sleep 1
