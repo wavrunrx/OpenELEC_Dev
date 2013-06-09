@@ -741,7 +741,7 @@ unset asystem
 unset dkernel
 unset dsystem
 unset sysrom
-unset OPTIND
+#unset OPTIND
 unset FOLDER
 unset branch
 unset sysmd5
