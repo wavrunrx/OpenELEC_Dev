@@ -325,7 +325,7 @@ do
 				unset reb
 				sync
 				sleep 1
-				/sbin/reboot
+				/usr/sbin/reboot
 				exit 0
 			elif [[ "$reb" = "N" || "$reb" = "n" ]] ;
 			then
@@ -617,7 +617,7 @@ do
 					rm -rf $temploc
 					sync
 					sleep 1
-					/sbin/reboot
+					/usr/sbin/reboot
 					exit 0
 				elif [[ "$reb" = "N" || "$reb" = "n" || "$reb" = "No" || "$reb" = "no" ]] ;
 				then
@@ -655,7 +655,7 @@ do
 		# reboot
 		options_found=1
 		echo "Rebooting..."
-		/sbin/reboot
+		/usr/sbin/reboot
 		;;
 
 	h|help)
@@ -963,7 +963,7 @@ while true; do
 		unsetv
 		sync
 		sleep 2
-		/sbin/reboot
+		/usr/sbin/reboot
 	elif [[ $reb = "N" || $reb = "n" ]] ;
 	then
 		echo
@@ -1364,7 +1364,7 @@ then
 	echo "Rebooting..."
 	rm -rf $temploc
 	sync
-	/sbin/reboot
+	/usr/sbin/reboot
 elif [[ "$reb" = "N" || "$reb" = "n" ]] ;
 then
 	sleep 1
