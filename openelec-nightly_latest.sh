@@ -345,7 +345,7 @@ do
 	s)
 		options_found=1
 		# checking for a script update, and notifying. no actual update going on here.
-		rsvers=$(curl --silent https://raw.github.com/wavrunrx/OpenELEC_Dev/master/openelec-nightly_latest.sh | grep "VERSION=" | grep -v grep | sed 's/[^0-9]*//g')
+		rsvers=$(curl --silent https://raw.github.com/sethyx/OpenELEC_Dev/master/openelec-nightly_latest.sh | grep "VERSION=" | grep -v grep | sed 's/[^0-9]*//g')
 		if [ "$rsvers" -gt "$VERSION" ] ;
 		then
 			echo
@@ -810,7 +810,7 @@ then
 		###### update_in_progress does not exist :: first run
 		###### checking script version; auto updating and re-running new version
 		mkdir -p $temploc
-		curl --silent https://raw.github.com/wavrunrx/OpenELEC_Dev/master/openelec-nightly_latest.sh > $temploc/tempscript
+		curl --silent https://raw.github.com/sethyx/OpenELEC_Dev/master/openelec-nightly_latest.sh > $temploc/tempscript
 		Allow=$(grep "Allow_Update=" $temploc/tempscript | grep -v grep | sed 's/=/ /g' | awk '{print $2}' | awk '{gsub(/[[:punct:]]/,"")}1')
 		rsvers=$(grep "VERSION=" $temploc/tempscript | grep -v grep | sed 's/[^0-9]*//g')
 		while true; do
