@@ -89,7 +89,7 @@ Allow_Update="YES"
 
 ###### script version
 
-VERSION="39"
+VERSION="40"
 
 
 ###### if no options specified; we continue as normal
@@ -325,7 +325,7 @@ do
 				unset reb
 				sync
 				sleep 1
-				/sbin/reboot
+				/usr/sbin/reboot
 				exit 0
 			elif [[ "$reb" = "N" || "$reb" = "n" ]] ;
 			then
@@ -345,7 +345,7 @@ do
 	s)
 		options_found=1
 		# checking for a script update, and notifying. no actual update going on here.
-		rsvers=$(curl --silent https://raw.github.com/wavrunrx/OpenELEC_Dev/master/openelec-nightly_latest.sh | grep "VERSION=" | grep -v grep | sed 's/[^0-9]*//g')
+		rsvers=$(curl --silent https://raw.github.com/sethyx/OpenELEC_Dev/master/openelec-nightly_latest.sh | grep "VERSION=" | grep -v grep | sed 's/[^0-9]*//g')
 		if [ "$rsvers" -gt "$VERSION" ] ;
 		then
 			echo
@@ -617,7 +617,7 @@ do
 					rm -rf $temploc
 					sync
 					sleep 1
-					/sbin/reboot
+					/usr/sbin/reboot
 					exit 0
 				elif [[ "$reb" = "N" || "$reb" = "n" || "$reb" = "No" || "$reb" = "no" ]] ;
 				then
@@ -655,7 +655,7 @@ do
 		# reboot
 		options_found=1
 		echo "Rebooting..."
-		/sbin/reboot
+		/usr/sbin/reboot
 		;;
 
 	h|help)
@@ -810,7 +810,7 @@ then
 		###### update_in_progress does not exist :: first run
 		###### checking script version; auto updating and re-running new version
 		mkdir -p $temploc
-		curl --silent https://raw.github.com/wavrunrx/OpenELEC_Dev/master/openelec-nightly_latest.sh > $temploc/tempscript
+		curl --silent https://raw.github.com/sethyx/OpenELEC_Dev/master/openelec-nightly_latest.sh > $temploc/tempscript
 		Allow=$(grep "Allow_Update=" $temploc/tempscript | grep -v grep | sed 's/=/ /g' | awk '{print $2}' | awk '{gsub(/[[:punct:]]/,"")}1')
 		rsvers=$(grep "VERSION=" $temploc/tempscript | grep -v grep | sed 's/[^0-9]*//g')
 		while true; do
@@ -963,7 +963,7 @@ while true; do
 		unsetv
 		sync
 		sleep 2
-		/sbin/reboot
+		/usr/sbin/reboot
 	elif [[ $reb = "N" || $reb = "n" ]] ;
 	then
 		echo
@@ -1364,7 +1364,7 @@ then
 	echo "Rebooting..."
 	rm -rf $temploc
 	sync
-	/sbin/reboot
+	/usr/sbin/reboot
 elif [[ "$reb" = "N" || "$reb" = "n" ]] ;
 then
 	sleep 1
